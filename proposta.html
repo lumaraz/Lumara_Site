@@ -74,18 +74,19 @@
 </style>
 </head>
 <body>
-<div class="demo" role="region" aria-label="Aviso" id="aviso">Protótipo: nenhum pagamento é cobrado de verdade.</div>
+<div id="aviso" hidden></div>
 <header><a href="index.html"><img src="img/logo-escuro.svg" alt="Lumara Silva" width="1552" height="366"></a><span class="topo-acoes"><button class="lang" id="idioma" aria-label="Switch to English" lang="en"><span class="ativo">PT</span><span>EN</span></button><a class="btn-link" id="falar" href="mailto:contato@lumarasilva.com.br">Falar com a Lumara</a></span></header>
 <main id="main"></main>
 
+<script src="/api/publico"></script>
 <script src="js/site.js"></script>
-<script src="js/exemplo.js"></script>
+<script src="js/nuvem.js"></script>
 <script src="js/comum.js"></script>
 <script>
 const e=LS.esc, brl=LS.brl;
 const CFG=SITE.carregar(), DESC=(CFG.integracoes.descontoVista||5)/100, GW=CFG.integracoes.gateway||"Asaas";
 const S=LS.dados();
-const id=location.hash.slice(1), o=S&&S.orcamentos.find(x=>x.id===id), c=o&&S.clientes.find(x=>x.id===o.cliente);
+const id=LS.id(), o=S&&S.orcamentos.find(x=>x.id===id), c=o&&S.clientes.find(x=>x.id===o.cliente);
 const total=o?o.itens.reduce((a,i)=>a+(+i.v||0),0):0;
 const hoje=new Date(); hoje.setHours(0,0,0,0);
 const validade=o?(()=>{const d=new Date((o.enviadoEm||o.criado)+"T00:00:00");d.setDate(d.getDate()+ +o.validade);return d})():null;
@@ -98,12 +99,13 @@ const T={
       aprovada:"Proposta aprovada",pixT:"Pague com Pix",cartaoT:"Pague com cartão",agora:"Valor agora",mensal:", e depois todo mês no mesmo dia",
       lerQR:"Abra o app do banco, escolha Pix e leia o código",autoriza:". No mesmo passo você autoriza as cobranças mensais",copiaCola:"Pix copia e cola",copiar:"Copiar código Pix",copiado:"Código copiado",
       cartaoTxt:(g,x)=>`No site publicado, este botão abre o pagamento seguro ${fem(g)?"da":"do"} ${g} para você informar o cartão${x?" e escolher as 3 parcelas":""}.`,
-      simPix:"Simular pagamento recebido",simCartao:"Simular pagamento aprovado",soProt:g=>`Botão só do protótipo. No sistema real, a confirmação chega sozinha ${fem(g)?"da":"do"} ${g}.`,
+      irTxt:(g,pix,x)=>pix?`Você vai para a página segura ${fem(g)?"da":"do"} ${g}, com o QR Code e o código Pix copia e cola. A confirmação chega aqui sozinha.`:`Você vai para a página segura ${fem(g)?"da":"do"} ${g} para informar o cartão${x?" e escolher as 3 parcelas":""}.`,
+      irBtn:"Ir para o pagamento",abrindo:"Abrindo o pagamento…",irErro:"Não foi possível abrir o pagamento agora. Tente de novo em instantes ou me chame no WhatsApp.",
       pago:"Pagamento confirmado",pagoP:"Obrigada! O projeto já entrou na minha agenda. Faltam só estes passos:",pPag:"Pagamento",pCont:"Assinar o contrato",pReun:"Agendar a reunião de briefing",
       assinar:"Assinar o contrato",verCont:"Ver o contrato assinado",agendar:"Agendar a reunião de briefing",semAgenda:"Em breve envio as opções de horário para a reunião de briefing.",acompanhar:"Acompanhar o projeto",novaAba:" (abre em nova aba)",
       encerrada:"Proposta encerrada",encerradaP:"Esta proposta foi marcada como não aprovada. Se quiser retomar, é só escrever para contato@lumarasilva.com.br.",
       venceu:"Esta proposta venceu",venceuP:d=>`A validade terminou em ${d}. Escreva para contato@lumarasilva.com.br que eu atualizo os valores e o prazo.`,
-      prep:"Proposta em preparação",prepP:"Esta proposta ainda não foi enviada.",nf:"Proposta não encontrada",nfP:"O link pode estar incompleto. Escreva para contato@lumarasilva.com.br que eu envio de novo.",nfDemo:"No protótipo, abra antes a área da equipe neste navegador para carregar os dados de exemplo.",
+      prep:"Proposta em preparação",prepP:"Esta proposta ainda não foi enviada.",nf:"Proposta não encontrada",nfP:"O link pode estar incompleto. Escreva para contato@lumarasilva.com.br que eu envio de novo.",nfDemo:"",
       qr:"QR Code de exemplo para pagamento por Pix",
       op:{avPix:d=>[`Pix com ${d}% de desconto`,v=>`${v}, pagamento na hora`],avCartao:["Cartão de crédito",v=>`${v} à vista`],
           entPix:["Entrada por Pix",v=>`${v} agora. A 2ª metade chega por e-mail na entrega`],entCartao:["Entrada no cartão",v=>`${v} agora. A 2ª metade chega por e-mail na entrega`],
@@ -118,12 +120,13 @@ const T={
       aprovada:"Proposal approved",pixT:"Pay with Pix",cartaoT:"Pay by card",agora:"Amount now",mensal:", then every month on the same day",
       lerQR:"Open your bank app, choose Pix and scan the code",autoriza:". In the same step you authorize the monthly charges",copiaCola:"Pix copy and paste code",copiar:"Copy Pix code",copiado:"Code copied",
       cartaoTxt:(g,x)=>`On the live site, this button opens ${g}'s secure checkout for you to enter your card${x?" and choose 3 installments":""}.`,
-      simPix:"Simulate payment received",simCartao:"Simulate payment approved",soProt:g=>`Prototype-only button. In the real system, ${g} confirms the payment automatically.`,
+      irTxt:(g,pix,x)=>pix?`You'll go to ${g}'s secure page, with the Pix QR code and copy-and-paste code. Confirmation comes back here automatically.`:`You'll go to ${g}'s secure page to enter your card${x?" and choose 3 installments":""}.`,
+      irBtn:"Go to payment",abrindo:"Opening payment…",irErro:"We couldn't open the payment right now. Please try again in a moment or message me on WhatsApp.",
       pago:"Payment confirmed",pagoP:"Thank you! The project is now on my schedule. Just these steps left:",pPag:"Payment",pCont:"Sign the agreement",pReun:"Book the briefing meeting",
       assinar:"Sign the agreement",verCont:"See the signed agreement",agendar:"Book the briefing meeting",semAgenda:"I'll send you time options for the briefing meeting soon.",acompanhar:"Follow the project",novaAba:" (opens in a new tab)",
       encerrada:"Proposal closed",encerradaP:"This proposal was marked as not approved. If you'd like to pick it up again, write to contato@lumarasilva.com.br.",
       venceu:"This proposal has expired",venceuP:d=>`It was valid until ${d}. Write to contato@lumarasilva.com.br and I'll update the prices and timeline.`,
-      prep:"Proposal in preparation",prepP:"This proposal hasn't been sent yet.",nf:"Proposal not found",nfP:"The link may be incomplete. Write to contato@lumarasilva.com.br and I'll send it again.",nfDemo:"In the prototype, open the team area in this browser first to load the sample data.",
+      prep:"Proposal in preparation",prepP:"This proposal hasn't been sent yet.",nf:"Proposal not found",nfP:"The link may be incomplete. Write to contato@lumarasilva.com.br and I'll send it again.",nfDemo:"",
       qr:"Sample QR code for Pix payment",
       op:{avPix:d=>[`Pix with ${d}% off`,v=>`${v}, paid instantly`],avCartao:["Credit card",v=>`${v} in full`],
           entPix:["Deposit by Pix",v=>`${v} now. The second half is sent by email on delivery`],entCartao:["Deposit by card",v=>`${v} now. The second half is sent by email on delivery`],
@@ -172,23 +175,13 @@ function painelAprovar(){const L=t();
    <p class="erro" id="erro-aceite" hidden>${L.erroAceite}</p>
    <p class="mut" style="margin-top:.9rem">${L.mudar}</p></div>`;
 }
-function qr(seed){ // QR ilustrativo, não é um código Pix válido
-  const n=25,cel=[];let x=seed;const r=()=>((x=(x*9301+49297)%233280)/233280);
-  const finder=(a,b)=>{for(let i=0;i<7;i++)for(let j=0;j<7;j++){const borda=i===0||i===6||j===0||j===6,meio=i>=2&&i<=4&&j>=2&&j<=4;if(borda||meio)cel.push([a+i,b+j])}};
-  finder(0,0);finder(0,n-7);finder(n-7,0);
-  for(let i=0;i<n;i++)for(let j=0;j<n;j++){const emF=(i<8&&j<8)||(i<8&&j>=n-8)||(i>=n-8&&j<8);if(!emF&&r()>.52)cel.push([i,j])}
-  return `<svg viewBox="0 0 ${n} ${n}" role="img" aria-label="${t().qr}"><rect width="${n}" height="${n}" fill="#fff"/>${cel.map(([i,j])=>`<rect x="${j}" y="${i}" width="1" height="1" fill="#2D2D2D"/>`).join("")}</svg>`;
-}
 function painelPagar(forma){
   const L=t(), v=valorAgora(forma), pix=/Pix/.test(forma);
   return `<div class="painel"><span class="estado">${L.aprovada}</span><h2>${pix?L.pixT:L.cartaoT}</h2>
    <p>${L.agora}: <strong>${brl(v)}</strong>${forma==="Pix Automático"?L.mensal:""}.</p>
-   ${pix?`<div class="pix">${qr(o.num.length*997+total)}<p class="mut">${L.lerQR}${forma==="Pix Automático"?L.autoriza:""}.</p>
-     <label class="mut" for="copia" style="justify-self:start">${L.copiaCola}</label><input class="codigo" id="copia" readonly value="00020101021226900014br.gov.bcb.pix2568exemplo.${e(GW.toLowerCase().replace(/\s/g,''))}.com/qr/v2/EXEMPLO-${e(o.num)}5204000053039865802BR6304ABCD">
-     <button class="botao sec" id="copiar" type="button">${L.copiar}</button></div>`
-   :`<p style="margin:1rem 0">${L.cartaoTxt(e(GW),forma==="Cartão em 3x")}</p>`}
-   <button class="botao" id="simular">${pix?L.simPix:L.simCartao}</button>
-   <p class="mut" style="margin-top:.6rem">${L.soProt(e(GW))}</p></div>`;
+   <p style="margin:1rem 0">${L.irTxt(e(GW),pix,forma==="Cartão em 3x")}</p>
+   <button class="botao" id="ir-pagar" type="button">${L.irBtn}</button>
+   <p class="mut" id="pagar-erro" role="alert" hidden style="margin-top:.6rem">${L.irErro}</p></div>`;
 }
 function assinado(){return !!(o.contrato&&o.contrato.status==="assinado")||LS.fila().some(x=>x.orc===o.id&&x.tipo==="contrato")}
 function painelPago(){
@@ -228,7 +221,10 @@ if(o) document.addEventListener("click",ev=>{
     o.status="aprovado";o.forma=forma;LS.evento({tipo:"aprovado",orc:o.id,forma});
     mostrar(()=>painelPagar(forma)); focoPainel();}
   if(b.id==="copiar"){const i=document.getElementById("copia");i.select();try{navigator.clipboard.writeText(i.value).then(()=>{b.textContent=t().copiado},()=>{})}catch(x){}}
-  if(b.id==="simular"){LS.evento({tipo:"pago",orc:o.id,forma:o.forma||"Pix"});mostrar(painelPago);focoPainel()}
+  if(b.id==="ir-pagar"){const L=t();b.disabled=true;b.textContent=L.abrindo;
+    fetch("/api/pagar",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({orc:o.id,forma:o.forma||opcoes()[0][0]})})
+      .then(r=>r.json()).then(j=>{if(j.url)location.href=j.url;else if(j.erro==="pago")location.reload();else throw 0})
+      .catch(()=>{b.disabled=false;b.textContent=L.irBtn;document.getElementById("pagar-erro").hidden=false})}
 });
 addEventListener("hashchange",()=>location.reload());
 </script>

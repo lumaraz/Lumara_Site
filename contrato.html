@@ -55,11 +55,11 @@
 </style>
 </head>
 <body>
-<div class="demo" role="region" aria-label="Aviso" id="aviso">Protótipo: a assinatura aqui não tem validade jurídica.</div>
+<div id="aviso" hidden></div>
 <header><a href="index.html"><img src="img/logo-escuro.svg" alt="Lumara Silva" width="1552" height="366"></a>
   <span class="topo-acoes"><button class="lang" id="idioma" aria-label="Switch to English" lang="en"><span class="ativo">PT</span><span>EN</span></button><button class="btn-link" id="imprimir" type="button">Baixar PDF</button></span></header>
 <main id="main"></main>
-<script src="js/exemplo.js"></script>
+<script src="js/nuvem.js"></script>
 <script src="js/comum.js"></script>
 <script>
 const {esc,brl}=LS;
@@ -80,7 +80,7 @@ const T={
       pend:"Agreement in preparation",pendP:"The agreement becomes available once the proposal is approved.",ptOnly:"The agreement is written in Portuguese, the language that governs it."}
 };
 let lang=LS.ligarIdioma(document.getElementById("idioma"),l=>{lang=l;mostrar()});
-const S=LS.dados(), id=location.hash.slice(1), o=S&&S.orcamentos.find(x=>x.id===id), c=o&&S.clientes.find(x=>x.id===o.cliente);
+const S=LS.dados(), id=LS.id(), o=S&&S.orcamentos.find(x=>x.id===id), c=o&&S.clientes.find(x=>x.id===o.cliente);
 let assinatura=null;
 if(o){const evA=LS.fila().find(x=>x.tipo==="aprovado"&&x.orc===o.id); if(evA&&o.status!=="aprovado"){o.status="aprovado";o.aprovadoEm=evA.quando.slice(0,10)}}
 if(o){const ev=LS.fila().reverse().find(x=>x.tipo==="contrato"&&x.orc===o.id); assinatura=(o.contrato&&o.contrato.assinatura)||(ev&&ev.assinatura)||null}

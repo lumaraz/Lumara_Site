@@ -76,13 +76,14 @@
 </style>
 </head>
 <body>
-<div class="demo" role="region" aria-label="Aviso" id="aviso"></div>
+<div id="aviso" hidden></div>
 <header><a href="index.html"><img src="img/logo-escuro.svg" alt="Lumara Silva" width="1552" height="366"></a>
   <span class="topo-acoes"><button class="lang" id="idioma" aria-label="Switch to English" lang="en"><span class="ativo">PT</span><span>EN</span></button><a class="botao sec" id="falar" href="mailto:contato@lumarasilva.com.br"></a></span></header>
 <main id="main"></main>
 <footer id="rodape"></footer>
+<script src="/api/publico"></script>
 <script src="js/site.js"></script>
-<script src="js/exemplo.js"></script>
+<script src="js/nuvem.js"></script>
 <script src="js/comum.js"></script>
 <script>
 const e=LS.esc, brl=LS.brl;
@@ -96,7 +97,7 @@ const T={
       posts:"Calendário de posts",postsP:"Posts planejados para as suas redes. Os que estão aguardando você podem ser aprovados aqui.",formato:{Feed:"Feed",Stories:"Stories",Reels:"Reels",Carrossel:"Carrossel"},
       stPost:{ideia:"Ideia",producao:"Em produção",aprovacao:"Aguardando você",aprovado:"Aprovado",ajustes:"Ajustes pedidos",publicado:"Publicado"},
       pagamentos:"Pagamentos",semPag:"Nenhum pagamento registrado.",data:"Vencimento",desc:"Descrição",valor:"Valor",situacao:"Situação",pagoT:"Pago",aPagar:"A pagar",atrasado:"Atrasado",
-      pagar:"Pagar agora",recibo:"Recibo",nota:"Nota fiscal",pixP:v=>`Pague ${v} por Pix. No sistema real, o QR Code e o código copia e cola aparecem aqui.`,simular:"Simular pagamento recebido",
+      pagar:"Pagar agora",recibo:"Recibo",nota:"Nota fiscal",pixP:v=>`Pague ${v} por Pix ou cartão na página segura da InfinitePay.`,simular:"Ir para o pagamento",abrindo:"Abrindo…",irErro:"Não foi possível abrir o pagamento agora. Tente de novo em instantes.",
       contratos:"Contratos",assinado:"Assinado",assinar:"Assinar contrato",verCont:"Ver contrato",contratoDe:n=>`Contrato da proposta nº ${n}`,semCont:"Nenhum contrato ainda.",
       propostas:"Propostas",semProp:"Nenhuma proposta.",prop:n=>`Proposta nº ${n}`,stProp:{aprovado:"aprovada",recusado:"encerrada",enviado:"aguardando aprovação"},
       obrigado:"Recebido! A Lumara foi avisada.",ajusteEnviado:"Pedido de ajuste enviado. A Lumara foi avisada.",agendaP:"O próximo passo é a nossa reunião de briefing. Escolha o melhor horário na minha agenda.",agendaBtn:"Agendar reunião de briefing",agendaSem:"O próximo passo é a reunião de briefing. Em breve você recebe por e-mail as opções de horário.",novaAba:"(abre em nova aba)"},
@@ -108,14 +109,14 @@ const T={
       posts:"Post calendar",postsP:"Posts planned for your social media. The ones waiting for you can be approved here.",formato:{Feed:"Feed",Stories:"Stories",Reels:"Reels",Carrossel:"Carousel"},
       stPost:{ideia:"Idea",producao:"In production",aprovacao:"Waiting for you",aprovado:"Approved",ajustes:"Changes requested",publicado:"Published"},
       pagamentos:"Payments",semPag:"No payments yet.",data:"Due date",desc:"Description",valor:"Amount",situacao:"Status",pagoT:"Paid",aPagar:"To pay",atrasado:"Overdue",
-      pagar:"Pay now",recibo:"Receipt",nota:"Invoice",pixP:v=>`Pay ${v} by Pix. In the real system, the QR code and copy-and-paste code appear here.`,simular:"Simulate payment received",
+      pagar:"Pay now",recibo:"Receipt",nota:"Invoice",pixP:v=>`Pay ${v} by Pix or card on InfinitePay's secure page.`,simular:"Go to payment",abrindo:"Opening…",irErro:"We couldn't open the payment right now. Please try again in a moment.",
       contratos:"Agreements",assinado:"Signed",assinar:"Sign agreement",verCont:"View agreement",contratoDe:n=>`Agreement for proposal no. ${n}`,semCont:"No agreements yet.",
       propostas:"Proposals",semProp:"No proposals.",prop:n=>`Proposal no. ${n}`,stProp:{aprovado:"approved",recusado:"closed",enviado:"waiting for approval"},
       obrigado:"Done! Lumara has been notified.",ajusteEnviado:"Change request sent. Lumara has been notified.",agendaP:"The next step is our briefing meeting. Pick the time that works best for you in my calendar.",agendaBtn:"Book the briefing meeting",agendaSem:"The next step is the briefing meeting. You will receive time options by email soon.",novaAba:"(opens in a new tab)"}
 };
 let lang=LS.ligarIdioma(document.getElementById("idioma"),l=>{lang=l;render()});
 const AGENDA=(window.SITE&&SITE.carregar().integracoes.agenda)||"";
-const S=LS.dados(), c=S&&S.clientes.find(x=>x.id===location.hash.slice(1)), m=document.getElementById("main");
+const S=LS.dados(), c=S&&S.clientes.find(x=>x.id===LS.id()), m=document.getElementById("main");
 let abertoAjuste=null, abertoPagar=null, aviso="";
 const hoje=new Date();hoje.setHours(0,0,0,0);
 /* respostas já enviadas e ainda não lidas pela área da equipe */
@@ -180,7 +181,10 @@ document.addEventListener("click",ev=>{
   else if(d.postAj){abertoAjuste="post"+d.postAj;render();const t=document.getElementById("ajp-"+d.postAj);if(t)t.focus();return}
   else if(d.postEnviar){const t=document.getElementById("ajp-"+d.postEnviar);if(!t.value.trim()){t.focus();return}LS.evento({tipo:"post",post:d.postEnviar,status:"ajustes",comentario:t.value.trim()});abertoAjuste=null;aviso="ajusteEnviado"}
   else if(d.pagar){abertoPagar=abertoPagar===d.pagar?null:d.pagar}
-  else if(d.simular){LS.evento({tipo:"parcela",lanc:d.simular,forma:"Pix"});abertoPagar=null;aviso="obrigado"}
+  else if(d.simular){b.disabled=true;b.textContent=L.abrindo;
+    fetch("/api/pagar",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({lanc:d.simular})})
+      .then(r=>r.json()).then(j=>{if(j.url)location.href=j.url;else throw 0})
+      .catch(()=>{b.disabled=false;b.textContent=L.simular;b.insertAdjacentHTML("afterend",`<span role="alert" class="vazio">${L.irErro}</span>`)});return}
   else return;
   render(); const st=document.querySelector('[role="status"]'); if(st){st.setAttribute("tabindex","-1");st.focus()}
 });

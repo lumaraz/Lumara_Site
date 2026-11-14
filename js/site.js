@@ -1,5 +1,5 @@
 /* Conteúdo do site controlado pela área da equipe: textos, valores, etapas de trabalho,
-   depoimentos, página de links e integrações. No protótipo fica no navegador (localStorage);
+   depoimentos, página de links e integrações. No site publicado vem do banco (/api/publico); sem servidor, fica no navegador (localStorage);
    no sistema final vira uma tabela de configurações no banco de dados. */
 (function(){
   const CHAVE="lumara_site";
@@ -54,7 +54,7 @@
     return r;
   }
   function carregar(){
-    try{const s=JSON.parse(localStorage.getItem(CHAVE)); if(s&&typeof s==="object"){const r=mesclar(s,padrao);
+    try{const s=(window.NUVEM&&window.NUVEM.site)?JSON.parse(JSON.stringify(window.NUVEM.site)):JSON.parse(localStorage.getItem(CHAVE)); if(s&&typeof s==="object"){const r=mesclar(s,padrao);
       if((r.links||[]).map(l=>l.titulo).join("|")==="Solicitar orçamento|Ver portfólio|Behance|LinkedIn|WhatsApp") r.links=clone(padrao.links); /* ordem antiga de exemplo */
       if((r.processo||[]).map(p=>p.t).join("|")==="Briefing|Criação|Apresentação e ajustes|Entrega") r.processo=clone(padrao.processo); /* texto antigo de exemplo */
       (r.processo||[]).forEach(p=>{const d=padrao.processo.find(x=>x.t===p.t);if(d&&p.tEn===undefined){p.tEn=d.tEn;p.dEn=p.d===d.d?d.dEn:""}});return r}}catch(e){}

@@ -15,11 +15,25 @@
   }
   const brl=v=>Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
   const data=(iso,lang)=>new Date(String(iso).slice(0,10)+"T00:00:00").toLocaleDateString(lang==="en"?"en-GB":"pt-BR");
-  function evento(ev){let l=[];try{l=JSON.parse(localStorage.getItem("lumara_eventos")||"[]")}catch(x){}
-    l.push(Object.assign({quando:new Date().toISOString()},ev));try{localStorage.setItem("lumara_eventos",JSON.stringify(l))}catch(x){}}
-  function fila(){try{return JSON.parse(localStorage.getItem("lumara_eventos")||"[]")}catch(x){return []}}
-  /* dados do sistema; sem nada salvo neste navegador, usa os dados de exemplo do protótipo */
+  /* No site publicado, os dados de cada cliente vêm do servidor (window.NUVEM, carregado por /api/cliente)
+     e cada ação vai para /api/evento. Sem servidor (protótipo), tudo fica neste navegador. */
+  const naNuvem=()=>!!(window.NUVEM&&Array.isArray(window.NUVEM.eventos));
+  const locais=[];
+  function evento(ev){const x=Object.assign({quando:new Date().toISOString()},ev);
+    if(naNuvem()){locais.push(x);
+      return fetch("/api/evento",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(ev),keepalive:true})
+        .then(r=>{if(!r.ok)throw 0;return true}).catch(()=>{avisoFalha();return false})}
+    let l=[];try{l=JSON.parse(localStorage.getItem("lumara_eventos")||"[]")}catch(e){}
+    l.push(x);try{localStorage.setItem("lumara_eventos",JSON.stringify(l))}catch(e){}}
+  function avisoFalha(){if(document.getElementById("falha-envio"))return;const d=document.createElement("p");d.id="falha-envio";d.setAttribute("role","alert");
+    d.style.cssText="position:fixed;left:50%;bottom:1rem;transform:translateX(-50%);background:#2D2D2D;color:#fff;padding:.7rem 1rem;border-radius:10px;z-index:99;max-width:92vw;font:14px/1.4 Verdana,sans-serif";
+    d.textContent=idioma()==="en"?"We couldn't send this. Please check your connection and try again.":"Não conseguimos enviar. Confira sua conexão e tente de novo.";document.body.appendChild(d);setTimeout(()=>d.remove(),8000)}
+  function fila(){if(naNuvem())return window.NUVEM.eventos.concat(locais);try{return JSON.parse(localStorage.getItem("lumara_eventos")||"[]")}catch(x){return []}}
+  /* identificador da página: depois do # (ou ?id= na volta do pagamento) */
+  function id(){return location.hash.slice(1)||new URLSearchParams(location.search).get("id")||""}
+  /* dados do sistema; sem servidor e sem nada salvo neste navegador, usa os dados de exemplo do protótipo */
   function dados(){
+    if(window.NUVEM&&"admin" in window.NUVEM) return window.NUVEM.admin;
     let S=null; try{S=JSON.parse(localStorage.getItem("lumara_admin"))}catch(x){}
     if((!S||S.v!==4)&&window.EXEMPLO){S=window.EXEMPLO.completo();try{localStorage.setItem("lumara_admin",JSON.stringify(S))}catch(x){}}
     return S;
@@ -141,5 +155,5 @@ As partes acima identificadas têm, entre si, justo e acertado o presente Contra
     if(lista) html+="</ul>";
     return html;
   }
-  window.LS={esc,idioma,salvarIdioma,ligarIdioma,brl,data,evento,fila,dados,extenso,MODELO_CONTRATO,camposContrato,contratoHTML,CONDICOES};
+  window.LS={esc,idioma,salvarIdioma,ligarIdioma,brl,data,evento,fila,dados,id,naNuvem,extenso,MODELO_CONTRATO,camposContrato,contratoHTML,CONDICOES};
 })();

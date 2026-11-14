@@ -37,10 +37,10 @@
 <body>
 <header class="barra"><a href="javascript:history.back()">Voltar</a><button class="botao" onclick="window.print()">Baixar PDF</button></header>
 <main id="main"></main>
-<script src="js/exemplo.js"></script>
+<script src="js/nuvem.js"></script>
 <script src="js/comum.js"></script>
 <script>
-const {esc,brl}=LS, S=LS.dados(), l=S&&S.caixa.find(x=>x.id===location.hash.slice(1));
+const {esc,brl}=LS, S=LS.dados(), l=S&&S.caixa.find(x=>x.id===LS.id());
 const c=l&&S.clientes.find(x=>x.id===l.cliente);
 const m=document.getElementById("main");
 if(!l||l.tipo!=="entrada"||!l.pago){m.innerHTML=`<div class="recibo"><h1>Recibo indisponível</h1><p style="margin-top:1rem">O recibo é gerado depois que o pagamento é confirmado.</p></div>`}

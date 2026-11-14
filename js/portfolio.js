@@ -1,5 +1,5 @@
 /* Portfólio compartilhado entre o site, as páginas de projeto e a área da equipe.
-   No protótipo os dados ficam no navegador (localStorage). No sistema final, esta
+   No site publicado os dados vêm do banco (/api/publico); sem servidor, ficam no navegador. Esta
    mesma estrutura vira uma tabela no banco de dados e as imagens vão para o armazenamento.
    texto/textoEn: parágrafos separados por uma linha em branco. links: botões extras na página do projeto. */
 (function(){
@@ -288,7 +288,7 @@
 
   function slugify(t){return t.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"")}
   function carregar(){
-    try{const s=JSON.parse(localStorage.getItem(CHAVE)); if(Array.isArray(s)&&s.length) return s}catch(e){}
+    try{const s=(window.NUVEM&&window.NUVEM.portfolio)?JSON.parse(JSON.stringify(window.NUVEM.portfolio)):JSON.parse(localStorage.getItem(CHAVE)); if(Array.isArray(s)&&s.length) return s}catch(e){}
     return JSON.parse(JSON.stringify(padrao));
   }
   function salvar(lista){
