@@ -39,7 +39,7 @@ export default async (req) => {
     return json({ erro: "dados" }, 400);
   } catch (e) {
     console.error("pagar:", e.message);
-    return json({ erro: "servidor" }, 502);
+    return json({ erro: "servidor", codigo: e.codigo || "interno" }, 502);
   }
 };
 export const config = { path: "/api/pagar" };

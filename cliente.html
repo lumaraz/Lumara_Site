@@ -184,8 +184,8 @@ document.addEventListener("click",ev=>{
   else if(d.pagar){abertoPagar=abertoPagar===d.pagar?null:d.pagar}
   else if(d.simular){b.disabled=true;b.textContent=L.abrindo;
     fetch("/api/pagar",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({lanc:d.simular})})
-      .then(r=>r.json()).then(j=>{if(j.url)location.href=j.url;else throw 0})
-      .catch(()=>{b.disabled=false;b.textContent=L.simular;b.insertAdjacentHTML("afterend",`<span role="alert" class="vazio">${L.irErro}</span>`)});return}
+      .then(r=>r.json()).then(j=>{if(j.url)location.href=j.url;else throw j})
+      .catch(j=>{b.disabled=false;b.textContent=L.simular;b.insertAdjacentHTML("afterend",`<span role="alert" class="vazio">${L.irErro}${j&&j.codigo?` (código: ${LS.esc(j.codigo)})`:""}</span>`)});return}
   else return;
   render(); const st=document.querySelector('[role="status"]'); if(st){st.setAttribute("tabindex","-1");st.focus()}
 });

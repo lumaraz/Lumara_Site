@@ -33,12 +33,16 @@ export async function criarLink({ nsu, descricao, centavos, cliente, voltar }) {
     order_nsu: nsu,
     items: [{ quantity: 1, price: centavos, description: descricao.slice(0, 120) }],
     redirect_url: voltar,
-    webhook_url: `${SITE_URL}/api/infinitepay`,
+    webhook: { url: `${SITE_URL}/api/infinitepay`, events: ["paid"] },
   };
   if (cliente && cliente.email) corpo.customer = { name: cliente.nome || cliente.empresa || "", email: cliente.email, phone_number: telefone(cliente.whats) };
   const r = await fetch(`${API}/links`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(corpo) });
   const t = await r.text();
-  if (!r.ok) throw new Error(`InfinitePay ${r.status}: ${t.slice(0, 300)}`);
+  if (!r.ok) {
+    let codigo = "http_" + r.status;
+    try { const j = JSON.parse(t); codigo = j.code || j.error_code || j.error || (j.errors && JSON.stringify(j.errors).slice(0, 80)) || codigo; } catch {}
+    const e = new Error(`InfinitePay ${r.status}: ${t.slice(0, 300)}`); e.codigo = String(codigo).slice(0, 80); throw e;
+  }
   const j = JSON.parse(t);
   const url = j.url || j.link || j.checkout_url || Object.values(j).find((v) => typeof v === "string" && /^https:\/\//.test(v));
   if (!url) throw new Error("InfinitePay não devolveu o link: " + t.slice(0, 200));

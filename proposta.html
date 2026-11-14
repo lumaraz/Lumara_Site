@@ -224,8 +224,9 @@ if(o) document.addEventListener("click",ev=>{
   if(b.id==="copiar"){const i=document.getElementById("copia");i.select();try{navigator.clipboard.writeText(i.value).then(()=>{b.textContent=t().copiado},()=>{})}catch(x){}}
   if(b.id==="ir-pagar"){const L=t();b.disabled=true;b.textContent=L.abrindo;
     fetch("/api/pagar",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({orc:o.id,forma:o.forma||opcoes()[0][0]})})
-      .then(r=>r.json()).then(j=>{if(j.url)location.href=j.url;else if(j.erro==="pago")location.reload();else throw 0})
-      .catch(()=>{b.disabled=false;b.textContent=L.irBtn;document.getElementById("pagar-erro").hidden=false})}
+      .then(r=>r.json()).then(j=>{if(j.url)location.href=j.url;else if(j.erro==="pago")location.reload();else throw j})
+      .catch(j=>{b.disabled=false;b.textContent=L.irBtn;const er=document.getElementById("pagar-erro");er.hidden=false;
+        if(j&&j.codigo)er.innerHTML=LS.esc(L.irErro)+`<br><small style="opacity:.7">Código: ${LS.esc(j.codigo)}</small>`})}
 });
 addEventListener("hashchange",()=>location.reload());
 </script>
