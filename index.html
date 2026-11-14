@@ -85,7 +85,7 @@
   .pilula .lang{margin-left:.2rem}
 
   /* hero centralizado com pilha de etiquetas */
-  .hero-b{position:relative;min-height:calc(100svh - 84px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:1.5rem 1.25rem calc(var(--pilha,150px) + 2.5rem);overflow:hidden}
+  .hero-b{position:relative;min-height:min(calc(100svh - 84px),calc(var(--pilha,150px) + 34rem));display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;padding:clamp(2rem,7vh,4.5rem) 1.25rem calc(var(--pilha,150px) + 2.5rem);overflow:hidden}
   .ola{display:flex;align-items:center;gap:.5rem;color:var(--suave);font-size:1rem;margin-bottom:1.25rem}
   .ola img{width:46px;height:46px;border-radius:50%;object-fit:cover;border:2px solid var(--claro);box-shadow:0 0 0 1px var(--linha)}
   .hero-b h1{font-size:clamp(2.4rem,6.2vw,5rem);line-height:1.02;font-weight:300;letter-spacing:-.045em;max-width:16ch}
