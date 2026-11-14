@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recibo — Lumara Silva</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+<link rel="preload" href="fonts/inter-tight-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/fontes.css">
+<style>
+  :root{--bege:#F2EFE9;--azul:#86BBD8;--azul-esc:#3A6EA5;--texto:#2D2D2D;--linha:#DAD4CA;--suave:#6B6560}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bege);color:var(--texto);font-family:"Inter Tight",system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;padding:1.5rem 1rem 3rem}
+  :focus-visible{outline:3px solid var(--azul-esc);outline-offset:3px;border-radius:4px}
+  .barra{width:min(760px,100%);margin:0 auto 1rem;display:flex;justify-content:space-between;gap:.6rem;align-items:center}
+  .barra a{color:var(--azul-esc)}
+  .botao{background:var(--azul-esc);color:#fff;border:0;border-radius:99px;padding:.7rem 1.3rem;font:inherit;font-weight:600;cursor:pointer}
+  .botao:hover{background:#2C5682}
+  .recibo{width:min(760px,100%);margin:0 auto;background:#fff;border-radius:12px;padding:clamp(1.5rem,5vw,3.5rem);box-shadow:0 14px 34px -22px rgba(45,45,45,.45)}
+  .topo{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;border-bottom:2px solid var(--texto);padding-bottom:1rem}
+  .topo img{height:34px;width:auto}
+  .topo div{text-align:right;color:var(--suave);font-size:.92rem}
+  .topo strong{display:block;color:var(--texto);font-size:1.1rem}
+  .faixa{height:6px;background:var(--azul);border-radius:3px;margin:1.25rem 0 2rem}
+  h1{font-size:2rem;font-weight:800;letter-spacing:-.04em;line-height:1}
+  .valor{font-size:1.6rem;font-weight:800;letter-spacing:-.02em;margin:.4rem 0 1.5rem;font-variant-numeric:tabular-nums}
+  .texto{font-size:1.05rem;text-align:justify}
+  dl{display:grid;grid-template-columns:1fr 1fr;gap:.8rem 2rem;margin:1.75rem 0;padding:1rem 0;border-top:1px solid var(--linha);border-bottom:1px solid var(--linha)}
+  dt{font-size:.82rem;color:var(--suave)}
+  .ass{margin-top:3.5rem;width:min(320px,100%);border-top:1px solid var(--texto);padding-top:.5rem;font-size:.92rem}
+  .ass span{display:block;color:var(--suave);font-size:.85rem}
+  .pe{margin-top:2.5rem;display:flex;justify-content:space-between;gap:1rem;color:var(--suave);font-size:.85rem;flex-wrap:wrap}
+  @media print{body{background:#fff;padding:0}.barra{display:none}.recibo{box-shadow:none;border-radius:0;width:100%}@page{size:A4;margin:18mm}}
+</style>
+</head>
+<body>
+<header class="barra"><a href="javascript:history.back()">Voltar</a><button class="botao" onclick="window.print()">Baixar PDF</button></header>
+<main id="main"></main>
+<script src="js/exemplo.js"></script>
+<script src="js/comum.js"></script>
+<script>
+const {esc,brl}=LS, S=LS.dados(), l=S&&S.caixa.find(x=>x.id===location.hash.slice(1));
+const c=l&&S.clientes.find(x=>x.id===l.cliente);
+const m=document.getElementById("main");
+if(!l||l.tipo!=="entrada"||!l.pago){m.innerHTML=`<div class="recibo"><h1>Recibo indisponível</h1><p style="margin-top:1rem">O recibo é gerado depois que o pagamento é confirmado.</p></div>`}
+else{
+  const num=l.id.replace(/\W/g,"").slice(-6).toUpperCase(), quando=LS.data(l.pagoEm||l.data);
+  const pagador=c?(c.empresa&&c.empresa!==c.nome?`${c.empresa} (${c.nome})`:c.nome):"cliente";
+  document.title=`Recibo ${num} — Lumara Silva`;
+  m.innerHTML=`<article class="recibo">
+    <div class="topo"><img src="img/logo-escuro.svg" alt="Lumara Silva" width="1552" height="366"><div>Recibo<strong>Nº ${num}</strong>${quando}</div></div>
+    <div class="faixa"></div>
+    <h1>Recibo</h1><p class="valor">${brl(l.valor)}</p>
+    <p class="texto">Recebi de <strong>${esc(pagador)}</strong> a importância de <strong>${brl(l.valor)}</strong> (${LS.extenso(l.valor)}), referente a “${esc(l.desc.replace((c&&c.empresa||"")+", ","").replace(/\s*\([^)]*\)\s*$/,""))}”, dando por este a devida quitação do valor.</p>
+    <dl><div><dt>Data do pagamento</dt><dd>${quando}</dd></div><div><dt>Forma de pagamento</dt><dd>${esc((l.desc.match(/\(([^)]*(Pix|Cart)[^)]*)\)/)||[])[1]||l.forma||"Pix")}</dd></div>
+      <div><dt>Recebedora</dt><dd>Lumara da Silva e Silva<br>CNPJ 65.247.485/0001-68</dd></div><div><dt>Local</dt><dd>Magé – RJ</dd></div></dl>
+    <div class="ass">Lumara da Silva e Silva<span>Designer gráfica</span></div>
+    <div class="pe"><span>contato@lumarasilva.com.br</span><span>lumarasilva.com.br</span></div>
+  </article>`;
+}
+addEventListener("hashchange",()=>location.reload());
+</script>
+<script src="js/volta.js"></script>
+</body>
+</html>

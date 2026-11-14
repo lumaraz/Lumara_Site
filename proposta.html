@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proposta — Lumara Silva</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+<link rel="preload" href="fonts/inter-tight-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/fontes.css">
+<style>
+  .btn-link{display:inline-flex;align-items:center;text-decoration:none;font-weight:600;font-size:.95rem;color:var(--texto,#2D2D2D);border:1px solid currentColor;border-radius:99px;padding:.5rem 1.1rem;white-space:nowrap}
+  .btn-link:hover{background:#2D2D2D;color:#F2EFE9;border-color:#2D2D2D}
+
+  :root{--bege:#F2EFE9;--claro:#FBFAF7;--azul:#86BBD8;--azul-esc:#3A6EA5;--texto:#2D2D2D;--marrom:#462D26;--linha:#DAD4CA;--suave:#6B6560;--verde:#2F6B4F;--alerta:#A3283A}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bege);color:var(--texto);font-family:"Inter Tight",system-ui,sans-serif;font-size:1.02rem;line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:var(--azul-esc)}
+  :focus-visible{outline:3px solid var(--azul-esc);outline-offset:3px;border-radius:4px}
+  .demo{background:#DCEAF2;color:#24476B;text-align:center;font-size:.85rem;padding:.45rem 1rem}
+  header{width:min(1040px,100% - 2.5rem);margin:0 auto;height:68px;display:flex;align-items:center;justify-content:space-between}
+  header img{height:30px;width:auto;display:block}
+  main{width:min(1040px,100% - 2.5rem);margin:1rem auto 4rem;display:grid;grid-template-columns:1.4fr 1fr;gap:1.5rem;align-items:start}
+  .folha{background:#fff;border-radius:14px;padding:clamp(1.5rem,4vw,2.75rem);box-shadow:0 14px 34px -22px rgba(45,45,45,.45)}
+  .f-topo{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;border-bottom:2px solid var(--texto);padding-bottom:1rem}
+  .f-topo img{height:34px;width:auto}
+  .f-num{text-align:right;color:var(--suave);font-size:.92rem}
+  .f-num strong{display:block;color:var(--texto);font-size:1.15rem}
+  .faixa{height:6px;background:var(--azul);border-radius:3px;margin:1.25rem 0 1.5rem}
+  h1{font-size:clamp(1.8rem,4vw,2.4rem);font-weight:800;letter-spacing:-.04em;line-height:1.05}
+  .para{color:var(--suave);margin:.3rem 0 1.5rem}
+  table{width:100%;border-collapse:collapse}
+  th{text-align:left;font-weight:500;font-size:.85rem;color:var(--suave);border-bottom:1px solid var(--linha);padding:.5rem 0}
+  td{padding:.8rem 0;border-bottom:1px solid #ECE7DF;vertical-align:top}
+  td small{display:block;color:var(--suave);font-size:.9rem;white-space:pre-wrap}
+  .v{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .total{display:flex;justify-content:space-between;font-weight:800;font-size:1.35rem;margin:1rem 0 1.25rem;letter-spacing:-.02em}
+  dl.cond{display:grid;grid-template-columns:1fr 1fr;gap:.9rem 1.5rem}
+  dl.cond dt{font-size:.85rem;color:var(--suave)}
+  .obs{margin-top:1.25rem;white-space:pre-wrap;color:#45403B}
+  aside{position:sticky;top:1rem}
+  .painel{background:var(--claro);border:1px solid var(--linha);border-radius:14px;padding:1.4rem}
+  .painel h2{font-size:1.35rem;font-weight:800;letter-spacing:-.03em;margin-bottom:.4rem}
+  .painel p{color:#45403B}
+  .opcoes{display:grid;gap:.6rem;margin:1.1rem 0}
+  .op{display:grid;grid-template-columns:auto 1fr;gap:.2rem .7rem;align-items:start;padding:.9rem 1rem;border:1px solid #B9B1A6;border-radius:10px;cursor:pointer}
+  .op input{accent-color:var(--azul-esc);width:1.1rem;height:1.1rem;margin-top:.2rem;grid-row:span 2}
+  .op strong{font-weight:700}
+  .op span{color:var(--suave);font-size:.9rem;grid-column:2}
+  .op:has(input:checked){border-color:var(--azul-esc);box-shadow:inset 0 0 0 1px var(--azul-esc)}
+  .aceite{display:flex;gap:.6rem;align-items:flex-start;font-size:.92rem;margin:.5rem 0 1.1rem}
+  .aceite input{accent-color:var(--azul-esc);width:1.1rem;height:1.1rem;margin-top:.15rem;flex:none}
+  .botao{display:block;width:100%;text-align:center;background:var(--azul-esc);color:#fff;border:0;border-radius:99px;padding:1rem 1.4rem;font:inherit;font-weight:700;font-size:1.05rem;cursor:pointer;text-decoration:none}
+  .botao:hover{background:#2C5682}
+  .botao.sec{background:transparent;color:var(--texto);border:1px solid var(--texto);margin-top:.6rem}
+  .erro{color:var(--alerta);font-size:.9rem;margin-top:.5rem}
+  .pix{display:grid;justify-items:center;gap:.8rem;margin:1rem 0;text-align:center}
+  .pix svg{width:190px;height:190px;background:#fff;padding:10px;border-radius:10px;border:1px solid var(--linha)}
+  .codigo{width:100%;font-family:ui-monospace,monospace;font-size:.75rem;padding:.6rem;border:1px solid var(--linha);border-radius:8px;background:#fff;word-break:break-all}
+  .ok{display:grid;gap:.6rem}
+  .ok .selo{width:56px;height:56px;border-radius:50%;background:var(--verde);display:grid;place-items:center;color:#fff;font-size:1.6rem}
+  .mut{color:var(--suave);font-size:.9rem}
+  .estado{display:inline-block;font-size:.8rem;font-weight:700;padding:.15rem .6rem;border-radius:99px;background:#DCEAF2;color:#1F4A62;margin-bottom:.6rem}
+.topo-acoes{display:flex;gap:.6rem;align-items:center}
+  .lang{display:inline-flex;padding:2px;border:1px solid var(--linha);border-radius:99px;background:var(--claro);cursor:pointer;font:inherit;font-size:.78rem;font-weight:600;color:var(--suave)}
+  .lang span{padding:.22rem .55rem;border-radius:99px}
+  .lang span.ativo{background:var(--texto);color:var(--bege)}
+  .passos{list-style:none;display:grid;gap:.5rem;margin:1rem 0}
+  .passos li{display:flex;gap:.6rem;align-items:center;font-size:.95rem}
+  .passos li::before{content:"";width:1.1rem;height:1.1rem;border-radius:50%;border:2px solid var(--linha);flex:none}
+  .passos li.feito::before{background:var(--verde);border-color:var(--verde)}
+  @media (max-width:560px){#falar{display:none}}
+  @media (max-width:860px){main{grid-template-columns:1fr}aside{position:static;order:-1}dl.cond{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="demo" role="region" aria-label="Aviso" id="aviso">Protótipo: nenhum pagamento é cobrado de verdade.</div>
+<header><a href="index.html"><img src="img/logo-escuro.svg" alt="Lumara Silva" width="1552" height="366"></a><span class="topo-acoes"><button class="lang" id="idioma" aria-label="Switch to English" lang="en"><span class="ativo">PT</span><span>EN</span></button><a class="btn-link" id="falar" href="mailto:contato@lumarasilva.com.br">Falar com a Lumara</a></span></header>
+<main id="main"></main>
+
+<script src="js/site.js"></script>
+<script src="js/exemplo.js"></script>
+<script src="js/comum.js"></script>
+<script>
+const e=LS.esc, brl=LS.brl;
+const CFG=SITE.carregar(), DESC=(CFG.integracoes.descontoVista||5)/100, GW=CFG.integracoes.gateway||"Asaas";
+const S=LS.dados();
+const id=location.hash.slice(1), o=S&&S.orcamentos.find(x=>x.id===id), c=o&&S.clientes.find(x=>x.id===o.cliente);
+const total=o?o.itens.reduce((a,i)=>a+(+i.v||0),0):0;
+const hoje=new Date(); hoje.setHours(0,0,0,0);
+const validade=o?(()=>{const d=new Date((o.enviadoEm||o.criado)+"T00:00:00");d.setDate(d.getDate()+ +o.validade);return d})():null;
+const fem=g=>/infinite|efí/i.test(g);
+const T={
+  pt:{aviso:"Protótipo: nenhum pagamento é cobrado de verdade.",falar:"Falar com a Lumara",proposta:"Proposta",para:"Para",servico:"Serviço",valor:"Valor",total:"Total",prazo:"Prazo de entrega",combinar:"A combinar",pagamento:"Pagamento",validade:"Validade",ate:"Até",
+      aguardando:"Aguardando sua aprovação",aprovarPagar:"Aprovar e pagar",escolha:p=>`Escolha como prefere pagar. O pagamento é processado com segurança ${fem(p)?"pela":"pelo"} ${p}.`,forma:"Forma de pagamento",
+      aceite:"Li a proposta e concordo com os serviços, valores, prazo e condições de pagamento.",aprovar:"Aprovar proposta",erroAceite:"Para continuar, marque que você concorda com a proposta.",
+      mudar:"Quer mudar alguma coisa antes? Responda o e-mail da proposta ou escreva para contato@lumarasilva.com.br.",
+      aprovada:"Proposta aprovada",pixT:"Pague com Pix",cartaoT:"Pague com cartão",agora:"Valor agora",mensal:", e depois todo mês no mesmo dia",
+      lerQR:"Abra o app do banco, escolha Pix e leia o código",autoriza:". No mesmo passo você autoriza as cobranças mensais",copiaCola:"Pix copia e cola",copiar:"Copiar código Pix",copiado:"Código copiado",
+      cartaoTxt:(g,x)=>`No site publicado, este botão abre o pagamento seguro ${fem(g)?"da":"do"} ${g} para você informar o cartão${x?" e escolher as 3 parcelas":""}.`,
+      simPix:"Simular pagamento recebido",simCartao:"Simular pagamento aprovado",soProt:g=>`Botão só do protótipo. No sistema real, a confirmação chega sozinha ${fem(g)?"da":"do"} ${g}.`,
+      pago:"Pagamento confirmado",pagoP:"Obrigada! O projeto já entrou na minha agenda. Faltam só estes passos:",pPag:"Pagamento",pCont:"Assinar o contrato",pReun:"Agendar a reunião de briefing",
+      assinar:"Assinar o contrato",verCont:"Ver o contrato assinado",agendar:"Agendar a reunião de briefing",semAgenda:"Em breve envio as opções de horário para a reunião de briefing.",acompanhar:"Acompanhar o projeto",novaAba:" (abre em nova aba)",
+      encerrada:"Proposta encerrada",encerradaP:"Esta proposta foi marcada como não aprovada. Se quiser retomar, é só escrever para contato@lumarasilva.com.br.",
+      venceu:"Esta proposta venceu",venceuP:d=>`A validade terminou em ${d}. Escreva para contato@lumarasilva.com.br que eu atualizo os valores e o prazo.`,
+      prep:"Proposta em preparação",prepP:"Esta proposta ainda não foi enviada.",nf:"Proposta não encontrada",nfP:"O link pode estar incompleto. Escreva para contato@lumarasilva.com.br que eu envio de novo.",nfDemo:"No protótipo, abra antes a área da equipe neste navegador para carregar os dados de exemplo.",
+      qr:"QR Code de exemplo para pagamento por Pix",
+      op:{avPix:d=>[`Pix com ${d}% de desconto`,v=>`${v}, pagamento na hora`],avCartao:["Cartão de crédito",v=>`${v} à vista`],
+          entPix:["Entrada por Pix",v=>`${v} agora. A 2ª metade chega por e-mail na entrega`],entCartao:["Entrada no cartão",v=>`${v} agora. A 2ª metade chega por e-mail na entrega`],
+          c3:["Cartão de crédito em 3x",v=>`3 × ${v} na fatura do cartão`],pix3:["Pix mês a mês",v=>`${v} agora e as outras 2 por e-mail, a cada 30 dias`],
+          pixAuto:["Pix Automático",v=>`${v} por mês. Você autoriza uma vez e o débito acontece todo mês, sem boleto`],cartRec:["Cartão de crédito recorrente",v=>`${v} por mês no cartão, sem ocupar o limite total`],
+          pixMes:["Pix todo mês",v=>`${v} por mês. Todo mês chega por e-mail um link para pagar, sem boleto`],cartMes:["Cartão de crédito todo mês",v=>`${v} por mês. Todo mês chega por e-mail um link para pagar no cartão`]},
+      cond:x=>x},
+  en:{aviso:"Prototype: no real payment is charged.",falar:"Contact Lumara",proposta:"Proposal",para:"For",servico:"Service",valor:"Price",total:"Total",prazo:"Delivery time",combinar:"To be agreed",pagamento:"Payment",validade:"Valid",ate:"Until",
+      aguardando:"Waiting for your approval",aprovarPagar:"Approve and pay",escolha:p=>`Choose how you'd like to pay. Payment is processed securely by ${p}.`,forma:"Payment method",
+      aceite:"I have read the proposal and agree to the services, prices, timeline and payment terms.",aprovar:"Approve proposal",erroAceite:"To continue, confirm that you agree with the proposal.",
+      mudar:"Want to change something first? Reply to the proposal email or write to contato@lumarasilva.com.br.",
+      aprovada:"Proposal approved",pixT:"Pay with Pix",cartaoT:"Pay by card",agora:"Amount now",mensal:", then every month on the same day",
+      lerQR:"Open your bank app, choose Pix and scan the code",autoriza:". In the same step you authorize the monthly charges",copiaCola:"Pix copy and paste code",copiar:"Copy Pix code",copiado:"Code copied",
+      cartaoTxt:(g,x)=>`On the live site, this button opens ${g}'s secure checkout for you to enter your card${x?" and choose 3 installments":""}.`,
+      simPix:"Simulate payment received",simCartao:"Simulate payment approved",soProt:g=>`Prototype-only button. In the real system, ${g} confirms the payment automatically.`,
+      pago:"Payment confirmed",pagoP:"Thank you! The project is now on my schedule. Just these steps left:",pPag:"Payment",pCont:"Sign the agreement",pReun:"Book the briefing meeting",
+      assinar:"Sign the agreement",verCont:"See the signed agreement",agendar:"Book the briefing meeting",semAgenda:"I'll send you time options for the briefing meeting soon.",acompanhar:"Follow the project",novaAba:" (opens in a new tab)",
+      encerrada:"Proposal closed",encerradaP:"This proposal was marked as not approved. If you'd like to pick it up again, write to contato@lumarasilva.com.br.",
+      venceu:"This proposal has expired",venceuP:d=>`It was valid until ${d}. Write to contato@lumarasilva.com.br and I'll update the prices and timeline.`,
+      prep:"Proposal in preparation",prepP:"This proposal hasn't been sent yet.",nf:"Proposal not found",nfP:"The link may be incomplete. Write to contato@lumarasilva.com.br and I'll send it again.",nfDemo:"In the prototype, open the team area in this browser first to load the sample data.",
+      qr:"Sample QR code for Pix payment",
+      op:{avPix:d=>[`Pix with ${d}% off`,v=>`${v}, paid instantly`],avCartao:["Credit card",v=>`${v} in full`],
+          entPix:["Deposit by Pix",v=>`${v} now. The second half is sent by email on delivery`],entCartao:["Deposit by card",v=>`${v} now. The second half is sent by email on delivery`],
+          c3:["Credit card in 3 installments",v=>`3 × ${v} on your card statement`],pix3:["Monthly Pix",v=>`${v} now and the other 2 by email, every 30 days`],
+          pixAuto:["Automatic Pix",v=>`${v} per month. You authorize once and it's debited every month, no bank slip`],cartRec:["Recurring credit card",v=>`${v} per month on your card, without using up your full limit`],
+          pixMes:["Monthly Pix",v=>`${v} per month. Each month you get an email with a payment link, no bank slip`],cartMes:["Monthly credit card",v=>`${v} per month. Each month you get an email with a link to pay by card`]},
+      cond:x=>({"À vista, com 5% de desconto":"Paid in full, 5% off","50% na aprovação e 50% na entrega":"50% on approval and 50% on delivery","3 parcelas mensais":"3 monthly installments","Mensal, todo dia 10":"Monthly, on the 10th"}[x]||x)}
+};
+let lang=LS.ligarIdioma(document.getElementById("idioma"),l=>{lang=l;atualizar()});
+const t=()=>T[lang];
+
+/* [valor interno da forma, título, descrição] */
+function opcoes(){
+  const p=o.pagamento, O=t().op;
+  if(p.startsWith("À vista")) return [["Pix",O.avPix(Math.round(DESC*100))[0],O.avPix(0)[1](brl(total*(1-DESC)))],["Cartão de crédito",O.avCartao[0],O.avCartao[1](brl(total))]];
+  if(p.startsWith("50%")) return [["Pix",O.entPix[0],O.entPix[1](brl(total/2))],["Cartão de crédito",O.entCartao[0],O.entCartao[1](brl(total/2))]];
+  if(p.startsWith("3 ")) return [["Cartão em 3x",O.c3[0],O.c3[1](brl(total/3))],["Pix mensal",O.pix3[0],O.pix3[1](brl(total/3))]];
+  if(/infinite/i.test(GW)) return [["Pix mensal",O.pixMes[0],O.pixMes[1](brl(total))],["Cartão mensal",O.cartMes[0],O.cartMes[1](brl(total))]];
+  return [["Pix Automático",O.pixAuto[0],O.pixAuto[1](brl(total))],["Cartão recorrente",O.cartRec[0],O.cartRec[1](brl(total))]];
+}
+function valorAgora(forma){const p=o.pagamento;
+  if(p.startsWith("À vista")) return /Pix/.test(forma)?total*(1-DESC):total;
+  if(p.startsWith("50%")) return total/2;
+  if(p.startsWith("3 ")) return /Cartão/.test(forma)?total:total/3;
+  return total;}
+
+function folha(){const L=t();
+  return `<article class="folha" aria-label="${L.proposta}">
+    <div class="f-topo"><img src="img/logo-escuro.svg" alt="Lumara Silva" width="1552" height="366"><div class="f-num">${L.proposta}<strong>Nº ${e(o.num)}</strong>${LS.data(o.criado,lang)}</div></div>
+    <div class="faixa"></div>
+    <h1>${e(c.empresa)}</h1><p class="para">${L.para} ${e(c.nome)}${c.cidade?", "+e(c.cidade):""}</p>
+    <table><thead><tr><th scope="col">${L.servico}</th><th scope="col" class="v">${L.valor}</th></tr></thead><tbody>
+    ${o.itens.map(i=>`<tr><td><strong>${e(i.s)}</strong>${i.d?`<small>${e(i.d)}</small>`:""}</td><td class="v">${brl(i.v)}</td></tr>`).join("")}</tbody></table>
+    <div class="total"><span>${L.total}</span><span>${brl(total)}</span></div>
+    <dl class="cond"><div><dt>${L.prazo}</dt><dd>${e(o.prazoEntrega)||L.combinar}</dd></div><div><dt>${L.pagamento}</dt><dd>${e(L.cond(o.pagamento))}</dd></div>
+    <div><dt>${L.validade}</dt><dd>${L.ate} ${LS.data(validade.toISOString(),lang)}</dd></div></dl>
+    ${o.obs?`<p class="obs">${e(o.obs)}</p>`:""}</article>`;
+}
+function painelAprovar(){const L=t();
+  return `<div class="painel"><span class="estado">${L.aguardando}</span><h2>${L.aprovarPagar}</h2>
+   <p>${L.escolha(e(GW))}</p>
+   <fieldset style="border:0"><legend class="mut" style="margin-top:1rem">${L.forma}</legend>
+   <div class="opcoes">${opcoes().map(([v,ti,d],k)=>`<label class="op"><input type="radio" name="forma" value="${e(v)}" ${k===0?"checked":""}><strong>${e(ti)}</strong><span>${e(d)}</span></label>`).join("")}</div></fieldset>
+   <label class="aceite"><input type="checkbox" id="aceite" aria-describedby="erro-aceite"><span>${L.aceite}</span></label>
+   <button class="botao" id="aprovar">${L.aprovar}</button>
+   <p class="erro" id="erro-aceite" hidden>${L.erroAceite}</p>
+   <p class="mut" style="margin-top:.9rem">${L.mudar}</p></div>`;
+}
+function qr(seed){ // QR ilustrativo, não é um código Pix válido
+  const n=25,cel=[];let x=seed;const r=()=>((x=(x*9301+49297)%233280)/233280);
+  const finder=(a,b)=>{for(let i=0;i<7;i++)for(let j=0;j<7;j++){const borda=i===0||i===6||j===0||j===6,meio=i>=2&&i<=4&&j>=2&&j<=4;if(borda||meio)cel.push([a+i,b+j])}};
+  finder(0,0);finder(0,n-7);finder(n-7,0);
+  for(let i=0;i<n;i++)for(let j=0;j<n;j++){const emF=(i<8&&j<8)||(i<8&&j>=n-8)||(i>=n-8&&j<8);if(!emF&&r()>.52)cel.push([i,j])}
+  return `<svg viewBox="0 0 ${n} ${n}" role="img" aria-label="${t().qr}"><rect width="${n}" height="${n}" fill="#fff"/>${cel.map(([i,j])=>`<rect x="${j}" y="${i}" width="1" height="1" fill="#2D2D2D"/>`).join("")}</svg>`;
+}
+function painelPagar(forma){
+  const L=t(), v=valorAgora(forma), pix=/Pix/.test(forma);
+  return `<div class="painel"><span class="estado">${L.aprovada}</span><h2>${pix?L.pixT:L.cartaoT}</h2>
+   <p>${L.agora}: <strong>${brl(v)}</strong>${forma==="Pix Automático"?L.mensal:""}.</p>
+   ${pix?`<div class="pix">${qr(o.num.length*997+total)}<p class="mut">${L.lerQR}${forma==="Pix Automático"?L.autoriza:""}.</p>
+     <label class="mut" for="copia" style="justify-self:start">${L.copiaCola}</label><input class="codigo" id="copia" readonly value="00020101021226900014br.gov.bcb.pix2568exemplo.${e(GW.toLowerCase().replace(/\s/g,''))}.com/qr/v2/EXEMPLO-${e(o.num)}5204000053039865802BR6304ABCD">
+     <button class="botao sec" id="copiar" type="button">${L.copiar}</button></div>`
+   :`<p style="margin:1rem 0">${L.cartaoTxt(e(GW),forma==="Cartão em 3x")}</p>`}
+   <button class="botao" id="simular">${pix?L.simPix:L.simCartao}</button>
+   <p class="mut" style="margin-top:.6rem">${L.soProt(e(GW))}</p></div>`;
+}
+function assinado(){return !!(o.contrato&&o.contrato.status==="assinado")||LS.fila().some(x=>x.orc===o.id&&x.tipo==="contrato")}
+function painelPago(){
+  const L=t(), ag=CFG.integracoes.agenda, ok=assinado();
+  return `<div class="painel ok" role="status"><div class="selo" aria-hidden="true">✓</div><h2>${L.pago}</h2>
+   <p>${L.pagoP}</p>
+   <ol class="passos"><li class="feito">${L.pPag}</li><li class="${ok?"feito":""}">${L.pCont}</li><li>${L.pReun}</li></ol>
+   <a class="botao${ok?" sec":""}" href="contrato.html#${e(o.id)}">${ok?L.verCont:L.assinar}</a>
+   ${ag?`<a class="botao sec" href="${e(ag)}" target="_blank" rel="noopener">${L.agendar}<span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">${L.novaAba}</span></a>`:`<p class="mut">${L.semAgenda}</p>`}
+   <a class="botao sec" href="cliente.html#${e(c.id)}">${L.acompanhar}</a></div>`;
+}
+let painelAtual=null;
+function mostrar(fn){painelAtual=fn; document.getElementById("main").innerHTML=folha()+`<aside id="lado">${fn()}</aside>`}
+function focoPainel(){const h=document.querySelector("#lado h2");h.setAttribute("tabindex","-1");h.focus()}
+function estado(){
+  const L=t(), fila=LS.fila();
+  const evA=fila.find(x=>x.orc===o.id&&x.tipo==="aprovado"); if(evA){o.status="aprovado";o.forma=evA.forma}
+  const pago=S.caixa.some(l=>l.orc===o.id&&l.pago)||fila.some(x=>x.orc===o.id&&x.tipo==="pago");
+  if(o.status==="aprovado") return pago?painelPago:()=>painelPagar(o.forma||opcoes()[0][0]);
+  if(o.status==="recusado") return ()=>`<div class="painel"><h2>${t().encerrada}</h2><p>${t().encerradaP}</p></div>`;
+  if(validade<hoje) return ()=>`<div class="painel"><h2>${t().venceu}</h2><p>${t().venceuP(LS.data(validade.toISOString(),lang))}</p></div>`;
+  if(o.status==="rascunho") return ()=>`<div class="painel"><h2>${t().prep}</h2><p>${t().prepP}</p></div>`;
+  return painelAprovar;
+}
+function atualizar(){
+  const L=t(); document.getElementById("aviso").textContent=L.aviso; document.getElementById("falar").textContent=L.falar;
+  if(!o){document.getElementById("main").innerHTML=`<div class="painel" style="grid-column:1/-1"><h1 style="font-size:1.6rem">${L.nf}</h1><p>${L.nfP}</p><p class="mut" style="margin-top:.6rem">${L.nfDemo}</p></div>`;return}
+  document.title=`${L.proposta} ${o.num} — Lumara Silva`;
+  mostrar(painelAtual||estado());
+}
+atualizar();
+if(o) document.addEventListener("click",ev=>{
+  const b=ev.target.closest("button"); if(!b) return;
+  if(b.id==="aprovar"){const a=document.getElementById("aceite"),er=document.getElementById("erro-aceite");
+    if(!a.checked){er.hidden=false;a.setAttribute("aria-invalid","true");a.focus();return}
+    const forma=document.querySelector('input[name="forma"]:checked').value;
+    o.status="aprovado";o.forma=forma;LS.evento({tipo:"aprovado",orc:o.id,forma});
+    mostrar(()=>painelPagar(forma)); focoPainel();}
+  if(b.id==="copiar"){const i=document.getElementById("copia");i.select();try{navigator.clipboard.writeText(i.value).then(()=>{b.textContent=t().copiado},()=>{})}catch(x){}}
+  if(b.id==="simular"){LS.evento({tipo:"pago",orc:o.id,forma:o.forma||"Pix"});mostrar(painelPago);focoPainel()}
+});
+addEventListener("hashchange",()=>location.reload());
+</script>
+<script src="js/volta.js"></script>
+</body>
+</html>

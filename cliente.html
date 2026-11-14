@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seu projeto — Lumara Silva</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+<link rel="apple-touch-icon" href="img/favicon-180.png">
+<link rel="preload" href="fonts/inter-tight-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/fontes.css">
+<style>
+  :root{--bege:#F2EFE9;--claro:#FBFAF7;--azul:#86BBD8;--azul-esc:#3A6EA5;--texto:#2D2D2D;--linha:#DAD4CA;--suave:#6B6560;--verde:#2F6B4F;--alerta:#A3283A}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bege);color:var(--texto);font-family:"Inter Tight",system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:var(--azul-esc)}
+  :focus-visible{outline:3px solid var(--azul-esc);outline-offset:3px;border-radius:4px}
+  .demo{background:#DCEAF2;color:#24476B;text-align:center;font-size:.85rem;padding:.45rem 1rem}
+  header,main{width:min(900px,100% - 2.5rem);margin:0 auto}
+  header{height:68px;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+  header img{height:30px;width:auto;display:block}
+  .topo-acoes{display:flex;gap:.6rem;align-items:center}
+  .lang{display:inline-flex;padding:2px;border:1px solid var(--linha);border-radius:99px;background:var(--claro);cursor:pointer;font:inherit;font-size:.78rem;font-weight:600;color:var(--suave)}
+  .lang span{padding:.22rem .55rem;border-radius:99px}
+  .lang span.ativo{background:var(--texto);color:var(--bege)}
+  h1{font-size:clamp(2rem,5vw,3rem);font-weight:800;letter-spacing:-.045em;line-height:1;margin:1.5rem 0 .5rem}
+  .sub{color:var(--suave);margin-bottom:2rem}
+  h2{font-size:1.3rem;font-weight:800;letter-spacing:-.03em;margin:2.25rem 0 .9rem}
+  h4{font-size:1rem;font-weight:700;margin:1.4rem 0 .6rem}
+  .proj{background:var(--claro);border:1px solid var(--linha);border-radius:14px;padding:1.4rem;margin-bottom:1rem}
+  .proj h3{font-size:1.25rem;font-weight:700;letter-spacing:-.02em}
+  .proj .meta{color:var(--suave);font-size:.92rem;margin-bottom:1.1rem}
+  .trilha{list-style:none;display:grid;grid-template-columns:repeat(6,1fr);gap:.35rem}
+  .trilha li{font-size:.78rem;color:var(--suave);padding-top:.55rem;border-top:4px solid var(--linha)}
+  .trilha li.feito{border-color:var(--azul)}
+  .trilha li.atual{border-color:var(--azul-esc);color:var(--texto);font-weight:700}
+  .tarefas{margin-top:1rem;font-size:.92rem;color:#45403B}
+  .agenda{display:flex;flex-wrap:wrap;gap:.75rem 1rem;align-items:center;justify-content:space-between;margin-top:1.1rem;padding:.9rem 1rem;background:#fff;border:1px solid var(--linha);border-radius:12px}
+  .agenda p{font-size:.95rem;color:#45403B;max-width:46ch}
+  .artes{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem}
+  .arte{background:#fff;border:1px solid var(--linha);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+  .arte img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:var(--bege)}
+  .arte .corpo{padding:.9rem;display:grid;gap:.6rem;flex:1;align-content:start}
+  .arte textarea{width:100%;min-height:70px;padding:.55rem;border:1px solid #9E968B;border-radius:8px;font:inherit;resize:vertical}
+  .arte .linha{display:flex;gap:.5rem;flex-wrap:wrap}
+  .arte .tag{justify-self:start}
+  .arquivos{list-style:none;display:grid;gap:.4rem}
+  .arquivos li{display:flex;justify-content:space-between;gap:1rem;align-items:center;padding:.6rem .8rem;background:#fff;border:1px solid var(--linha);border-radius:10px}
+  .trava{font-size:.9rem;color:#7A4A12;background:#F6E6D2;padding:.6rem .8rem;border-radius:10px}
+  table{width:100%;border-collapse:collapse;background:var(--claro);border:1px solid var(--linha);border-radius:12px;overflow:hidden}
+  th,td{text-align:left;padding:.7rem .9rem;border-bottom:1px solid #ECE7DF;font-size:.95rem;vertical-align:middle}
+  th{font-weight:500;color:var(--suave);font-size:.85rem;background:var(--bege)}
+  .v{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .tag{font-size:.78rem;font-weight:700;padding:.12rem .55rem;border-radius:99px;white-space:nowrap}
+  .pago{background:#DCEBE2;color:#1F5039}.aberto{background:#F6E6D2;color:#7A4A12}.atras{background:#F5D9DD;color:#8A1E2F}.info{background:#DCE8EF;color:#1F4A62}
+  .vazio{color:var(--suave)}
+  .botao{display:inline-flex;align-items:center;justify-content:center;background:var(--azul-esc);color:#fff;text-decoration:none;padding:.75rem 1.4rem;border-radius:99px;font:inherit;font-weight:600;border:1px solid var(--azul-esc);white-space:nowrap;cursor:pointer}
+  .botao:hover{background:#2C5682;border-color:#2C5682}
+  .botao.sec{background:transparent;color:var(--texto);border-color:var(--texto);padding:.55rem 1.1rem;font-size:.95rem}
+  .botao.sec:hover{background:var(--texto);color:var(--bege)}
+  .botao.peq{padding:.4rem .9rem;font-size:.88rem}
+  .topo-portal{display:flex;justify-content:space-between;align-items:flex-end;gap:1rem 2rem;flex-wrap:wrap;margin-bottom:.5rem}
+  .topo-portal .sub{margin-bottom:0}
+  .posts{list-style:none;display:grid;gap:.6rem}
+  .post{display:grid;grid-template-columns:4.2rem 1fr auto;gap:1rem;align-items:start;background:var(--claro);border:1px solid var(--linha);border-radius:12px;padding:.9rem 1rem}
+  .post .dia{text-align:center;line-height:1.1}
+  .post .dia strong{display:block;font-size:1.5rem;font-weight:800;letter-spacing:-.03em}
+  .post .dia span{font-size:.8rem;color:var(--suave)}
+  .post p{font-size:.92rem;color:#45403B;white-space:pre-wrap}
+  .post .acoes-post{grid-column:2/-1;display:flex;gap:.5rem;flex-wrap:wrap}
+  .pagar{background:#fff;border:1px solid var(--linha);border-radius:12px;padding:1rem;margin-top:.75rem;display:grid;gap:.6rem;justify-items:start}
+  footer{width:min(900px,100% - 2.5rem);margin:3rem auto 2.5rem;color:var(--suave);font-size:.9rem}
+  @media (max-width:640px){.trilha{grid-template-columns:repeat(3,1fr)}.post{grid-template-columns:3.4rem 1fr}.post>.tag{grid-column:2}#falar{display:none}
+    table,tbody,tr,td{display:block;width:100%}thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+    tr{border-bottom:1px solid var(--linha);padding:.5rem 0}td{border:0;padding:.25rem .9rem}.v{text-align:left}}
+</style>
+</head>
+<body>
+<div class="demo" role="region" aria-label="Aviso" id="aviso"></div>
+<header><a href="index.html"><img src="img/logo-escuro.svg" alt="Lumara Silva" width="1552" height="366"></a>
+  <span class="topo-acoes"><button class="lang" id="idioma" aria-label="Switch to English" lang="en"><span class="ativo">PT</span><span>EN</span></button><a class="botao sec" id="falar" href="mailto:contato@lumarasilva.com.br"></a></span></header>
+<main id="main"></main>
+<footer id="rodape"></footer>
+<script src="js/site.js"></script>
+<script src="js/exemplo.js"></script>
+<script src="js/comum.js"></script>
+<script>
+const e=LS.esc, brl=LS.brl;
+const ETAPAS=["Briefing","Criação","Apresentação","Ajustes","Entrega final","Concluído"];
+const T={
+  pt:{aviso:"Protótipo do portal do cliente. No sistema real, o cliente entra com um link pessoal enviado por e-mail.",falar:"Falar com a Lumara",rodape:"Dúvidas sobre o projeto? Escreva para",
+      nf:"Link não encontrado",nfP:"Confira o link recebido por e-mail ou escreva para contato@lumarasilva.com.br.",ola:"Olá",intro:n=>`Aqui você acompanha os projetos de ${n}, aprova as artes, baixa os arquivos e vê os pagamentos.`,novo:"Fazer novo pedido",
+      projetos:"Projetos",semProj:"Nenhum projeto em andamento.",etapa:"Etapa atual",previsao:"previsão de entrega",andamento:"Andamento do projeto",tarefas:(f,n)=>`${f} de ${n} tarefas desta fase concluídas.`,
+      etapas:ETAPAS,aprovar:"Para sua aprovação",aprovarBtn:"Aprovar",ajustesBtn:"Pedir ajustes",ajustesLbl:"O que você gostaria de ajustar?",enviar:"Enviar pedido de ajuste",cancelar:"Cancelar",
+      aprovado:"Aprovado",ajustes:"Ajustes pedidos",aguard:"Aguardando você",arquivos:"Arquivos finais",baixar:"Baixar",trava:"Os arquivos finais ficam disponíveis assim que o pagamento for concluído, como prevê o contrato.",
+      posts:"Calendário de posts",postsP:"Posts planejados para as suas redes. Os que estão aguardando você podem ser aprovados aqui.",formato:{Feed:"Feed",Stories:"Stories",Reels:"Reels",Carrossel:"Carrossel"},
+      stPost:{ideia:"Ideia",producao:"Em produção",aprovacao:"Aguardando você",aprovado:"Aprovado",ajustes:"Ajustes pedidos",publicado:"Publicado"},
+      pagamentos:"Pagamentos",semPag:"Nenhum pagamento registrado.",data:"Vencimento",desc:"Descrição",valor:"Valor",situacao:"Situação",pagoT:"Pago",aPagar:"A pagar",atrasado:"Atrasado",
+      pagar:"Pagar agora",recibo:"Recibo",nota:"Nota fiscal",pixP:v=>`Pague ${v} por Pix. No sistema real, o QR Code e o código copia e cola aparecem aqui.`,simular:"Simular pagamento recebido",
+      contratos:"Contratos",assinado:"Assinado",assinar:"Assinar contrato",verCont:"Ver contrato",contratoDe:n=>`Contrato da proposta nº ${n}`,semCont:"Nenhum contrato ainda.",
+      propostas:"Propostas",semProp:"Nenhuma proposta.",prop:n=>`Proposta nº ${n}`,stProp:{aprovado:"aprovada",recusado:"encerrada",enviado:"aguardando aprovação"},
+      obrigado:"Recebido! A Lumara foi avisada.",ajusteEnviado:"Pedido de ajuste enviado. A Lumara foi avisada.",agendaP:"O próximo passo é a nossa reunião de briefing. Escolha o melhor horário na minha agenda.",agendaBtn:"Agendar reunião de briefing",agendaSem:"O próximo passo é a reunião de briefing. Em breve você recebe por e-mail as opções de horário.",novaAba:"(abre em nova aba)"},
+  en:{aviso:"Client portal prototype. In the real system, clients sign in with a personal link sent by email.",falar:"Contact Lumara",rodape:"Questions about the project? Write to",
+      nf:"Link not found",nfP:"Check the link you received by email or write to contato@lumarasilva.com.br.",ola:"Hi",intro:n=>`Here you can follow ${n}'s projects, approve artwork, download files and see payments.`,novo:"Make a new request",
+      projetos:"Projects",semProj:"No projects in progress.",etapa:"Current stage",previsao:"expected delivery",andamento:"Project progress",tarefas:(f,n)=>`${f} of ${n} tasks done in this stage.`,
+      etapas:["Briefing","Creation","Presentation","Adjustments","Final delivery","Done"],aprovar:"Waiting for your approval",aprovarBtn:"Approve",ajustesBtn:"Request changes",ajustesLbl:"What would you like to change?",enviar:"Send change request",cancelar:"Cancel",
+      aprovado:"Approved",ajustes:"Changes requested",aguard:"Waiting for you",arquivos:"Final files",baixar:"Download",trava:"Final files become available once payment is complete, as set out in the agreement.",
+      posts:"Post calendar",postsP:"Posts planned for your social media. The ones waiting for you can be approved here.",formato:{Feed:"Feed",Stories:"Stories",Reels:"Reels",Carrossel:"Carousel"},
+      stPost:{ideia:"Idea",producao:"In production",aprovacao:"Waiting for you",aprovado:"Approved",ajustes:"Changes requested",publicado:"Published"},
+      pagamentos:"Payments",semPag:"No payments yet.",data:"Due date",desc:"Description",valor:"Amount",situacao:"Status",pagoT:"Paid",aPagar:"To pay",atrasado:"Overdue",
+      pagar:"Pay now",recibo:"Receipt",nota:"Invoice",pixP:v=>`Pay ${v} by Pix. In the real system, the QR code and copy-and-paste code appear here.`,simular:"Simulate payment received",
+      contratos:"Agreements",assinado:"Signed",assinar:"Sign agreement",verCont:"View agreement",contratoDe:n=>`Agreement for proposal no. ${n}`,semCont:"No agreements yet.",
+      propostas:"Proposals",semProp:"No proposals.",prop:n=>`Proposal no. ${n}`,stProp:{aprovado:"approved",recusado:"closed",enviado:"waiting for approval"},
+      obrigado:"Done! Lumara has been notified.",ajusteEnviado:"Change request sent. Lumara has been notified.",agendaP:"The next step is our briefing meeting. Pick the time that works best for you in my calendar.",agendaBtn:"Book the briefing meeting",agendaSem:"The next step is the briefing meeting. You will receive time options by email soon.",novaAba:"(opens in a new tab)"}
+};
+let lang=LS.ligarIdioma(document.getElementById("idioma"),l=>{lang=l;render()});
+const AGENDA=(window.SITE&&SITE.carregar().integracoes.agenda)||"";
+const S=LS.dados(), c=S&&S.clientes.find(x=>x.id===location.hash.slice(1)), m=document.getElementById("main");
+let abertoAjuste=null, abertoPagar=null, aviso="";
+const hoje=new Date();hoje.setHours(0,0,0,0);
+/* respostas já enviadas e ainda não lidas pela área da equipe */
+function pendentes(){const f=LS.fila();return {
+  arte:(pj,en)=>f.filter(x=>x.tipo==="arte"&&x.projeto===pj&&x.entrega===en).pop(),
+  post:id=>f.filter(x=>x.tipo==="post"&&x.post===id).pop(),
+  parcela:id=>f.some(x=>x.tipo==="parcela"&&x.lanc===id),
+  contrato:o=>f.some(x=>x.tipo==="contrato"&&x.orc===o)}}
+function render(){
+  const L=T[lang];
+  document.getElementById("aviso").textContent=L.aviso; document.getElementById("falar").textContent=L.falar;
+  document.getElementById("rodape").innerHTML=`${L.rodape} <a href="mailto:contato@lumarasilva.com.br">contato@lumarasilva.com.br</a>.`;
+  if(!c){m.innerHTML=`<h1>${L.nf}</h1><p class="sub">${L.nfP}</p>`;return}
+  const P=pendentes();
+  const pj=S.projetos.filter(p=>p.cliente===c.id), oc=S.orcamentos.filter(o=>o.cliente===c.id&&o.status!=="rascunho");
+  const pg=S.caixa.filter(l=>l.cliente===c.id&&l.tipo==="entrada").sort((a,b)=>a.data.localeCompare(b.data));
+  const posts=(S.posts||[]).filter(p=>p.cliente===c.id&&p.status!=="ideia").sort((a,b)=>a.data.localeCompare(b.data)).filter(p=>new Date(p.data+"T00:00:00")>=new Date(hoje.getTime()-7*864e5));
+  const devendo=p=>S.caixa.some(l=>l.cliente===c.id&&l.tipo==="entrada"&&!l.pago&&!P.parcela(l.id)&&((p.orc&&l.orc===p.orc)||l.projeto===p.id));
+  document.title=`${c.empresa} — Lumara Silva`;
+  const tagArte=st=>st==="aprovado"?`<span class="tag pago">${L.aprovado}</span>`:st==="ajustes"?`<span class="tag aberto">${L.ajustes}</span>`:`<span class="tag info">${L.aguard}</span>`;
+  m.innerHTML=`${aviso?`<p class="tag pago" role="status" style="display:inline-block;margin-top:1rem;font-size:.9rem;padding:.4rem .8rem">${L[aviso]}</p>`:""}
+  <div class="topo-portal"><div><h1>${L.ola}, ${e(c.nome.split(" ")[0])}</h1><p class="sub">${L.intro(e(c.empresa))}</p></div>
+    <a class="botao" href="orcamento.html" id="novo-pedido">${L.novo}</a></div>
+  <h2>${L.projetos}</h2>${pj.length?pj.map(p=>{const i=ETAPAS.indexOf(p.etapa),f=p.check.filter(k=>k[1]).length;
+    const ent=(p.entregas||[]), aprov=ent.filter(x=>x.tipo==="aprovacao"), finais=ent.filter(x=>x.tipo==="final");
+    return `<article class="proj"><h3>${e(p.titulo)}</h3>
+    <p class="meta">${L.etapa}: <strong>${e(L.etapas[i]||p.etapa)}</strong>${p.etapa!=="Concluído"?` · ${L.previsao} ${LS.data(p.prazo,lang)}`:""}</p>
+    <ol class="trilha" aria-label="${L.andamento}">${L.etapas.map((et,k)=>`<li class="${k<i?"feito":k===i?"atual":""}" ${k===i?'aria-current="step"':""}>${et}</li>`).join("")}</ol>
+    ${p.check.length?`<p class="tarefas">${L.tarefas(f,p.check.length)}</p>`:""}
+    ${p.etapa==="Briefing"&&!p.check.some(k=>/briefing/i.test(k[0])&&k[1])?(AGENDA?`<div class="agenda"><p>${L.agendaP}</p><a class="botao" href="${e(AGENDA)}" target="_blank" rel="noopener">${L.agendaBtn}<span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)"> ${L.novaAba}</span></a></div>`:`<div class="agenda"><p>${L.agendaSem}</p></div>`):""}
+    ${aprov.length?`<h4>${L.aprovar}</h4><div class="artes">${aprov.map(a=>{const ev=P.arte(p.id,a.id), st=ev?ev.status:a.status;
+      return `<figure class="arte"><img src="${e(a.img)}" alt="${e(a.titulo)}"><figcaption class="corpo"><strong>${e(a.titulo)}</strong>${tagArte(st)}
+      ${st==="aguardando"?(abertoAjuste===p.id+a.id?`<label for="aj-${a.id}" class="vazio">${L.ajustesLbl}</label><textarea id="aj-${a.id}"></textarea><span class="linha"><button class="botao peq" data-aj-enviar="${p.id}|${a.id}">${L.enviar}</button><button class="botao sec peq" data-aj-cancelar>${L.cancelar}</button></span>`
+        :`<span class="linha"><button class="botao peq" data-aprovar="${p.id}|${a.id}">${L.aprovarBtn}</button><button class="botao sec peq" data-ajuste="${p.id}|${a.id}">${L.ajustesBtn}</button></span>`):""}
+      </figcaption></figure>`}).join("")}</div>`:""}
+    ${finais.length?`<h4>${L.arquivos}</h4>${devendo(p)?`<p class="trava">${L.trava}</p>`:`<ul class="arquivos">${finais.map(a=>`<li><span>${e(a.titulo)}</span><a class="botao sec peq" href="${e(a.url||"#")}" target="_blank" rel="noopener" download>${L.baixar}</a></li>`).join("")}</ul>`}`:""}
+    </article>`}).join(""):`<p class="vazio">${L.semProj}</p>`}
+  ${posts.length?`<h2>${L.posts}</h2><p class="sub" style="margin:-.4rem 0 1rem">${L.postsP}</p><ul class="posts">${posts.map(p=>{const ev=P.post(p.id), st=ev?ev.status:p.status, d=new Date(p.data+"T00:00:00");
+    return `<li class="post"><span class="dia"><strong>${d.getDate()}</strong><span>${d.toLocaleDateString(lang==="en"?"en-GB":"pt-BR",{month:"short"}).replace(".","")}</span></span>
+      <div><strong>${e(L.formato[p.formato]||p.formato)} · ${e(p.tema)}</strong>${p.legenda?`<p>${e(p.legenda)}</p>`:""}</div>
+      <span class="tag ${st==="aprovado"||st==="publicado"?"pago":st==="aprovacao"?"info":"aberto"}">${L.stPost[st]||st}</span>
+      ${st==="aprovacao"?(abertoAjuste==="post"+p.id?`<div class="acoes-post"><label for="ajp-${p.id}" class="vazio" style="width:100%">${L.ajustesLbl}</label><textarea id="ajp-${p.id}" style="width:100%;min-height:60px;padding:.5rem;border:1px solid #9E968B;border-radius:8px;font:inherit"></textarea><button class="botao peq" data-post-enviar="${p.id}">${L.enviar}</button><button class="botao sec peq" data-aj-cancelar>${L.cancelar}</button></div>`
+        :`<div class="acoes-post"><button class="botao peq" data-post-ok="${p.id}">${L.aprovarBtn}</button><button class="botao sec peq" data-post-aj="${p.id}">${L.ajustesBtn}</button></div>`):""}</li>`}).join("")}</ul>`:""}
+  <h2>${L.pagamentos}</h2>${pg.length?`<table><thead><tr><th scope="col">${L.data}</th><th scope="col">${L.desc}</th><th scope="col" class="v">${L.valor}</th><th scope="col">${L.situacao}</th></tr></thead><tbody>${pg.map(l=>{
+    const pago=l.pago||P.parcela(l.id), atras=!pago&&new Date(l.data+"T00:00:00")<hoje;
+    return `<tr><td>${LS.data(l.data,lang)}</td><td>${e(l.desc.replace(c.empresa+", ",""))}</td><td class="v">${brl(l.valor)}</td>
+    <td>${pago?`<span class="tag pago">${L.pagoT}</span> ${l.pago?`<a href="recibo.html#${e(l.id)}">${L.recibo}</a>`:""}${l.nf&&l.nf.status==="emitida"&&l.nf.url?` · <a href="${e(l.nf.url)}" target="_blank" rel="noopener">${L.nota} ${e(l.nf.numero)}</a>`:""}`:`<span class="tag ${atras?"atras":"aberto"}">${atras?L.atrasado:L.aPagar}</span> <button class="botao sec peq" data-pagar="${l.id}">${L.pagar}</button>`}
+      ${abertoPagar===l.id&&!pago?`<div class="pagar"><span>${L.pixP(brl(l.valor))}</span><button class="botao peq" data-simular="${l.id}">${L.simular}</button></div>`:""}</td></tr>`}).join("")}</tbody></table>`:`<p class="vazio">${L.semPag}</p>`}
+  <h2>${L.contratos}</h2>${oc.filter(o=>o.status==="aprovado").length?oc.filter(o=>o.status==="aprovado").map(o=>{const ok=(o.contrato&&o.contrato.status==="assinado")||P.contrato(o.id);
+    return `<p style="margin-bottom:.5rem">${L.contratoDe(e(o.num))} · <span class="tag ${ok?"pago":"aberto"}">${ok?L.assinado:L.aguard}</span> <a href="contrato.html#${e(o.id)}">${ok?L.verCont:L.assinar}</a></p>`}).join(""):`<p class="vazio">${L.semCont}</p>`}
+  <h2>${L.propostas}</h2>${oc.length?oc.map(o=>`<p><a href="proposta.html#${e(o.id)}">${L.prop(e(o.num))}</a> <span class="vazio">· ${L.stProp[o.status]||""}</span></p>`).join(""):`<p class="vazio">${L.semProp}</p>`}`;
+}
+document.addEventListener("click",ev=>{
+  if(ev.target.closest("#novo-pedido")){try{localStorage.setItem("lumara_prefill",JSON.stringify({nome:c.nome,email:c.email,cidade:c.cidade,whatsapp:c.whats,negocio:c.empresa}))}catch(x){}return}
+  const b=ev.target.closest("button"); if(!b||b.id==="idioma") return;
+  const L=T[lang], d=b.dataset;
+  if(d.aprovar){const [pj,en]=d.aprovar.split("|");LS.evento({tipo:"arte",projeto:pj,entrega:en,status:"aprovado"});aviso="obrigado"}
+  else if(d.ajuste){abertoAjuste=d.ajuste.replace("|","");render();const t=document.querySelector(".arte textarea");if(t)t.focus();return}
+  else if(d.ajEnviar){const [pj,en]=d.ajEnviar.split("|"),t=document.getElementById("aj-"+en);if(!t.value.trim()){t.focus();return}LS.evento({tipo:"arte",projeto:pj,entrega:en,status:"ajustes",comentario:t.value.trim()});abertoAjuste=null;aviso="ajusteEnviado"}
+  else if("ajCancelar" in d){abertoAjuste=null}
+  else if(d.postOk){LS.evento({tipo:"post",post:d.postOk,status:"aprovado"});aviso="obrigado"}
+  else if(d.postAj){abertoAjuste="post"+d.postAj;render();const t=document.getElementById("ajp-"+d.postAj);if(t)t.focus();return}
+  else if(d.postEnviar){const t=document.getElementById("ajp-"+d.postEnviar);if(!t.value.trim()){t.focus();return}LS.evento({tipo:"post",post:d.postEnviar,status:"ajustes",comentario:t.value.trim()});abertoAjuste=null;aviso="ajusteEnviado"}
+  else if(d.pagar){abertoPagar=abertoPagar===d.pagar?null:d.pagar}
+  else if(d.simular){LS.evento({tipo:"parcela",lanc:d.simular,forma:"Pix"});abertoPagar=null;aviso="obrigado"}
+  else return;
+  render(); const st=document.querySelector('[role="status"]'); if(st){st.setAttribute("tabindex","-1");st.focus()}
+});
+render();
+addEventListener("hashchange",()=>location.reload());
+</script>
+<script src="js/volta.js"></script>
+</body>
+</html>

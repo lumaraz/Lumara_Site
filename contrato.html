@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contrato — Lumara Silva</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+<link rel="apple-touch-icon" href="img/favicon-180.png">
+<link rel="preload" href="fonts/inter-tight-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/fontes.css">
+<style>
+  :root{--bege:#F2EFE9;--claro:#FBFAF7;--azul:#86BBD8;--azul-esc:#3A6EA5;--texto:#2D2D2D;--linha:#DAD4CA;--suave:#6B6560;--verde:#2F6B4F;--alerta:#A3283A}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bege);color:var(--texto);font-family:"Inter Tight",system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:var(--azul-esc)}
+  :focus-visible{outline:3px solid var(--azul-esc);outline-offset:3px;border-radius:4px}
+  .demo{background:#DCEAF2;color:#24476B;text-align:center;font-size:.85rem;padding:.45rem 1rem}
+  header{width:min(1040px,100% - 2.5rem);margin:0 auto;height:68px;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+  header img{height:30px;width:auto;display:block}
+  .topo-acoes{display:flex;gap:.6rem;align-items:center}
+  .lang{display:inline-flex;padding:2px;border:1px solid var(--linha);border-radius:99px;background:var(--claro);cursor:pointer;font:inherit;font-size:.78rem;font-weight:600;color:var(--suave)}
+  .lang span{padding:.22rem .55rem;border-radius:99px}
+  .lang span.ativo{background:var(--texto);color:var(--bege)}
+  .btn-link{display:inline-flex;align-items:center;text-decoration:none;font-weight:600;font-size:.95rem;color:var(--texto);border:1px solid currentColor;border-radius:99px;padding:.5rem 1.1rem;white-space:nowrap;background:none;cursor:pointer;font-family:inherit}
+  .btn-link:hover{background:var(--texto);color:var(--bege)}
+  main{width:min(1040px,100% - 2.5rem);margin:1rem auto 4rem;display:grid;grid-template-columns:1.5fr 1fr;gap:1.5rem;align-items:start}
+  .folha{background:#fff;border-radius:14px;padding:clamp(1.5rem,4vw,3rem);box-shadow:0 14px 34px -22px rgba(45,45,45,.45);font-size:.95rem}
+  .folha h1{font-size:clamp(1.4rem,3vw,1.9rem);font-weight:800;letter-spacing:-.03em;line-height:1.15;margin-bottom:.4rem}
+  .folha .num{color:var(--suave);margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:2px solid var(--texto)}
+  .folha h2{font-size:1rem;font-weight:800;letter-spacing:-.01em;margin:1.6rem 0 .6rem;padding-bottom:.3rem;border-bottom:1px solid var(--azul)}
+  .folha p{margin-bottom:.65rem;text-align:justify;hyphens:auto}
+  .folha p.sub{padding-left:1.5rem}
+  .folha ul{margin:0 0 .8rem 1.5rem}
+  .folha li{margin-bottom:.3rem}
+  .assinado{margin-top:2rem;padding:1rem 1.2rem;border:1px solid var(--verde);border-radius:10px;background:#EEF5F0;font-size:.9rem}
+  aside{position:sticky;top:1rem}
+  .painel{background:var(--claro);border:1px solid var(--linha);border-radius:14px;padding:1.4rem}
+  .painel h2{font-size:1.35rem;font-weight:800;letter-spacing:-.03em;margin-bottom:.4rem}
+  .painel p{color:#45403B}
+  .cmp{margin-top:.9rem}
+  .cmp label{display:block;font-size:.88rem;font-weight:600;margin-bottom:.3rem}
+  .cmp input{width:100%;padding:.65rem .75rem;border:1px solid #9E968B;border-radius:8px;background:#fff;font:inherit}
+  .cmp input[aria-invalid=true]{border-color:var(--alerta)}
+  .aceite{display:flex;gap:.6rem;align-items:flex-start;font-size:.92rem;margin:1rem 0}
+  .aceite input{accent-color:var(--azul-esc);width:1.1rem;height:1.1rem;margin-top:.15rem;flex:none}
+  .botao{display:block;width:100%;text-align:center;background:var(--azul-esc);color:#fff;border:0;border-radius:99px;padding:1rem 1.4rem;font:inherit;font-weight:700;font-size:1.05rem;cursor:pointer;text-decoration:none}
+  .botao:hover{background:#2C5682}
+  .botao.sec{background:transparent;color:var(--texto);border:1px solid var(--texto);margin-top:.6rem}
+  .erro{color:var(--alerta);font-size:.9rem;margin-top:.5rem}
+  .mut{color:var(--suave);font-size:.9rem}
+  .selo{width:56px;height:56px;border-radius:50%;background:var(--verde);display:grid;place-items:center;color:#fff;font-size:1.6rem;margin-bottom:.6rem}
+  @media (max-width:860px){main{grid-template-columns:1fr}aside{position:static;order:-1}}
+  @media print{.demo,header,aside{display:none!important}main{display:block;width:100%;margin:0}.folha{box-shadow:none;padding:0}}
+</style>
+</head>
+<body>
+<div class="demo" role="region" aria-label="Aviso" id="aviso">Protótipo: a assinatura aqui não tem validade jurídica.</div>
+<header><a href="index.html"><img src="img/logo-escuro.svg" alt="Lumara Silva" width="1552" height="366"></a>
+  <span class="topo-acoes"><button class="lang" id="idioma" aria-label="Switch to English" lang="en"><span class="ativo">PT</span><span>EN</span></button><button class="btn-link" id="imprimir" type="button">Baixar PDF</button></span></header>
+<main id="main"></main>
+<script src="js/exemplo.js"></script>
+<script src="js/comum.js"></script>
+<script>
+const {esc,brl}=LS;
+const T={
+  pt:{aviso:"Protótipo: a assinatura aqui não tem validade jurídica.",pdf:"Baixar PDF",tit:"Contrato de prestação de serviços de design",ref:"Referente à proposta nº",
+      assinar:"Assinar o contrato",assinarP:"Confira o contrato ao lado. Para assinar, informe os dados que vão no contrato.",nome:"Nome completo ou razão social",doc:"CPF ou CNPJ",end:"Endereço completo",
+      aceite:"Li o contrato e concordo com todas as cláusulas, inclusive as condições de uso das artes e a proibição de uso com inteligência artificial (cláusula 7.4).",
+      btn:"Assinar eletronicamente",erro:"Preencha os campos e marque que você concorda para assinar.",nota:"Ao assinar, registramos data, hora e os dados informados. Você recebe uma cópia por e-mail.",
+      ok:"Contrato assinado",okP:"Obrigada! Uma cópia foi enviada para o seu e-mail. Você também encontra o contrato no seu portal.",portal:"Ir para o meu portal",
+      por:"Assinado eletronicamente por",em:"em",nf:"Contrato não encontrado",nfP:"O link pode estar incompleto. Escreva para contato@lumarasilva.com.br.",
+      pend:"Contrato em preparação",pendP:"O contrato fica disponível depois que a proposta é aprovada.",ptOnly:""},
+  en:{aviso:"Prototype: this signature has no legal effect.",pdf:"Download PDF",tit:"Design services agreement",ref:"For proposal no.",
+      assinar:"Sign the agreement",assinarP:"Review the agreement. To sign, enter the details that go into it.",nome:"Full name or company name",doc:"Brazilian tax ID (CPF or CNPJ)",end:"Full address",
+      aceite:"I have read the agreement and accept all clauses, including the terms of use of the artwork and the ban on use with artificial intelligence (clause 7.4).",
+      btn:"Sign electronically",erro:"Fill in the fields and confirm you agree in order to sign.",nota:"When you sign, we record the date, time and the details you entered. You get a copy by email.",
+      ok:"Agreement signed",okP:"Thank you! A copy was sent to your email. You can also find the agreement in your portal.",portal:"Go to my portal",
+      por:"Signed electronically by",em:"on",nf:"Agreement not found",nfP:"The link may be incomplete. Please write to contato@lumarasilva.com.br.",
+      pend:"Agreement in preparation",pendP:"The agreement becomes available once the proposal is approved.",ptOnly:"The agreement is written in Portuguese, the language that governs it."}
+};
+let lang=LS.ligarIdioma(document.getElementById("idioma"),l=>{lang=l;mostrar()});
+const S=LS.dados(), id=location.hash.slice(1), o=S&&S.orcamentos.find(x=>x.id===id), c=o&&S.clientes.find(x=>x.id===o.cliente);
+let assinatura=null;
+if(o){const evA=LS.fila().find(x=>x.tipo==="aprovado"&&x.orc===o.id); if(evA&&o.status!=="aprovado"){o.status="aprovado";o.aprovadoEm=evA.quando.slice(0,10)}}
+if(o){const ev=LS.fila().reverse().find(x=>x.tipo==="contrato"&&x.orc===o.id); assinatura=(o.contrato&&o.contrato.assinatura)||(ev&&ev.assinatura)||null}
+
+function folha(t){
+  const campos=LS.camposContrato(o,c,assinatura), modelo=(o.contrato&&o.contrato.modelo)||S.contratoModelo;
+  return `<article class="folha" aria-labelledby="ct-tit"><h1 id="ct-tit">Contrato de prestação de serviços de design</h1>
+    <p class="num">Proposta nº ${esc(o.num)} · ${esc(c.empresa||c.nome)}</p>
+    ${t.ptOnly?`<p class="mut" lang="en" style="margin-bottom:1rem">${t.ptOnly}</p>`:""}
+    <div lang="pt-BR">${LS.contratoHTML(modelo,campos)}</div>
+    ${assinatura?`<p class="assinado">${t.por} <strong>${esc(assinatura.nome)}</strong> (${esc(assinatura.doc)}) ${t.em} ${new Date(assinatura.quando).toLocaleString(lang==="en"?"en-GB":"pt-BR")}.<br>Lumara da Silva e Silva, CONTRATADA.</p>`:""}
+  </article>`;
+}
+function painel(t){
+  if(assinatura) return `<div class="painel" role="status"><div class="selo" aria-hidden="true">✓</div><h2>${t.ok}</h2><p>${t.okP}</p><a class="botao sec" href="cliente.html#${esc(c.id)}">${t.portal}</a></div>`;
+  return `<form class="painel" id="form" novalidate><h2>${t.assinar}</h2><p>${t.assinarP}</p>
+    <div class="cmp"><label for="a-nome">${t.nome}</label><input id="a-nome" autocomplete="name" value="${esc(c.nome)}" required></div>
+    <div class="cmp"><label for="a-doc">${t.doc}</label><input id="a-doc" inputmode="numeric" required></div>
+    <div class="cmp"><label for="a-end">${t.end}</label><input id="a-end" autocomplete="street-address" required></div>
+    <label class="aceite"><input type="checkbox" id="a-ok" required><span>${t.aceite}</span></label>
+    <button class="botao" type="submit">${t.btn}</button><p class="erro" id="erro" hidden>${t.erro}</p>
+    <p class="mut" style="margin-top:.8rem">${t.nota}</p></form>`;
+}
+function mostrar(){
+  const t=T[lang], m=document.getElementById("main");
+  document.getElementById("aviso").textContent=t.aviso; document.getElementById("imprimir").textContent=t.pdf;
+  if(!o){m.innerHTML=`<div class="painel" style="grid-column:1/-1"><h2>${t.nf}</h2><p>${t.nfP}</p></div>`;return}
+  if(o.status!=="aprovado"){m.innerHTML=`<div class="painel" style="grid-column:1/-1"><h2>${t.pend}</h2><p>${t.pendP}</p></div>`;return}
+  document.title=`${t.tit} ${o.num} — Lumara Silva`;
+  m.innerHTML=folha(t)+`<aside>${painel(t)}</aside>`;
+  const f=document.getElementById("form"); if(!f) return;
+  f.addEventListener("submit",ev=>{ev.preventDefault();
+    const n=f.querySelector("#a-nome"),d=f.querySelector("#a-doc"),en=f.querySelector("#a-end"),ok=f.querySelector("#a-ok");
+    let bom=true;[n,d,en].forEach(i=>{const v=i.value.trim().length>2;i.setAttribute("aria-invalid",!v);if(!v)bom=false});
+    if(!ok.checked) bom=false;
+    if(!bom){f.querySelector("#erro").hidden=false;(f.querySelector('[aria-invalid="true"]')||ok).focus();return}
+    assinatura={nome:n.value.trim(),doc:d.value.trim(),endereco:en.value.trim(),quando:new Date().toISOString()};
+    LS.evento({tipo:"contrato",orc:o.id,assinatura});
+    mostrar(); const h=document.querySelector("aside h2"); h.setAttribute("tabindex","-1"); h.focus();
+  });
+}
+document.getElementById("imprimir").onclick=()=>window.print();
+mostrar();
+addEventListener("hashchange",()=>location.reload());
+</script>
+<script src="js/volta.js"></script>
+</body>
+</html>
