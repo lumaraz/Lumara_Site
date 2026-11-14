@@ -141,7 +141,7 @@ function corpoHTML(texto, assunto = "") {
     fecharPar();
   }
   const assinatura = temAssinatura ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:8px"><tr>
-      <td style="padding-right:12px;vertical-align:middle"><img src="${img("avatar.jpg")}" width="44" height="44" alt="" style="display:block;border-radius:50%;border:0"></td>
+      <td style="padding-right:12px;vertical-align:middle"><img src="${img("avatar-email.jpg")}" width="44" height="44" alt="" style="display:block;border-radius:50%;border:0"></td>
       <td style="vertical-align:middle;font-family:Helvetica,Arial,sans-serif"><div style="font-size:15px;font-weight:bold;color:#2D2D2D">Lumara Silva</div><div style="font-size:13px;color:#6B655E">Designer de marca e visual</div></td></tr></table>` : "";
   return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>${escH(assunto)}</title></head>
 <body style="margin:0;padding:0;background:#F2EEE9">
