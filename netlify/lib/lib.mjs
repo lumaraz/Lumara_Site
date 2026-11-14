@@ -91,16 +91,77 @@ function correio() {
   return _correio;
 }
 const escH = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-function corpoHTML(texto) {
-  const p = escH(texto).replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" style="color:#462D26">$1</a>').split(/\n{2,}/).map((x) => `<p style="margin:0 0 14px">${x.replace(/\n/g, "<br>")}</p>`).join("");
-  return `<div style="font-family:Verdana,Arial,sans-serif;font-size:14px;line-height:1.6;color:#2D2D2D;max-width:560px">${p}<p style="margin:24px 0 0;color:#5E5A55;font-size:12px">Lumara Silva · Designer de marca e visual · lumarasilva.com.br</p></div>`;
+/* E-mail em HTML com a identidade do site (tabelas e estilos inline, para funcionar no Gmail e no Outlook) */
+const BOTOES = [
+  [/\/contrato\.html/, "Ler e assinar o contrato"],
+  [/\/proposta\.html/, "Ver a proposta"],
+  [/\/cliente\.html/, "Abrir meu portal"],
+  [/calendar\.app\.google|calendar\.google|\/calendar\//, "Escolher o horário da reunião"],
+  [/\/admin\//, "Abrir a área da equipe"],
+  [/\/orcamento\.html/, "Pedir orçamento"],
+];
+const rotulo = (u) => (BOTOES.find(([r]) => r.test(u)) || [, "Abrir o link"])[1];
+const linkInline = (t) => t.replace(/(https?:\/\/[^\s<]+)/g, (u) => `<a href="${u}" style="color:#2F5F8A;text-decoration:underline">${rotulo(u).toLowerCase()}</a>`);
+function botao(u) {
+  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:6px 0 22px"><tr><td style="border-radius:999px;background:#2D2D2D">
+    <a href="${u}" style="display:inline-block;padding:13px 26px;font-family:Helvetica,Arial,sans-serif;font-size:15px;font-weight:bold;color:#FFFFFF;text-decoration:none;border-radius:999px">${rotulo(u)}</a></td></tr></table>`;
+}
+function corpoHTML(texto, assunto = "") {
+  const img = (n) => `${SITE_URL}/img/${n}`;
+  const linhas = String(texto || "").replace(/\r/g, "").split("\n");
+  // assinatura: a última linha "Lumara" vira o bloco com foto
+  let fim = linhas.length - 1;
+  while (fim >= 0 && !linhas[fim].trim()) fim--;
+  const temAssinatura = fim >= 0 && /^lumara( silva)?$/i.test(linhas[fim].trim());
+  if (temAssinatura) linhas.splice(fim, 1);
+  const blocos = linhas.join("\n").trim().split(/\n{2,}/);
+  let html = "", primeiro = true, preheader = "";
+  for (const b of blocos) {
+    const ls = b.split("\n");
+    let par = [];
+    const fecharPar = () => {
+      if (!par.length) return;
+      const t = par.join("<br>");
+      if (primeiro && /^(oi|olá|ola|hi|hello)\b/i.test(par[0])) {
+        html += `<p style="margin:0 0 18px;font-family:Helvetica,Arial,sans-serif;font-size:22px;line-height:1.3;font-weight:bold;color:#2D2D2D">${t}</p>`;
+      } else {
+        if (!preheader) preheader = par.join(" ").replace(/<[^>]+>/g, "");
+        html += `<p style="margin:0 0 16px;font-family:Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#3A3A3A">${t}</p>`;
+      }
+      primeiro = false; par = [];
+    };
+    for (const l of ls) {
+      const so = l.trim();
+      const m = /^(.*?:)?\s*(https?:\/\/\S+)$/.exec(so);
+      if (m && (!m[1] || m[1].length < 60)) { // linha que termina num link: vira botão
+        if (m[1]) par.push(linkInline(escH(m[1])));
+        fecharPar(); html += botao(m[2]); primeiro = false;
+      } else par.push(linkInline(escH(l)));
+    }
+    fecharPar();
+  }
+  const assinatura = temAssinatura ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:8px"><tr>
+      <td style="padding-right:12px;vertical-align:middle"><img src="${img("avatar.jpg")}" width="44" height="44" alt="" style="display:block;border-radius:50%;border:0"></td>
+      <td style="vertical-align:middle;font-family:Helvetica,Arial,sans-serif"><div style="font-size:15px;font-weight:bold;color:#2D2D2D">Lumara Silva</div><div style="font-size:13px;color:#6B655E">Designer de marca e visual</div></td></tr></table>` : "";
+  return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>${escH(assunto)}</title></head>
+<body style="margin:0;padding:0;background:#F2EEE9">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#F2EEE9">${escH(preheader).slice(0, 140)}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F2EEE9"><tr><td align="center" style="padding:28px 14px">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px">
+    <tr><td style="padding:0 6px 18px"><a href="${SITE_URL}"><img src="${img("logo-azul.png")}" width="132" height="22" alt="Lumara Silva" style="display:block;border:0;height:22px;width:132px"></a></td></tr>
+    <tr><td style="background:#FFFFFF;border:1px solid #E4DDD3;border-radius:18px;padding:34px 30px 30px">${html}${assinatura}</td></tr>
+    <tr><td style="padding:20px 6px 0;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:1.7;color:#7A736B">
+      <a href="${SITE_URL}" style="color:#7A736B">lumarasilva.com.br</a> &nbsp;·&nbsp; <a href="https://wa.me/5521989967803" style="color:#7A736B">WhatsApp (21) 98996-7803</a><br>
+      Dúvidas? É só responder este e-mail.</td></tr>
+  </table>
+</td></tr></table></body></html>`;
 }
 export async function enviarEmail(para, assunto, corpo) {
   const c = correio();
   if (!c) throw new Error("E-mail não configurado (GMAIL_USER e GMAIL_APP_PASSWORD)");
   await c.sendMail({
     from: `"Lumara Silva" <${process.env.GMAIL_USER || "teste@exemplo.com"}>`,
-    to: para, subject: assunto, text: corpo, html: corpoHTML(corpo),
+    to: para, subject: assunto, text: corpo, html: corpoHTML(corpo, assunto),
   });
 }
 /* Coloca na fila e tenta enviar na hora; se falhar, o lembrete diário tenta de novo */
@@ -157,3 +218,4 @@ export async function subirArquivo(caminho, buffer, tipo = "image/jpeg") {
   return `${DB}/storage/v1/object/public/arquivos/${caminho}`;
 }
 export const idForte = (p = "") => p + Array.from(crypto.getRandomValues(new Uint8Array(12)), (b) => "abcdefghijkmnpqrstuvwxyz23456789"[b % 32]).join("");
+export { corpoHTML };
