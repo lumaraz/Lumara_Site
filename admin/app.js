@@ -631,7 +631,7 @@ function editarPF(id){
      <div class="linha2" style="margin-top:.6rem">
        <div class="cmp"><label for="pf-pr">Formato das imagens</label><select id="pf-pr">${Object.entries(PORTFOLIO.PROPORCOES).map(([k,v])=>`<option value="${k}" ${PORTFOLIO.layout(p).prop===k?"selected":""}>${v}</option>`).join("")}</select></div>
        <div class="cmp"><label for="pf-g">Linhas automáticas: imagens por linha</label><select id="pf-g">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option value="${n}" ${PORTFOLIO.layout(p).cols===n?"selected":""}>${n}</option>`).join("")}</select></div></div>
-     <p class="mut">Monte a galeria linha por linha: em cada linha, escolha quantas imagens ela tem. As setas mudam a ordem. As imagens que sobrarem seguem nas linhas automáticas. “Excluir linha” tira a linha do site e guarda as imagens dela em “Fora da galeria”, de onde dá para trazer de volta.</p>
+     <p class="mut">Monte a galeria linha por linha: em cada linha, escolha quantas imagens ela tem. Arraste as imagens para mudar a ordem, inclusive de uma linha para outra (no celular, segure a imagem um instante antes de arrastar). As setas também mudam a ordem. As imagens que sobrarem seguem nas linhas automáticas. “Excluir linha” tira a linha do site e guarda as imagens dela em “Fora da galeria”, de onde dá para trazer de volta.</p>
      <div class="linhas-ed" id="pf-gal"></div>
      <h3 style="margin-top:1rem">Prévia da galeria</h3><div class="pf-prev" id="pf-prev" tabindex="0" role="region" aria-label="Prévia da galeria"></div>
      <label class="btn peq sec" style="cursor:pointer;margin-top:.5rem;display:inline-block">Adicionar imagens<input type="file" id="pf-galeria" accept="image/*" multiple class="sr-only"></label></div>
@@ -651,7 +651,7 @@ function editarPF(id){
     $("#pf-gal").innerHTML=(L.length?L.map((r,ri)=>`<div class="linha-ed${r.auto?" linha-auto":""}"><div class="linha-ed-cab"><strong>Linha ${ri+1}${r.auto?' <span class="mut">(automática)</span>':""}</strong>
         <span style="display:flex;gap:.5rem;align-items:center"><label>Imagens nesta linha <select data-linha="${ri}" aria-label="Imagens na linha ${ri+1}">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option ${n===r.n?"selected":""}>${n}</option>`).join("")}</select></label>
         <button type="button" class="btn peq sec" data-excluir="${ri}">Excluir linha<span class="sr-only"> ${ri+1}</span></button></span></div>
-      <div class="mini-gal">${vis.slice(r.ini,r.ini+r.qtd).map((g,j)=>{const k=r.ini+j;return `<figure class="gal-item"><img src="${srcPF(g)}" alt="Imagem ${k+1}">
+      <div class="mini-gal">${vis.slice(r.ini,r.ini+r.qtd).map((g,j)=>{const k=r.ini+j;return `<figure class="gal-item" data-arrasta="${k}"><img src="${srcPF(g)}" alt="Imagem ${k+1}" draggable="false">
         <span class="gal-acoes"><button type="button" data-mv="${k}" data-d="-1" aria-label="Mover imagem ${k+1} para trás" ${k===0?"disabled":""}>‹</button><span class="gal-n">${k+1}</span><button type="button" data-mv="${k}" data-d="1" aria-label="Mover imagem ${k+1} para frente" ${k===vis.length-1?"disabled":""}>›</button></span>
         <button class="rm" type="button" aria-label="Apagar imagem ${k+1} do projeto" data-k="${k}">×</button></figure>`}).join("")}</div></div>`).join("")
       :`<span class="mut">Nenhuma imagem na galeria.</span>`)
@@ -683,6 +683,31 @@ function editarPF(id){
     else if(b.dataset.mv!==undefined){const k=+b.dataset.mv,j=k+ +b.dataset.d,a1=real(k),a2=real(j);[p.galeria[a1],p.galeria[a2]]=[p.galeria[a2],p.galeria[a1]];gal();
       const nb=document.querySelector(`#pf-gal [data-mv="${j}"][data-d="${b.dataset.d}"]`)||document.querySelector(`#pf-gal [data-mv="${j}"]`);if(nb&&!nb.disabled)nb.focus();return}
     gal()});
+  /* arrastar e soltar as imagens (mouse e toque) */
+  (()=>{const box=$("#pf-gal"), rol=$("#gav-corpo");let ar=null;
+    const fim=()=>{if(!ar)return;clearTimeout(ar.timer);if(ar.fan)ar.fan.remove();box.querySelectorAll(".gal-item").forEach(f=>f.classList.remove("arrastando","antes","depois"));ar=null;cancelAnimationFrame(rolar.id)};
+    const rolar=()=>{if(!ar||!ar.on)return;const r=rol.getBoundingClientRect(),m=50;
+      if(ar.y<r.top+m)rol.scrollTop-=12;else if(ar.y>r.bottom-m)rol.scrollTop+=12;rolar.id=requestAnimationFrame(rolar)};
+    const comecar=()=>{ar.on=true;const f=ar.fig,img=f.querySelector("img");f.classList.add("arrastando");
+      const fan=img.cloneNode();fan.className="fantasma";fan.alt="";document.body.appendChild(fan);ar.fan=fan;mover();rolar()};
+    const mover=()=>{if(!ar||!ar.on)return;ar.fan.style.left=(ar.x-36)+"px";ar.fan.style.top=(ar.y-36)+"px";
+      box.querySelectorAll(".gal-item").forEach(f=>f.classList.remove("antes","depois"));
+      const el=document.elementFromPoint(ar.x,ar.y),alvo=el&&el.closest("#pf-gal .gal-item[data-arrasta]");ar.alvo=null;
+      if(alvo&&alvo!==ar.fig){const r=alvo.getBoundingClientRect(),dep=ar.x>r.left+r.width/2;alvo.classList.add(dep?"depois":"antes");ar.alvo={k:+alvo.dataset.arrasta,dep}}};
+    box.addEventListener("pointerdown",e=>{const f=e.target.closest(".gal-item[data-arrasta]");if(!f||e.target.closest("button")||e.button>0)return;
+      ar={fig:f,k:+f.dataset.arrasta,x:e.clientX,y:e.clientY,x0:e.clientX,y0:e.clientY,on:false,toque:e.pointerType!=="mouse"};
+      if(ar.toque)ar.timer=setTimeout(()=>{if(ar&&!ar.on)comecar()},280);});
+    addEventListener("pointermove",e=>{if(!ar)return;ar.x=e.clientX;ar.y=e.clientY;
+      if(!ar.on){const d=Math.hypot(ar.x-ar.x0,ar.y-ar.y0);if(ar.toque){if(d>10)fim()}else if(d>6)comecar();return}
+      mover()});
+    box.addEventListener("touchmove",e=>{if(ar&&ar.on)e.preventDefault()},{passive:false});
+    addEventListener("pointerup",()=>{if(!ar)return;const a=ar;
+      if(a.on&&a.alvo){const vis=PORTFOLIO.visiveis(p),item=vis[a.k];let t=a.alvo.k+(a.alvo.dep?1:0);if(t>a.k)t--;
+        if(t!==a.k){vis.splice(a.k,1);vis.splice(t,0,item);p.galeria=vis.concat(p.galeria.filter(g=>!vis.includes(g)));fim();gal();toast(`Imagem movida para a posição ${t+1}.`);return}}
+      fim()});
+    addEventListener("pointercancel",fim);
+    box.addEventListener("contextmenu",e=>{if(ar)e.preventDefault()});
+  })();
   document.querySelectorAll('input[name="pf-cor"]').forEach(r=>r.onchange=()=>{p.cor=r.value;$("#pf-capa-prev").style.setProperty("--c",p.cor)});
   $("#pf-capa").onchange=async e=>{const f=e.target.files[0];if(!f)return;p.capa=await reduzir(f,1200,.8);$("#pf-capa-prev").innerHTML=`<img src="${p.capa}" alt="Nova capa">`};
   if($("#pf-capa-rm")) $("#pf-capa-rm").onclick=()=>{p.capa="";$("#pf-capa-prev").textContent=iniciais(p.nome||"?")};

@@ -362,6 +362,10 @@ h2{font-size:1.15rem;font-weight:700;letter-spacing:-.01em;margin-bottom:.75rem}
   @keyframes sai{to{opacity:0;transform:translateY(-24px)}}
   @keyframes entra{from{opacity:0;transform:translateY(40px)}}
   @media (prefers-reduced-motion:reduce){::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}}
+#pf-gal .gal-item[data-arrasta]{cursor:grab;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#pf-gal .gal-item.arrastando{opacity:.3}
+#pf-gal .gal-item.antes{box-shadow:-5px 0 0 #2F5F8A}#pf-gal .gal-item.depois{box-shadow:5px 0 0 #2F5F8A}
+.fantasma{position:fixed;width:72px;height:72px;object-fit:cover;pointer-events:none;z-index:3000;border-radius:10px;opacity:.92;transform:rotate(4deg);box-shadow:0 8px 24px rgba(0,0,0,.25)}
 </style>
 </head>
 <body>
