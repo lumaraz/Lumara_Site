@@ -627,7 +627,7 @@ function editarPF(id){
      <div class="cores-pf">${PF_CORES.map(([c,n],k)=>`<input type="radio" name="pf-cor" id="pfc${k}" value="${c}" ${c===p.cor?"checked":""}><label for="pfc${k}" style="--c:${c}" title="${n}"><span class="sr-only">${n}</span></label>`).join("")}</div></fieldset>
    <div class="bloco"><h3>Capa</h3><div class="capa-prev" id="pf-capa-prev" style="--c:${p.cor}">${p.capa?`<img src="${srcPF(p.capa)}" alt="Capa atual">`:esc(iniciais(p.nome||"?"))}</div>
      <div class="acoes"><label class="btn peq sec" style="cursor:pointer">Escolher imagem<input type="file" id="pf-capa" accept="image/*" class="sr-only"></label>${p.capa?`<button class="btn peq perigo" id="pf-capa-rm">Remover capa</button>`:""}</div></div>
-   <div class="bloco"><h3>Galeria do projeto</h3><p class="mut">Até 20 imagens, na ordem em que aparecem na página.</p>
+   <div class="bloco"><h3>Galeria do projeto</h3><p class="mut">Até 50 imagens, na ordem em que aparecem na página.</p>
      <div class="linha2" style="margin-top:.6rem">
        <div class="cmp"><label for="pf-pr">Formato das imagens</label><select id="pf-pr">${Object.entries(PORTFOLIO.PROPORCOES).map(([k,v])=>`<option value="${k}" ${PORTFOLIO.layout(p).prop===k?"selected":""}>${v}</option>`).join("")}</select></div>
        <div class="cmp"><label for="pf-g">Linhas automáticas: imagens por linha</label><select id="pf-g">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option value="${n}" ${PORTFOLIO.layout(p).cols===n?"selected":""}>${n}</option>`).join("")}</select></div></div>
@@ -711,7 +711,9 @@ function editarPF(id){
   document.querySelectorAll('input[name="pf-cor"]').forEach(r=>r.onchange=()=>{p.cor=r.value;$("#pf-capa-prev").style.setProperty("--c",p.cor)});
   $("#pf-capa").onchange=async e=>{const f=e.target.files[0];if(!f)return;p.capa=await reduzir(f,1200,.8);$("#pf-capa-prev").innerHTML=`<img src="${p.capa}" alt="Nova capa">`};
   if($("#pf-capa-rm")) $("#pf-capa-rm").onclick=()=>{p.capa="";$("#pf-capa-prev").textContent=iniciais(p.nome||"?")};
-  $("#pf-galeria").onchange=async e=>{for(const f of [...e.target.files].slice(0,20-p.galeria.length)) p.galeria.push(await reduzir(f,1400,.78)); gal()};
+  $("#pf-galeria").onchange=async e=>{const fs=[...e.target.files], cabe=Math.max(0,50-p.galeria.length);
+    if(fs.length>cabe) toast(cabe?`O limite é 50 imagens por projeto: entraram só ${cabe} das ${fs.length}.`:"Este projeto já tem 50 imagens, que é o limite.");
+    for(const f of fs.slice(0,cabe)) p.galeria.push(await reduzir(f,1400,.78)); e.target.value=""; gal()};
   $("#pf-ok").onclick=()=>{
     const nome=$("#pf-n").value.trim(); if(!nome){$("#pf-e").style.display="block";$("#pf-n").setAttribute("aria-invalid","true");$("#pf-n").focus();return}
     Object.assign(p,{nome,descricao:$("#pf-d").value.trim(),descricaoEn:$("#pf-de").value.trim(),area:$("#pf-a").value,ano:$("#pf-y").value.trim(),grade:+$("#pf-g").value,proporcao:$("#pf-pr").value,largas:(p.linhas||[]).length?[]:p.largas,linhas:p.linhas||[],ocultas:(p.ocultas||[]).filter(u=>p.galeria.includes(u)),texto:$("#pf-tx").value.trim(),textoEn:$("#pf-txe").value.trim(),desafio:"",solucao:"",links:(p.links||[]).filter(l=>l.url),publicado:$("#pf-pub").checked});
