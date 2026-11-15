@@ -35,9 +35,7 @@
     links:[
       {titulo:"Solicitar orçamento",tituloEn:"Request a quote",url:"orcamento.html",destaque:true},
       {titulo:"Ver portfólio",tituloEn:"See portfolio",url:"index.html#trabalhos"},
-      {titulo:"WhatsApp",url:"https://wa.me/5521989967803"},
-      {titulo:"Behance",url:"https://www.behance.net/lumarasilva"},
-      {titulo:"LinkedIn",url:"https://www.linkedin.com/in/lumarasilva"}
+      {titulo:"WhatsApp",url:"https://wa.me/5521989967803"}
     ],
     servicosAbertos:false,
     /* serviços do site, na ordem em que aparecem; "pedido" é o nome curto usado no formulário e no sistema.
@@ -55,7 +53,7 @@
   }
   function carregar(){
     try{const s=(window.NUVEM&&window.NUVEM.site)?JSON.parse(JSON.stringify(window.NUVEM.site)):JSON.parse(localStorage.getItem(CHAVE)); if(s&&typeof s==="object"){const r=mesclar(s,padrao);
-      if((r.links||[]).map(l=>l.titulo).join("|")==="Solicitar orçamento|Ver portfólio|Behance|LinkedIn|WhatsApp") r.links=clone(padrao.links); /* ordem antiga de exemplo */
+      if(["Solicitar orçamento|Ver portfólio|Behance|LinkedIn|WhatsApp","Solicitar orçamento|Ver portfólio|WhatsApp|Behance|LinkedIn"].includes((r.links||[]).map(l=>l.titulo).join("|"))) r.links=clone(padrao.links); /* listas antigas de exemplo (sem Behance e LinkedIn desde nov/2026) */
       if((r.processo||[]).map(p=>p.t).join("|")==="Briefing|Criação|Apresentação e ajustes|Entrega") r.processo=clone(padrao.processo); /* texto antigo de exemplo */
       if(r.textos&&r.textos.heroTitB==="Crio visuais que dão forma à *história* da sua marca") r.textos.heroTitB=padrao.textos.heroTitB; /* destaque novo em "sua marca" */
       (r.processo||[]).forEach(p=>{const d=padrao.processo.find(x=>x.t===p.t);if(d&&p.tEn===undefined){p.tEn=d.tEn;p.dEn=p.d===d.d?d.dEn:""}});return r}}catch(e){}
