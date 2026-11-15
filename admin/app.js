@@ -51,6 +51,10 @@ function processarEventos(){
         const pj=S.projetos.find(y=>y.orc===o.id); if(pj){const ck=pj.check.find(k=>/pagamento/i.test(k[0]));if(ck)ck[1]=1}
         window.SEM_ENVIO=!!x.emailEnviado; registrarEmail("pago",c.email,{nome:c.nome.split(" ")[0],agenda:SITE.carregar().integracoes.agenda||"(link de agendamento)",portal:linkPortal(c)}); window.SEM_ENVIO=false;
         if(x.receipt_url&&l) l.comprovante=x.receipt_url;
+        if(x.difDesconto>0&&!S.caixa.some(y=>y.difDe===x.transaction_nsu)){
+          S.caixa.push({id:uid("L"),orc:o.id,projeto:pj?pj.id:undefined,desc:`${c.empresa}, diferença do desconto Pix (pago no cartão)`,tipo:"entrada",cat:"Projeto",valor:x.difDesconto,data:dia(3),pago:false,cliente:c.id,difDe:x.transaction_nsu});
+          notas.push(`${c.empresa} pagou no cartão o valor com desconto do Pix: a diferença de ${brl(x.difDesconto)} foi lançada como parcela.`);
+        }
         notas.push(`${c.empresa} pagou a entrada por ${x.forma}.`);
       }
       if(x.tipo==="contrato"){
@@ -111,6 +115,8 @@ let usuario=window.NUVEM_ADMIN?NUVEM_ADMIN.eu:"lumara";
 const admin=()=>window.NUVEM_ADMIN?NUVEM_ADMIN.papel==="admin":usuario==="lumara";
 const cli=id=>S.clientes.find(c=>c.id===id)||{};
 const pessoa=id=>S.equipe.find(p=>p.id===id)||{};
+/* quem está na equipe hoje (sem removidos; no site publicado, só quem tem login) */
+const ativos=(manter)=>S.equipe.filter(p=>p.id===manter||(!p.removido&&(p.email||!window.NUVEM_ADMIN)));
 const totalOrc=o=>o.itens.reduce((a,i)=>a+(+i.v||0),0);
 const iniciais=n=>n.split(" ").filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase();
 
@@ -148,6 +154,7 @@ function render(){
   m.innerHTML=({inicio,pedidos,orcamentos,contratos,projetos,calendario,portfolio,clientes,caixa,conteudo,emails,equipe})[view]();
   m.querySelectorAll(".tabela").forEach(t=>{const h=[...t.querySelectorAll("thead th")].map(x=>x.textContent);t.querySelectorAll("tbody tr").forEach(r=>[...r.children].forEach((td,i)=>td.setAttribute("data-label",h[i]||"")))});
   if(view==="projetos") ligarKanban();
+  if(view==="inicio"){ carregarVisitas(); carregarFalhas(); }
   if(view==="orcamentos"&&orcAberto) ligarEditor();
   fecharMenu();
 }
@@ -191,6 +198,8 @@ function inicio(){
         <div style="text-align:right"><span class="tag ${d<=0?"st-atrasado":"st-pendente"}">${d<0?"Atrasado":d===0?"Responder hoje":"Responder até "+fmtLongo(lim)}</span><div><button class="btn peq sec" style="margin-top:.35rem" onclick="verPedido('${p.id}')">Abrir</button></div></div></div>`}).join(""):`<p class="vazio">Nenhum pedido esperando. Tudo respondido.</p>`}
     </section>
     ${admin()?(()=>{const nf=notasPendentes();return nf.length?`<section class="painel"><h2>Notas fiscais para emitir</h2>${nf.map(l=>{const t=nfTomador(l);return `<div class="item-lista"><div><strong>${esc(cli(l.cliente).empresa)}</strong><div class="sub">${brl(l.valor)} · pago em ${fmt(l.pagoEm||l.data)} · ${t.exigida==="sim"?"obrigatória (CNPJ)":t.exigida==="opcional"?"pessoa física: opcional":"confirme se é CNPJ"}</div></div><button class="btn peq" onclick="emitirNota('${l.id}')">Emitir nota</button></div>`}).join("")}</section>`:""})():""}
+    ${window.NUVEM_ADMIN&&admin()?`<section class="painel" id="pn-falhas" hidden style="grid-column:1/-1"></section>`:""}
+    ${window.NUVEM_ADMIN?`<section class="painel" id="pn-visitas" style="grid-column:1/-1"><h2>Visitas do site</h2><p class="vazio">Carregando…</p></section>`:""}
     <section class="painel"><h2>Prazos dos próximos 7 dias</h2>
       ${semana.length?semana.map(p=>{const d=diasAte(p.prazo);return `<div class="item-lista"><div><strong>${esc(p.titulo)}</strong><div class="sub">${esc(cli(p.cliente).empresa)} · ${p.etapa}</div></div>
         <span class="tag ${d<0?"st-atrasado":d<=2?"st-pendente":"st-andamento"}">${d<0?`Atrasado ${-d} dia${d<-1?"s":""}`:d===0?"Hoje":fmtLongo(p.prazo)}</span></div>`}).join(""):`<p class="vazio">Nenhum prazo nesta semana.</p>`}
@@ -391,7 +400,7 @@ function projetos(){
   const vis=S.projetos.filter(p=>filtroResp==="todos"||p.resp===filtroResp);
   return `<div class="cab"><div><h1>Projetos</h1><p>Arraste os cartões entre as etapas, como no Trello. No celular, segure o cartão por um instante antes de arrastar. Abra um cartão para ver etiquetas, comentários, anexos e as artes enviadas ao cliente.</p></div></div>
   <div class="filtros"><button aria-pressed="${filtroResp==="todos"}" onclick="filtroResp='todos';render()">Todos</button>
-   ${S.equipe.map(p=>`<button aria-pressed="${filtroResp===p.id}" onclick="filtroResp='${p.id}';render()">${esc(p.nome.split(" ")[0])}</button>`).join("")}</div>
+   ${ativos().map(p=>`<button aria-pressed="${filtroResp===p.id}" onclick="filtroResp='${p.id}';render()">${esc(p.nome.split(" ")[0])}</button>`).join("")}</div>
   <div class="kanban" role="list" aria-label="Etapas dos projetos">${ETAPAS.map(et=>{const cs=vis.filter(p=>p.etapa===et);return `<div role="listitem" class="coluna" data-etapa="${et}" aria-labelledby="col-${ETAPAS.indexOf(et)}">
     <h2 class="col-cab" id="col-${ETAPAS.indexOf(et)}">${et}<span aria-label="${cs.length} cartões">${cs.length}</span></h2>
     <div class="cartoes">${cs.map(cartao).join("")}</div>
@@ -465,7 +474,7 @@ function verProjeto(id,aba){
     <div class="cmp"><label for="pj-p">Prazo</label><input id="pj-p" type="date" value="${p.prazo}"></div>
     <div class="cmp"><label for="pj-c">Cliente</label><select id="pj-c">${S.clientes.map(c=>`<option value="${c.id}" ${c.id===p.cliente?"selected":""}>${esc(c.empresa)}</option>`).join("")}</select></div>
     <div class="cmp"><label for="pj-s">Serviço</label><select id="pj-s">${Object.keys(SERV).slice(0,4).map(s=>`<option ${s===p.servico?"selected":""}>${s}</option>`).join("")}</select></div>
-    <div class="cmp"><label for="pj-r">Responsável</label><select id="pj-r">${S.equipe.map(e=>`<option value="${e.id}" ${e.id===p.resp?"selected":""}>${esc(e.nome)}</option>`).join("")}</select></div>
+    <div class="cmp"><label for="pj-r">Responsável</label><select id="pj-r">${ativos(p.resp).map(e=>`<option value="${e.id}" ${e.id===p.resp?"selected":""}>${esc(e.nome)}</option>`).join("")}</select></div>
     ${admin()?`<div class="cmp"><label>Valor do projeto</label><div style="padding:.55rem 0;font-weight:600">${brl(p.valor||0)}</div></div>`:""}
   </div>
   <fieldset class="cmp" style="border:0"><legend style="font-size:.85rem;font-weight:600;margin-bottom:.4rem">Etiquetas</legend>
@@ -573,7 +582,7 @@ function editarPost(id){
       <div class="cmp"><label for="po-d">Data de publicação</label><input id="po-d" type="date" value="${p.data}"></div>
       <div class="cmp"><label for="po-f">Formato</label><select id="po-f">${FORMATOS.map(f=>`<option ${f===p.formato?"selected":""}>${f}</option>`).join("")}</select></div>
       <div class="cmp"><label for="po-s">Situação</label><select id="po-s">${Object.entries(ST_POST).map(([k,[n]])=>`<option value="${k}" ${k===p.status?"selected":""}>${n}</option>`).join("")}</select></div>
-      <div class="cmp"><label for="po-r">Responsável</label><select id="po-r">${S.equipe.map(e=>`<option value="${e.id}" ${e.id===p.resp?"selected":""}>${esc(e.nome)}</option>`).join("")}</select></div>
+      <div class="cmp"><label for="po-r">Responsável</label><select id="po-r">${ativos(p.resp).map(e=>`<option value="${e.id}" ${e.id===p.resp?"selected":""}>${esc(e.nome)}</option>`).join("")}</select></div>
     </div>
     <div class="cmp"><label for="po-t">Tema</label><input id="po-t" value="${esc(p.tema)}" placeholder="Ex.: Promoção de aniversariante"></div>
     <div class="cmp"><label for="po-l">Legenda</label><textarea id="po-l" style="min-height:120px">${esc(p.legenda)}</textarea></div>
@@ -643,7 +652,7 @@ function editarPF(id){
    <label class="chave"><input type="checkbox" id="pf-pub" ${p.publicado?"checked":""}> Publicado no site</label>`;
   abrir(novo?"Novo projeto":p.nome,novo?"Aparece no site quando estiver publicado":esc(PORTFOLIO.AREAS[p.area]?.pt||""),corpo,
     `${novo?"":`<button class="btn perigo" id="pf-del">Excluir</button>`}<button class="btn" id="pf-ok">Salvar</button>`,
-    novo?"":`<button class="btn peq sec" onclick="copiarTexto(new URL('../projeto.html#${p.slug}',location.href).href,'Link do projeto copiado.')">Copiar link</button><a class="btn peq sec" href="../projeto.html#${p.slug}">Abrir página</a>`);
+    novo?"":`<button class="btn peq sec" onclick="copiarTexto(new URL('../projetos/${p.slug}',location.href).href,'Link do projeto copiado.')">Copiar link</button><a class="btn peq sec" href="../projeto.html#${p.slug}">Abrir página</a>`);
   p.largas=p.largas||[]; p.ocultas=p.ocultas||[];
   const gal=()=>{
     p.grade=+$("#pf-g").value; p.proporcao=$("#pf-pr").value;
@@ -992,16 +1001,59 @@ function editarEmail(k){const m=S.emails.modelos[k];
   $("#em-ok").onclick=()=>{m.assunto=$("#em-a").value;m.corpo=$("#em-c").value;salvar();fechar();render();toast("Mensagem salva.")}}
 function verEmail(id){const h=S.emails.historico.find(x=>x.id===id);abrir(h.assunto,"Para "+esc(h.para),`<div class="email-prev">${esc(h.corpo)}</div>`)}
 
+/* ============ E-MAILS QUE NÃO SAÍRAM (início) ============ */
+async function carregarFalhas(){
+  const el=$("#pn-falhas"); if(!el||!window.NUVEM_ADMIN) return;
+  let l=[]; try{ l=await NUVEM_ADMIN.falhasEmail(dia(-14)) }catch(e){ return }
+  if(!document.body.contains(el)) return;
+  if(!l.length){ el.hidden=true; return }
+  const motivo=e=>/535|Invalid login|Username and Password|BadCredentials/i.test(e||"")?"A senha de app do Gmail parou de funcionar. Crie uma nova no Google e troque no Netlify (GMAIL_APP_PASSWORD).":
+    /não configurado/i.test(e||"")?"O e-mail do site não está configurado no Netlify.":/550|5\.1\.1|No such user|does not exist/i.test(e||"")?"O endereço do destinatário parece não existir. Confira o e-mail do cliente.":"O Gmail recusou o envio. Tente de novo; se continuar, avise quem cuida do site.";
+  el.hidden=false;
+  el.innerHTML=`<h2>E-mails que não saíram</h2>
+    <p style="margin:.25rem 0 1rem">${l.length===1?"1 e-mail":`${l.length} e-mails`} dos últimos 14 dias não ${l.length===1?"foi enviado":"foram enviados"}. ${esc(motivo(l[0].erro))}</p>
+    ${l.slice(0,5).map(m=>`<div class="item-lista"><div><strong>${esc(m.assunto||"(sem assunto)")}</strong><div class="sub">${esc(m.para)} · ${fmt(String(m.criado).slice(0,10))}</div></div></div>`).join("")}
+    <div style="margin-top:1rem"><button class="btn" id="falhas-reenviar">Tentar enviar de novo</button></div>`;
+  $("#falhas-reenviar").onclick=async e=>{const b=e.currentTarget;b.disabled=true;b.textContent="Enviando…";
+    const r=await NUVEM_ADMIN.reenviar().catch(()=>({}));
+    toast(r&&r.enviados?`${r.enviados} e-mail(s) enviados.`:"Ainda não foi possível enviar. Confira o motivo acima.");carregarFalhas()};
+}
+
+/* ============ VISITAS (início) ============ */
+async function carregarVisitas(){
+  const el=$("#pn-visitas"); if(!el||!window.NUVEM_ADMIN) return;
+  const dias=[...Array(30)].map((_,i)=>dia(i-29)), desde=dias[0];
+  let l=[]; try{ l=await NUVEM_ADMIN.visitas(desde) }catch(e){ el.innerHTML=`<h2>Visitas do site</h2><p class="vazio">Não foi possível carregar as visitas agora.</p>`; return }
+  if(!document.body.contains(el)) return;
+  const porDia=Object.fromEntries(dias.map(d=>[d,0])), pag={}, ori={};
+  l.forEach(v=>{ if(v.dia in porDia) porDia[v.dia]+=v.n; pag[v.pagina]=(pag[v.pagina]||0)+v.n; if(v.origem!=="interno") ori[v.origem]=(ori[v.origem]||0)+v.n });
+  const total=Object.values(porDia).reduce((a,b)=>a+b,0), hoje=porDia[dias[29]]||0, mx=Math.max(1,...Object.values(porDia));
+  const chegadas=Object.values(ori).reduce((a,b)=>a+b,0);
+  const nomePag=p=>p==="início"?"Página inicial":p==="links"?"Página de links":p==="orcamento"?"Pedido de orçamento":p==="privacidade"?"Privacidade":
+    p.startsWith("projeto:")?((PF.find(x=>x.slug===p.slice(8))||{}).nome||"Projeto")+" (projeto)":p;
+  const top=(o,n)=>Object.entries(o).sort((a,b)=>b[1]-a[1]).slice(0,n);
+  if(!total){ el.innerHTML=`<h2>Visitas do site</h2><p class="vazio">Ainda não há visitas contadas nos últimos 30 dias. A contagem começa a partir de hoje e não inclui a equipe.</p>`; return }
+  el.innerHTML=`<h2>Visitas do site <span class="mut" style="font-weight:400;font-size:.85rem">últimos 30 dias</span></h2>
+    <dl class="numeros" style="margin:.5rem 0 1rem"><div class="num"><dt>Páginas vistas</dt><dd>${total}</dd></div><div class="num"><dt>Hoje</dt><dd>${hoje}</dd></div><div class="num"><dt>Chegadas de fora</dt><dd>${chegadas}</dd></div></dl>
+    <div role="img" aria-label="Páginas vistas por dia nos últimos 30 dias, total ${total}" style="display:flex;align-items:flex-end;gap:3px;height:90px;margin-bottom:1.25rem">
+      ${dias.map(d=>`<span title="${fmt(d)}: ${porDia[d]}" style="flex:1;min-width:0;height:${Math.max(2,Math.round(porDia[d]/mx*90))}px;background:${d===dias[29]?"var(--tinta,#2D2D2D)":"#86BBD8"};border-radius:3px 3px 0 0"></span>`).join("")}
+    </div>
+    <div class="grade2" style="gap:1.5rem">
+      <div><h3 style="font-size:.95rem;margin-bottom:.4rem">Páginas mais vistas</h3>${top(pag,6).map(([p,n])=>`<div class="item-lista"><span>${esc(nomePag(p))}</span><strong>${n}</strong></div>`).join("")}</div>
+      <div><h3 style="font-size:.95rem;margin-bottom:.4rem">De onde vieram</h3>${chegadas?top(ori,6).map(([o,n])=>`<div class="item-lista"><span>${esc(o==="direto"?"Direto (link digitado ou salvo)":o)}</span><strong>${Math.round(n/chegadas*100)}%</strong></div>`).join(""):`<p class="vazio">Sem chegadas de fora ainda.</p>`}</div>
+    </div>`;
+}
+
 /* ============ EQUIPE ============ */
 const PAPEIS={admin:["Administradora","Tudo, incluindo caixa e valores"],equipe:["Equipe","Pedidos, projetos, calendário e clientes, sem valores"]};
 function equipe(){
-  const lista=S.equipe.filter(p=>p.email||!window.NUVEM_ADMIN);
+  const lista=ativos();
   const eu=pessoa(usuario);
   return `<div class="cab"><div><h1>Equipe</h1><p>Cada pessoa entra com o próprio e-mail e senha e vê só o que o papel dela permite.</p></div>
    ${admin()?`<div class="acoes"><button class="btn" onclick="novaPessoa()">Adicionar pessoa</button></div>`:""}</div>
   <div class="tab-wrap"><table class="tabela"><thead><tr><th>Pessoa</th><th>Papel</th><th>O que vê</th>${admin()?"<th><span class=\"sr-only\">Ações</span></th>":""}</tr></thead><tbody>
   ${lista.map(p=>`<tr><td><span style="display:flex;gap:.6rem;align-items:center"><span class="avatar" style="--c:${p.cor}">${iniciais(p.nome)}</span><span><strong>${esc(p.nome)}</strong>${p.email?`<br><span class="mut" style="font-size:.85rem">${esc(p.email)}</span>`:""}</span></span></td>
-    <td>${esc(p.papel||"")}${p.convite?` <span class="tag st-rascunho">convite enviado</span>`:""}</td><td class="mut">${esc(p.acesso||"")}</td>
+    <td>${esc(p.papel||"")} ${p.convite?`<span class="tag st-rascunho">convite enviado</span>`:p.aceito?`<span class="tag st-aprovado">ativa</span>`:""}</td><td class="mut">${esc(p.acesso||"")}</td>
     ${admin()?`<td style="white-space:nowrap">${p.email&&p.id!==eu.id?`<button class="btn peq sec" onclick="convidarDeNovo('${p.id}')">Reenviar convite</button> <button class="btn peq perigo" onclick="removerPessoa('${p.id}')">Remover</button>`:p.id===eu.id?`<span class="mut">Você</span>`:""}</td>`:""}</tr>`).join("")}
   </tbody></table></div>`;
 }

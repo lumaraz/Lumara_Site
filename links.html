@@ -5,39 +5,57 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Lumara Silva — Links</title>
 <meta name="description" content="Links da Lumara Silva, designer de marca e visual.">
-<meta property="og:image" content="https://lumarasilva.com.br/img/compartilhar.jpg">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Lumara Silva — Links">
+<meta property="og:description" content="Peça um orçamento, veja o portfólio ou fale comigo pelo WhatsApp.">
+<meta property="og:url" content="https://lumarasilva.com.br/links.html">
+<meta property="og:image" content="https://lumarasilva.com.br/img/compartilhar-2026.jpg">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
 <link rel="apple-touch-icon" href="img/favicon-180.png">
 <link rel="preload" href="fonts/inter-tight-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/fontes.css">
 <style>
-  :root{--bege:#F2EFE9;--claro:#FBFAF7;--azul:#86BBD8;--azul-esc:#3A6EA5;--texto:#2D2D2D;--linha:#DAD4CA;--suave:#6B6560}
+  :root{--azul-esc:#3A6EA5;--claro:#FAFAFF;--tinta:#2D2D2D}
   *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bege);color:var(--texto);font-family:"Inter Tight",system-ui,sans-serif;min-height:100svh;display:flex;justify-content:center;-webkit-font-smoothing:antialiased}
-  :focus-visible{outline:3px solid var(--azul-esc);outline-offset:3px;border-radius:6px}
-  main{width:min(460px,100% - 2.5rem);padding:3.5rem 0 3rem;text-align:center}
-  .foto{width:96px;height:96px;border-radius:50%;object-fit:cover;display:block;margin:0 auto 1.1rem}
-  .logo{height:34px;width:auto;display:block;margin:0 auto .6rem}
-  .sub{color:var(--suave);margin-bottom:2rem;line-height:1.45}
-  ul{list-style:none;display:grid;gap:.7rem}
-  a.bt{display:block;padding:1.05rem 1.2rem;border-radius:14px;border:1px solid var(--linha);background:var(--claro);text-decoration:none;color:inherit;font-weight:600;font-size:1.05rem;transition:transform .15s,border-color .15s}
-  a.bt:hover{border-color:var(--texto);transform:translateY(-2px)}
-  a.bt.destaque{background:var(--azul-esc);border-color:var(--azul-esc);color:#fff}
-  .lang{position:absolute;top:1rem;right:1rem;display:inline-flex;padding:2px;border:1px solid var(--linha);border-radius:99px;background:var(--claro);cursor:pointer;font:inherit;font-size:.78rem;font-weight:600;color:var(--suave)}
-  .lang span{padding:.22rem .55rem;border-radius:99px}
-  .lang span.ativo{background:var(--texto);color:var(--bege)}
-  footer{margin-top:2.5rem;font-size:.85rem;color:var(--suave)}
+  body{background-color:var(--azul-esc);background-image:linear-gradient(rgba(242,239,233,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(242,239,233,.12) 1px,transparent 1px);background-size:24px 24px;background-attachment:fixed;
+    color:var(--claro);font-family:"Inter Tight",system-ui,sans-serif;min-height:100svh;display:flex;justify-content:center;-webkit-font-smoothing:antialiased}
+  :focus-visible{outline:3px solid #FAFAFF;outline-offset:4px}
+  main{width:min(420px,100% - 2.5rem);padding:3rem 0 2.5rem;text-align:center;display:flex;flex-direction:column;align-items:center}
+  .alvo{position:relative;width:118px;height:118px;display:grid;place-items:center;margin-bottom:1.6rem}
+  .alvo::before{content:"";position:absolute;inset:0;border:1.5px dashed rgba(242,239,233,.6);border-radius:50%}
+  .alvo::after{content:"";position:absolute;left:-26px;right:-26px;top:50%;height:1px;background:rgba(242,239,233,.45)}
+  .alvo i{position:absolute;top:-26px;bottom:-26px;left:50%;width:1px;background:rgba(242,239,233,.45)}
+  .foto{position:relative;z-index:2;width:96px;height:96px;border-radius:50%;object-fit:cover;display:block}
+  .selecao{position:relative;padding:.6rem .85rem;border:1.5px solid var(--claro);margin-bottom:2.2rem}
+  .selecao b{position:absolute;width:8px;height:8px;background:var(--azul-esc);border:1.5px solid var(--claro)}
+  .selecao b:nth-of-type(1){top:-5px;left:-5px}.selecao b:nth-of-type(2){top:-5px;right:-5px}.selecao b:nth-of-type(3){bottom:-5px;left:-5px}.selecao b:nth-of-type(4){bottom:-5px;right:-5px}
+  .logo{height:38px;width:auto;display:block}
+  .medida{position:absolute;left:50%;bottom:-27px;transform:translateX(-50%);background:var(--claro);color:var(--tinta);font-size:.7rem;font-weight:700;padding:2px 6px;border-radius:4px;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .sub{line-height:1.5;margin-bottom:2rem;font-size:1rem}
+  ul{list-style:none;display:grid;gap:1.35rem;width:100%;text-align:left}
+  .rot{display:block;font-size:.72rem;font-weight:600;margin-bottom:.35rem}
+  a.bt{position:relative;display:flex;align-items:center;justify-content:center;min-height:52px;padding:.8rem 1rem;border:1.5px solid var(--claro);color:var(--claro);text-decoration:none;font-weight:600;font-size:1.02rem;text-align:center;transition:background .15s,color .15s}
+  a.bt:hover{background:rgba(242,239,233,.14)}
+  a.bt.destaque{min-height:60px;background:var(--claro);color:var(--tinta);font-weight:750;font-size:1.08rem}
+  a.bt.destaque:hover{background:#FAFAFF}
+  a.bt .wh{position:absolute;right:6px;top:-1.35rem;font-size:.66rem;font-weight:600;color:var(--claro);font-variant-numeric:tabular-nums}
+  .lang{position:absolute;top:1rem;right:1rem;display:inline-flex;padding:2px;border:1.5px solid var(--claro);background:transparent;cursor:pointer;font:inherit;font-size:.78rem;font-weight:600;color:var(--claro)}
+  .lang span{padding:.22rem .55rem}
+  .lang span.ativo{background:var(--claro);color:var(--tinta)}
+  footer{margin-top:2.6rem;font-size:.85rem}
   footer a{color:inherit}
-  @media (prefers-reduced-motion:reduce){a.bt{transition:none}a.bt:hover{transform:none}}
+  @media (prefers-reduced-motion:reduce){a.bt{transition:none}}
 </style>
 <style>/* espaço para o selo do Netlify no canto */body{padding-bottom:56px}@media print{body{padding-bottom:0}}</style>
 </head>
 <body>
 <button class="lang" id="idioma" aria-label="Switch to English" lang="en"><span class="ativo">PT</span><span>EN</span></button>
 <main>
-  <img class="foto" src="img/avatar.webp" alt="Lumara Silva" width="240" height="240">
-  <h1><img class="logo" src="img/logo-escuro.svg" alt="Lumara Silva" width="1552" height="366"></h1>
+  <div class="alvo"><i aria-hidden="true"></i><img class="foto" src="img/avatar.webp" alt="Lumara Silva" width="240" height="240"></div>
+  <h1 class="selecao"><b aria-hidden="true"></b><b aria-hidden="true"></b><b aria-hidden="true"></b><b aria-hidden="true"></b><img class="logo" src="img/logo-claro.svg" alt="Lumara Silva" width="1552" height="366"><span class="medida" aria-hidden="true" id="medida-logo"></span></h1>
   <p class="sub" id="sub">Designer de marca e visual no Rio de Janeiro.<br>Identidade visual e design para social media.</p>
   <ul id="links"></ul>
   <footer><a href="index.html">lumarasilva.com.br</a> · <a href="privacidade.html" id="priv">Privacidade</a></footer>
@@ -55,10 +73,23 @@ function render(lang){
   document.getElementById("priv").textContent=en?"Privacy":"Privacidade";
   document.getElementById("links").innerHTML=SITE.carregar().links.filter(l=>l.titulo&&l.url).map(l=>{
     const t=en?(l.tituloEn||PADRAO_EN[l.titulo]||l.titulo):l.titulo;
-    return `<li><a class="bt${l.destaque?" destaque":""}" href="${e(l.url)}"${ext(l.url)?' target="_blank" rel="noopener"':""}>${e(t)}${ext(l.url)?`<span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)"> ${en?"(opens in a new tab)":"(abre em nova aba)"}</span>`:""}</a></li>`}).join("");
+    const rot=en?(ROTULO_EN[l.titulo]||t):(ROTULO[l.titulo]||l.titulo);
+    return `<li><span class="rot" aria-hidden="true">Frame · ${e(rot)}</span><a class="bt${l.destaque?" destaque":""}" href="${e(l.url)}"${ext(l.url)?' target="_blank" rel="noopener"':""}>${e(t)}${l.destaque?'<span class="wh" aria-hidden="true"></span>':""}${ext(l.url)?`<span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)"> ${en?"(opens in a new tab)":"(abre em nova aba)"}</span>`:""}</a></li>`}).join("");
+  medir();
 }
+/* rótulos de "frame" e medidas reais, como numa prancheta de design */
+const ROTULO={"Solicitar orçamento":"Orçamento","Ver portfólio":"Portfólio","WhatsApp":"Contato"};
+const ROTULO_EN={"Solicitar orçamento":"Quote","Ver portfólio":"Portfolio","WhatsApp":"Contact"};
+function medir(){
+  const lg=document.querySelector(".logo"), m=document.getElementById("medida-logo");
+  if(lg&&m) m.textContent=`${Math.round(lg.offsetWidth)} × ${Math.round(lg.offsetHeight)}`;
+  document.querySelectorAll("a.bt .wh").forEach(w=>{const a=w.parentNode;w.textContent=`W ${Math.round(a.offsetWidth)} · H ${Math.round(a.offsetHeight)}`});
+}
+addEventListener("resize",medir);
+document.querySelector(".logo").addEventListener("load",medir);
 render(LS.ligarIdioma(document.getElementById("idioma"),render));
 </script>
 <script src="js/volta.js"></script>
+<script src="js/visita.js" defer></script>
 </body>
 </html>

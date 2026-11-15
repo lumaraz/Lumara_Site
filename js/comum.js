@@ -26,7 +26,7 @@
     let l=[];try{l=JSON.parse(localStorage.getItem("lumara_eventos")||"[]")}catch(e){}
     l.push(x);try{localStorage.setItem("lumara_eventos",JSON.stringify(l))}catch(e){}}
   function avisoFalha(){if(document.getElementById("falha-envio"))return;const d=document.createElement("p");d.id="falha-envio";d.setAttribute("role","alert");
-    d.style.cssText="position:fixed;left:50%;bottom:1rem;transform:translateX(-50%);background:#2D2D2D;color:#fff;padding:.7rem 1rem;border-radius:10px;z-index:99;max-width:92vw;font:14px/1.4 Verdana,sans-serif";
+    d.style.cssText="position:fixed;left:50%;bottom:1rem;transform:translateX(-50%);background:#2D2D2D;color:#FAFAFF;padding:.7rem 1rem;border-radius:10px;z-index:99;max-width:92vw;font:14px/1.4 Verdana,sans-serif";
     d.textContent=idioma()==="en"?"We couldn't send this. Please check your connection and try again.":"Não conseguimos enviar. Confira sua conexão e tente de novo.";document.body.appendChild(d);setTimeout(()=>d.remove(),8000)}
   function fila(){if(naNuvem())return window.NUVEM.eventos.concat(locais);try{return JSON.parse(localStorage.getItem("lumara_eventos")||"[]")}catch(x){return []}}
   /* identificador da página: depois do # (ou ?id= na volta do pagamento) */

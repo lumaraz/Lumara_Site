@@ -71,13 +71,22 @@ export async function confirmar({ order_nsu, transaction_nsu, slug, receipt_url 
     if (!o) return { ok: false, motivo: "proposta" };
     const c2 = (await registro("clientes", o.cliente)) || {};
     const forma = FORMAS[+n] || metodo;
-    await novoEvento("pago", { ...base, orc: o.id, forma: (metodo === "Pix") === /Pix/.test(forma) ? forma : metodo, cliente: o.cliente, emailEnviado: true });
+    /* desconto do Pix pago no cartão: a diferença vira uma parcela a pagar */
+    let difDesconto = 0;
+    if (forma === "Pix" && metodo !== "Pix" && String(o.pagamento || "").startsWith("À vista")) {
+      const total = (o.itens || []).reduce((a, i) => a + (+i.v || 0), 0);
+      difDesconto = Math.round((total - base.valor) * 100) / 100;
+      if (difDesconto < 1) difDesconto = 0;
+    }
+    await novoEvento("pago", { difDesconto, ...base, orc: o.id, forma: (metodo === "Pix") === /Pix/.test(forma) ? forma : metodo, cliente: o.cliente, emailEnviado: true });
     const m = await modelo("pago");
     const site = (await lerConfig("site")) || {};
     if (m && c2.email) {
       const v = { nome: primeiroNome(c2.nome), agenda: (site.integracoes && site.integracoes.agenda) || "", portal: `${SITE_URL}/cliente.html#${o.cliente}` };
       await mandar(c2.email, preencher(m.assunto, v), preencher(m.corpo, v));
     }
+    if (difDesconto && c2.email) await mandar(c2.email, "Pagamento recebido: diferença do desconto",
+      `Olá, ${primeiroNome(c2.nome)}!\n\nRecebemos o seu pagamento, obrigada! Como ele foi feito no cartão, o desconto do Pix não se aplica, e ficou uma diferença de ${brl(difDesconto)}.\n\nEla aparece no seu portal para pagar quando for melhor para você (vence em 3 dias):\n${SITE_URL}/cliente.html#${o.cliente}`);
     await avisarEquipe(`Pagamento recebido: ${c2.empresa || c2.nome || "cliente"}`, `Entrou ${brl(base.valor)} por ${metodo}${base.parcelas > 1 ? ` em ${base.parcelas}x` : ""}, referente à proposta ${o.num}.${forma.startsWith("Pix") && metodo !== "Pix" ? "\n\nAtenção: a pessoa escolheu Pix na proposta, mas pagou com cartão." : ""}${base.receipt_url ? `\nComprovante: ${base.receipt_url}` : ""}`);
     return { ok: true };
   }

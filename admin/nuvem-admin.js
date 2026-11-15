@@ -13,6 +13,7 @@
   let base = {}, baseCfg = {};
   let pendEv = [], pendPed = [], marcarEv = false, ultimoEv = 0;
   let pendente = null, salvando = false, timer = null, falhas = 0;
+  let visto = "";
 
   /* ---------- sessão ---------- */
   function lerSessao() { try { return JSON.parse(localStorage.getItem(SK)); } catch (e) { return null; } }
@@ -133,8 +134,8 @@
   }
   async function hidratar() {
     const [regs, cfgs, evs] = await Promise.all([
-      tudo("registros?select=tipo,id,dados"),
-      rest("config?select=chave,dados"),
+      tudo("registros?select=tipo,id,dados,atualizado"),
+      rest("config?select=chave,dados,atualizado"),
       tudo("eventos?processado=is.null&select=id,tipo,dados&order=id"),
     ]);
     const C = {}; cfgs.forEach((c) => (C[c.chave] = c.dados));
@@ -155,14 +156,19 @@
     setOrig.call(localStorage, "lumara_admin", JSON.stringify(S));
     if (C.site) setOrig.call(localStorage, "lumara_site", JSON.stringify(C.site)); else localStorage.removeItem("lumara_site");
     if (C.portfolio) setOrig.call(localStorage, "lumara_portfolio_v4", JSON.stringify(C.portfolio)); else localStorage.removeItem("lumara_portfolio_v4");
-    const ped = evs.filter((e) => e.tipo === "pedido"), outros = evs.filter((e) => e.tipo !== "pedido");
+    const ped = evs.filter((e) => e.tipo === "pedido"), outros = evs.filter((e) => e.tipo !== "pedido" && podeProcessar(e.tipo));
     setOrig.call(localStorage, "lumara_pedidos", JSON.stringify(ped.map((e) => e.dados)));
     setOrig.call(localStorage, "lumara_eventos", JSON.stringify(outros.map((e) => Object.assign({}, e.dados, { tipo: e.tipo }))));
     pendPed = ped.map((e) => ({ ev: e.id, id: e.dados.id }));
     pendEv = outros.map((e) => e.id);
     ultimoEv = evs.reduce((m, e) => Math.max(m, e.id), 0);
     if (!ultimoEv) { const u = await rest("eventos?select=id&order=id.desc&limit=1"); ultimoEv = u[0] ? u[0].id : 0; }
+    visto = [...regs.map((r) => r.atualizado || ""), ...cfgs.map((c) => c.atualizado || "")].reduce((a, b) => (b > a ? b : a), "");
   }
+
+  /* quem é "Equipe" não mexe em dinheiro: aprovação e pagamentos ficam para a administradora */
+  const ehAdmin = () => window.NUVEM_ADMIN && window.NUVEM_ADMIN.papel === "admin";
+  const podeProcessar = (tipo) => ehAdmin() || !["aprovado", "pago", "parcela"].includes(tipo);
 
   /* ---------- salvar no banco ---------- */
   function sinc(txt, erro) { const el = document.getElementById("sinc"); if (el) { el.textContent = txt; el.style.color = erro ? "#9b2c1f" : ""; } }
@@ -174,6 +180,7 @@
     const agora = new Date().toISOString(), up = [], dels = [], novo = {};
     try {
       TIPOS.forEach((t) => {
+        if (t === "caixa" && !ehAdmin()) { novo[t] = base[t] || new Map(); return; }
         const atual = new Map();
         (S[t] || []).forEach((x, i) => {
           if (!x || !x.id) return;
@@ -275,7 +282,7 @@
       const evs = await rest(`eventos?processado=is.null&id=gt.${ultimoEv}&select=id,tipo,dados&order=id`);
       if (!evs.length) return;
       ultimoEv = evs[evs.length - 1].id;
-      const ped = evs.filter((e) => e.tipo === "pedido"), outros = evs.filter((e) => e.tipo !== "pedido");
+      const ped = evs.filter((e) => e.tipo === "pedido"), outros = evs.filter((e) => e.tipo !== "pedido" && podeProcessar(e.tipo));
       ped.forEach((e) => {
         const p = e.dados; pendPed.push({ ev: e.id, id: p.id });
         if (!S.pedidos.find((x) => x.id === p.id)) {
@@ -295,6 +302,33 @@
     } catch (e) { console.error(e); }
   }
 
+  /* ---------- mudanças feitas em outro aparelho ---------- */
+  let avisoOutro = false;
+  async function conferirOutroAparelho() {
+    if (document.hidden || !sessao || !visto || pendente || salvando) return;
+    try {
+      const [rg, cf] = await Promise.all([
+        rest(`registros?atualizado=gt.${encodeURIComponent(visto)}&select=tipo,id,dados,atualizado&limit=200`),
+        rest(`config?atualizado=gt.${encodeURIComponent(visto)}&select=chave,dados,atualizado`),
+      ]);
+      if (!rg.length && !cf.length) return;
+      const novoVisto = [...rg, ...cf].map((x) => x.atualizado).reduce((a, b) => (b > a ? b : a), visto);
+      // o que eu mesma salvei volta igual ao que tenho: não conta
+      const mesmo = (a, b) => JSON.stringify(ordenar(a)) === JSON.stringify(ordenar(b));
+      const deFora = rg.some((r) => !(base[r.tipo] && base[r.tipo].has(r.id) && mesmo(r.dados, JSON.parse(base[r.tipo].get(r.id)))))
+        || cf.some((c) => ["geral", "emails", "catalogo", "site", "portfolio"].includes(c.chave) && !(baseCfg[c.chave] && mesmo(c.dados, JSON.parse(baseCfg[c.chave]))));
+      if (!deFora) { visto = novoVisto; return; }
+      const ocupada = document.getElementById("gaveta")?.classList.contains("on") || /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || "");
+      if (!ocupada) { location.reload(); return; }
+      if (!avisoOutro) { avisoOutro = true; sinc("Há mudanças feitas em outro aparelho. Ao fechar o que está editando, a página se atualiza.", false); }
+    } catch (e) { console.error(e); }
+  }
+  function ordenar(v) {
+    if (Array.isArray(v)) return v.map(ordenar);
+    if (v && typeof v === "object") return Object.keys(v).sort().reduce((o, k) => ((o[k] = ordenar(v[k])), o), {});
+    return v;
+  }
+
   /* ---------- início ---------- */
   async function iniciar() {
     if (!sessao.email) { // volta de convite ou recuperação: descobre o e-mail pelo próprio login
@@ -304,18 +338,19 @@
     }
     const quem = await rest("equipe?select=email,papel,nome");
     if (!quem.some((x) => x.email === String(sessao.email).toLowerCase())) { gravarSessao(null); mostrarLogin("Este e-mail não tem acesso à área da equipe."); return; }
-    sinc("Carregando…");
-    await hidratar();
-    // quem está usando: liga o login à pessoa da lista da equipe
+    // quem está usando: o papel decide o que ela carrega e salva
     const email = String(sessao.email || "").toLowerCase();
     const minha = quem.find((x) => x.email === email);
     window.NUVEM_ADMIN.papel = minha.papel;
+    sinc("Carregando…");
+    await hidratar();
     try {
       const S0 = JSON.parse(localStorage.getItem("lumara_admin"));
       let p = S0.equipe.find((x) => (x.email || "").toLowerCase() === email)
         || (minha.papel === "admin" && S0.equipe.find((x) => x.id === "lumara" && !x.email));
       if (!p) { p = { id: "p" + Math.random().toString(36).slice(2, 9), nome: minha.nome || email, cor: "#86BBD8" }; S0.equipe.push(p); }
       p.email = email;
+      if (p.convite || !p.aceito) { delete p.convite; delete p.removido; p.aceito = p.aceito || new Date().toISOString(); window.NUVEM_ADMIN.salvarAoAbrir = true; }
       if (minha.papel === "admin") { p.papel = "Administradora"; p.acesso = "Tudo, incluindo caixa e valores"; }
       else { p.papel = "Equipe"; p.acesso = "Pedidos, projetos, calendário e clientes, sem valores"; }
       window.NUVEM_ADMIN.eu = p.id;
@@ -352,13 +387,18 @@
   window.NUVEM_ADMIN = {
     vazio, email, api, papel: "admin", eu: "lumara",
     equipeBanco: () => rest("equipe?select=email,nome,papel&order=nome"),
+    visitas: (desde) => tudo(`visitas?dia=gte.${desde}&select=dia,pagina,origem,n`),
+    falhasEmail: (desde) => rest(`envios?status=eq.erro&criado=gte.${desde}&select=id,para,assunto,erro,criado&order=id.desc&limit=50`),
+    reenviar: async () => { const r = await fetch("/api/enviar", { method: "POST", headers: { Authorization: "Bearer " + (await token()) } }); return r.json().catch(() => ({})); },
     antes() {
       const orig = window.reduzir;
       if (typeof orig === "function") window.reduzir = async (...a) => subir(await orig(...a));
     },
     depois() {
-      setInterval(buscarNovos, 45000);
-      document.addEventListener("visibilitychange", () => { if (!document.hidden) buscarNovos(); });
+      if (window.NUVEM_ADMIN.salvarAoAbrir) { window.NUVEM_ADMIN.salvarAoAbrir = false; try { salvar(); } catch (e) {} }
+      setInterval(() => { buscarNovos(); conferirOutroAparelho(); }, 45000);
+      document.addEventListener("visibilitychange", () => { if (!document.hidden) { buscarNovos(); conferirOutroAparelho(); } });
+      document.addEventListener("click", () => { if (avisoOutro) setTimeout(conferirOutroAparelho, 400); });
       sinc("Tudo salvo");
     },
     async sair() {

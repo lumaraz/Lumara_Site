@@ -11,18 +11,18 @@
 <link rel="stylesheet" href="css/fontes.css">
 <style>
   .btn-link{display:inline-flex;align-items:center;text-decoration:none;font-weight:600;font-size:.95rem;color:var(--texto,#2D2D2D);border:1px solid currentColor;border-radius:99px;padding:.5rem 1.1rem;white-space:nowrap}
-  .btn-link:hover{background:#2D2D2D;color:#F2EFE9;border-color:#2D2D2D}
+  .btn-link:hover{background:#2D2D2D;color:#FAFAFF;border-color:#2D2D2D}
 
-  :root{--bege:#F2EFE9;--claro:#FBFAF7;--azul:#86BBD8;--azul-esc:#3A6EA5;--texto:#2D2D2D;--marrom:#462D26;--linha:#DAD4CA;--suave:#6B6560;--verde:#2F6B4F;--alerta:#A3283A}
+  :root{--bege:#F2EFE9;--claro:#FAFAFF;--azul:#86BBD8;--azul-esc:#3A6EA5;--texto:#2D2D2D;--marrom:#462D26;--linha:#CCCCCC;--suave:#2D2D2D;--verde:#3A6EA5;--alerta:#462D26}
   *{box-sizing:border-box;margin:0;padding:0}
   body{background:var(--bege);color:var(--texto);font-family:"Inter Tight",system-ui,sans-serif;font-size:1.02rem;line-height:1.55;-webkit-font-smoothing:antialiased}
   a{color:var(--azul-esc)}
   :focus-visible{outline:3px solid var(--azul-esc);outline-offset:3px;border-radius:4px}
-  .demo{background:#DCEAF2;color:#24476B;text-align:center;font-size:.85rem;padding:.45rem 1rem}
+  .demo{background:#86BBD8;color:#2D2D2D;text-align:center;font-size:.85rem;padding:.45rem 1rem}
   header{width:min(1040px,100% - 2.5rem);margin:0 auto;height:68px;display:flex;align-items:center;justify-content:space-between}
   header img{height:30px;width:auto;display:block}
   main{width:min(1040px,100% - 2.5rem);margin:1rem auto 4rem;display:grid;grid-template-columns:1.4fr 1fr;gap:1.5rem;align-items:start}
-  .folha{background:#fff;border-radius:14px;padding:clamp(1.5rem,4vw,2.75rem);box-shadow:0 14px 34px -22px rgba(45,45,45,.45)}
+  .folha{background:#FAFAFF;border-radius:14px;padding:clamp(1.5rem,4vw,2.75rem);box-shadow:0 14px 34px -22px rgba(45,45,45,.45)}
   .f-topo{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;border-bottom:2px solid var(--texto);padding-bottom:1rem}
   .f-topo img{height:34px;width:auto}
   .f-num{text-align:right;color:var(--suave);font-size:.92rem}
@@ -32,40 +32,40 @@
   .para{color:var(--suave);margin:.3rem 0 1.5rem}
   table{width:100%;border-collapse:collapse}
   th{text-align:left;font-weight:500;font-size:.85rem;color:var(--suave);border-bottom:1px solid var(--linha);padding:.5rem 0}
-  td{padding:.8rem 0;border-bottom:1px solid #ECE7DF;vertical-align:top}
+  td{padding:.8rem 0;border-bottom:1px solid #F2EFE9;vertical-align:top}
   td small{display:block;color:var(--suave);font-size:.9rem;white-space:pre-wrap}
   .v{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
   .total{display:flex;justify-content:space-between;font-weight:800;font-size:1.35rem;margin:1rem 0 1.25rem;letter-spacing:-.02em}
   dl.cond{display:grid;grid-template-columns:1fr 1fr;gap:.9rem 1.5rem}
   dl.cond dt{font-size:.85rem;color:var(--suave)}
-  .obs{margin-top:1.25rem;white-space:pre-wrap;color:#45403B}
+  .obs{margin-top:1.25rem;white-space:pre-wrap;color:#2D2D2D}
   aside{position:sticky;top:1rem}
   .painel{background:var(--claro);border:1px solid var(--linha);border-radius:14px;padding:1.4rem}
   .painel h2{font-size:1.35rem;font-weight:800;letter-spacing:-.03em;margin-bottom:.4rem}
-  .painel p{color:#45403B}
+  .painel p{color:#2D2D2D}
   .opcoes{display:grid;gap:.6rem;margin:1.1rem 0}
-  .op{display:grid;grid-template-columns:auto 1fr;gap:.2rem .7rem;align-items:start;padding:.9rem 1rem;border:1px solid #B9B1A6;border-radius:10px;cursor:pointer}
+  .op{display:grid;grid-template-columns:auto 1fr;gap:.2rem .7rem;align-items:start;padding:.9rem 1rem;border:1px solid #CCCCCC;border-radius:10px;cursor:pointer}
   .op input{accent-color:var(--azul-esc);width:1.1rem;height:1.1rem;margin-top:.2rem;grid-row:span 2}
   .op strong{font-weight:700}
   .op span{color:var(--suave);font-size:.9rem;grid-column:2}
   .op:has(input:checked){border-color:var(--azul-esc);box-shadow:inset 0 0 0 1px var(--azul-esc)}
   .aceite{display:flex;gap:.6rem;align-items:flex-start;font-size:.92rem;margin:.5rem 0 1.1rem}
   .aceite input{accent-color:var(--azul-esc);width:1.1rem;height:1.1rem;margin-top:.15rem;flex:none}
-  .botao{display:block;width:100%;text-align:center;background:var(--azul-esc);color:#fff;border:0;border-radius:99px;padding:1rem 1.4rem;font:inherit;font-weight:700;font-size:1.05rem;cursor:pointer;text-decoration:none}
-  .botao:hover{background:#2C5682}
+  .botao{display:block;width:100%;text-align:center;background:var(--azul-esc);color:#FAFAFF;border:0;border-radius:99px;padding:1rem 1.4rem;font:inherit;font-weight:700;font-size:1.05rem;cursor:pointer;text-decoration:none}
+  .botao:hover{background:#2D2D2D}
   .botao.sec{background:transparent;color:var(--texto);border:1px solid var(--texto);margin-top:.6rem}
   .erro{color:var(--alerta);font-size:.9rem;margin-top:.5rem}
   .pix{display:grid;justify-items:center;gap:.8rem;margin:1rem 0;text-align:center}
-  .pix svg{width:190px;height:190px;background:#fff;padding:10px;border-radius:10px;border:1px solid var(--linha)}
-  .codigo{width:100%;font-family:ui-monospace,monospace;font-size:.75rem;padding:.6rem;border:1px solid var(--linha);border-radius:8px;background:#fff;word-break:break-all}
+  .pix svg{width:190px;height:190px;background:#FAFAFF;padding:10px;border-radius:10px;border:1px solid var(--linha)}
+  .codigo{width:100%;font-family:ui-monospace,monospace;font-size:.75rem;padding:.6rem;border:1px solid var(--linha);border-radius:8px;background:#FAFAFF;word-break:break-all}
   .ok{display:grid;gap:.6rem}
-  .ok .selo{width:56px;height:56px;border-radius:50%;background:var(--verde);display:grid;place-items:center;color:#fff;font-size:1.6rem}
+  .ok .selo{width:56px;height:56px;border-radius:50%;background:var(--verde);display:grid;place-items:center;color:#FAFAFF;font-size:1.6rem}
   .mut{color:var(--suave);font-size:.9rem}
-  .estado{display:inline-block;font-size:.8rem;font-weight:700;padding:.15rem .6rem;border-radius:99px;background:#DCEAF2;color:#1F4A62;margin-bottom:.6rem}
+  .estado{display:inline-block;font-size:.8rem;font-weight:700;padding:.15rem .6rem;border-radius:99px;background:#86BBD8;color:#2D2D2D;margin-bottom:.6rem}
 .topo-acoes{display:flex;gap:.6rem;align-items:center}
   .lang{display:inline-flex;padding:2px;border:1px solid var(--linha);border-radius:99px;background:var(--claro);cursor:pointer;font:inherit;font-size:.78rem;font-weight:600;color:var(--suave)}
   .lang span{padding:.22rem .55rem;border-radius:99px}
-  .lang span.ativo{background:var(--texto);color:var(--bege)}
+  .lang span.ativo{background:var(--texto);color:#FAFAFF}
   .passos{list-style:none;display:grid;gap:.5rem;margin:1rem 0}
   .passos li{display:flex;gap:.6rem;align-items:center;font-size:.95rem}
   .passos li::before{content:"";width:1.1rem;height:1.1rem;border-radius:50%;border:2px solid var(--linha);flex:none}
@@ -101,7 +101,7 @@ const T={
       aprovada:"Proposta aprovada",pixT:"Pague com Pix",cartaoT:"Pague com cartão",agora:"Valor agora",mensal:", e depois todo mês no mesmo dia",
       lerQR:"Abra o app do banco, escolha Pix e leia o código",autoriza:". No mesmo passo você autoriza as cobranças mensais",copiaCola:"Pix copia e cola",copiar:"Copiar código Pix",copiado:"Código copiado",
       cartaoTxt:(g,x)=>`No site publicado, este botão abre o pagamento seguro ${fem(g)?"da":"do"} ${g} para você informar o cartão${x?" e escolher as 3 parcelas":""}.`,
-      irTxt:(g,pix,x)=>pix?`Você vai para a página segura ${fem(g)?"da":"do"} ${g}, com o QR Code e o código Pix copia e cola. A confirmação chega aqui sozinha.`:`Você vai para a página segura ${fem(g)?"da":"do"} ${g} para informar o cartão${x?" e escolher as 3 parcelas":""}.`,
+      irTxt:(g,pix,x)=>pix?`Você vai para a página segura ${fem(g)?"da":"do"} ${g}, com o QR Code e o código Pix copia e cola. A confirmação chega aqui sozinha. O desconto vale só no Pix: se pagar com cartão, a diferença fica como uma parcela no seu portal.`:`Você vai para a página segura ${fem(g)?"da":"do"} ${g} para informar o cartão${x?" e escolher as 3 parcelas":""}.`,
       irBtn:"Ir para o pagamento",abrindo:"Abrindo o pagamento…",irErro:"Não foi possível abrir o pagamento agora. Tente de novo em instantes ou me chame no WhatsApp.",
       pago:"Pagamento confirmado",pagoP:"Obrigada! O projeto já entrou na minha agenda. Faltam só estes passos:",pPag:"Pagamento",pCont:"Assinar o contrato",pReun:"Agendar a reunião de briefing",
       assinar:"Assinar o contrato",verCont:"Ver o contrato assinado",agendar:"Agendar a reunião de briefing",semAgenda:"Em breve envio as opções de horário para a reunião de briefing.",acompanhar:"Acompanhar o projeto",novaAba:" (abre em nova aba)",
@@ -122,7 +122,7 @@ const T={
       aprovada:"Proposal approved",pixT:"Pay with Pix",cartaoT:"Pay by card",agora:"Amount now",mensal:", then every month on the same day",
       lerQR:"Open your bank app, choose Pix and scan the code",autoriza:". In the same step you authorize the monthly charges",copiaCola:"Pix copy and paste code",copiar:"Copy Pix code",copiado:"Code copied",
       cartaoTxt:(g,x)=>`On the live site, this button opens ${g}'s secure checkout for you to enter your card${x?" and choose 3 installments":""}.`,
-      irTxt:(g,pix,x)=>pix?`You'll go to ${g}'s secure page, with the Pix QR code and copy-and-paste code. Confirmation comes back here automatically.`:`You'll go to ${g}'s secure page to enter your card${x?" and choose 3 installments":""}.`,
+      irTxt:(g,pix,x)=>pix?`You'll go to ${g}'s secure page, with the Pix QR code and copy-and-paste code. Confirmation comes back here automatically. The discount applies to Pix only: if you pay by card, the difference becomes an installment in your portal.`:`You'll go to ${g}'s secure page to enter your card${x?" and choose 3 installments":""}.`,
       irBtn:"Go to payment",abrindo:"Opening payment…",irErro:"We couldn't open the payment right now. Please try again in a moment or message me on WhatsApp.",
       pago:"Payment confirmed",pagoP:"Thank you! The project is now on my schedule. Just these steps left:",pPag:"Payment",pCont:"Sign the agreement",pReun:"Book the briefing meeting",
       assinar:"Sign the agreement",verCont:"See the signed agreement",agendar:"Book the briefing meeting",semAgenda:"I'll send you time options for the briefing meeting soon.",acompanhar:"Follow the project",novaAba:" (opens in a new tab)",
@@ -227,7 +227,7 @@ if(o) document.addEventListener("click",ev=>{
     fetch("/api/pagar",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({orc:o.id,forma:o.forma||opcoes()[0][0]})})
       .then(r=>r.json()).then(j=>{if(j.url)location.href=j.url;else if(j.erro==="pago")location.reload();else throw j})
       .catch(j=>{b.disabled=false;b.textContent=L.irBtn;const er=document.getElementById("pagar-erro");er.hidden=false;
-        if(j&&j.codigo)er.innerHTML=LS.esc(L.irErro)+`<br><small style="opacity:.7">Código: ${LS.esc(j.codigo)}</small>`})}
+        if(j&&j.codigo)er.innerHTML=LS.esc(L.irErro)+`<br><small>Código: ${LS.esc(j.codigo)}</small>`})}
 });
 addEventListener("hashchange",()=>location.reload());
 </script>
