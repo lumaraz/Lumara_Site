@@ -20,6 +20,8 @@ function pagina(p) {
   const u = String(p || "/").slice(0, 200);
   const [caminho, hash = ""] = u.split("#");
   const c = caminho.replace(/\/index\.html$/, "/").replace(/\.html$/, "") || "/";
+  const pj = /^\/projetos\/([^/]+)/.exec(c);
+  if (pj) return "projeto:" + decodeURIComponent(pj[1]).replace(/[^a-z0-9-]/gi, "").slice(0, 60);
   if (c === "/projeto") return "projeto:" + hash.replace(/[^a-z0-9-]/gi, "").slice(0, 60);
   if (c === "/") return "início";
   return c.replace(/^\//, "");

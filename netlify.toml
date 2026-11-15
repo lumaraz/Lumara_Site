@@ -4,7 +4,7 @@
 
 [functions]
   node_bundler = "esbuild"
-  included_files = ["js/exemplo.js"]
+  included_files = ["js/exemplo.js", "js/portfolio.js", "projeto.html"]
 
 [[headers]]
   for = "/*"

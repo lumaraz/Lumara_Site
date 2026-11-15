@@ -647,7 +647,7 @@ function editarPF(id){
    <label class="chave"><input type="checkbox" id="pf-pub" ${p.publicado?"checked":""}> Publicado no site</label>`;
   abrir(novo?"Novo projeto":p.nome,novo?"Aparece no site quando estiver publicado":esc(PORTFOLIO.AREAS[p.area]?.pt||""),corpo,
     `${novo?"":`<button class="btn perigo" id="pf-del">Excluir</button>`}<button class="btn" id="pf-ok">Salvar</button>`,
-    novo?"":`<button class="btn peq sec" onclick="copiarTexto(new URL('../projeto.html#${p.slug}',location.href).href,'Link do projeto copiado.')">Copiar link</button><a class="btn peq sec" href="../projeto.html#${p.slug}">Abrir página</a>`);
+    novo?"":`<button class="btn peq sec" onclick="copiarTexto(new URL('../projetos/${p.slug}',location.href).href,'Link do projeto copiado.')">Copiar link</button><a class="btn peq sec" href="../projeto.html#${p.slug}">Abrir página</a>`);
   p.largas=p.largas||[]; p.ocultas=p.ocultas||[];
   const gal=()=>{
     p.grade=+$("#pf-g").value; p.proporcao=$("#pf-pr").value;

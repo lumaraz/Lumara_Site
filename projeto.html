@@ -2,8 +2,18 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
+<base href="/">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Projeto — Lumara Silva</title>
+<meta name="description" content="Projeto de Lumara Silva, designer de marca e visual no Rio de Janeiro.">
+<link rel="canonical" href="https://lumarasilva.com.br/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Lumara Silva">
+<meta property="og:title" content="Projeto — Lumara Silva">
+<meta property="og:description" content="Projeto de Lumara Silva, designer de marca e visual no Rio de Janeiro.">
+<meta property="og:url" content="https://lumarasilva.com.br/">
+<meta property="og:image" content="https://lumarasilva.com.br/img/compartilhar.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
 <link rel="apple-touch-icon" href="img/favicon-180.png">
@@ -82,7 +92,8 @@ function mostrar(rolar){
   document.documentElement.lang=en?"en":"pt-BR";
   const b=document.getElementById("idioma"); b.children[0].classList.toggle("ativo",!en); b.children[1].classList.toggle("ativo",en);
   b.setAttribute("aria-label",en?"Mudar para português":"Switch to English"); b.setAttribute("lang",en?"pt-BR":"en");
-  const lista=PORTFOLIO.carregar().filter(p=>p.publicado), slug=location.hash.slice(1);
+  const lista=PORTFOLIO.carregar().filter(p=>p.publicado), slug=(()=>{const m=location.pathname.match(/\/projetos\/([^/?#]+)/);return m?decodeURIComponent(m[1]):location.hash.slice(1)})();
+  if(!/\/projetos\//.test(location.pathname)&&slug) history.replaceState(null,"","/projetos/"+encodeURIComponent(slug));
   const i=lista.findIndex(p=>p.slug===slug), p=lista[i], m=document.getElementById("conteudo");
   if(!p){m.innerHTML=`<div class="vazio"><h1>${T.nf}</h1><p class="desc">${T.nfp} <a href="index.html#trabalhos">${T.nfl}</a>.</p></div>`;document.title=T.nf+" — Lumara Silva";return}
   const prox=lista[(i+1)%lista.length], area=PORTFOLIO.AREAS[p.area]?.[lang]||"", desc=(en&&p.descricaoEn)||p.descricao;
@@ -104,7 +115,7 @@ function mostrar(rolar){
   ${p.galeria&&p.galeria.length?PORTFOLIO.galeriaHTML(p,esc,(k,n)=>`${esc(p.nome)}, ${T.img} ${k+1} ${T.de} ${n}`):""}
   <div class="acoes">
     <div><a class="botao" href="orcamento.html">${T.orc}</a></div>
-    ${lista.length>1?`<a class="prox" href="#${prox.slug}"><small>${T.prox}</small><strong>${esc(prox.nome)}</strong></a>`:""}
+    ${lista.length>1?`<a class="prox" href="/projetos/${prox.slug}"><small>${T.prox}</small><strong>${esc(prox.nome)}</strong></a>`:""}
   </div>`;
   if(rolar!==false) scrollTo(0,0);
 }

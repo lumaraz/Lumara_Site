@@ -422,7 +422,7 @@ function render(){
 /* trabalhos em grade, com o mesmo filtro de área */
 function renderGrade(){
   const g=document.getElementById("grade-trab"); if(!g) return;
-  g.innerHTML=projetos.map(p=>`<li ${filtro!=="todos"&&p.area!==filtro?"hidden":""}><a href="projeto.html#${p.slug}">
+  g.innerHTML=projetos.map(p=>`<li ${filtro!=="todos"&&p.area!==filtro?"hidden":""}><a href="projetos/${p.slug}">
     <span class="gt-img" style="--c:${p.cor};${p.cor==="#86BBD8"?"color:#2D2D2D":""}">${p.capa?`<img src="${p.capa}" alt="" loading="lazy">`:sigla(p.nome)}
       <span class="tag" style="${corArea(p.area)}">${areas[p.area][lang]}</span>
       <span class="gt-ver" aria-hidden="true">${lang==="en"?"See project":"Ver projeto"}</span></span>
