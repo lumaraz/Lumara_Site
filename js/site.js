@@ -5,7 +5,7 @@
   const CHAVE="lumara_site";
   const padrao={
     textos:{
-      heroTxt:"",heroTitB:"Crio visuais que dão forma à *história* da sua marca",
+      heroTxt:"",heroTitB:"Crio visuais que dão forma à *história* da *sua marca*",
       sobre1:"",sobre2:"",s1p:"",s1i:"",s2p:"",s2i:"",s3p:"",s3i:""
     },
     /* versões em inglês dos textos acima; vazio usa a tradução padrão do site */
@@ -57,6 +57,7 @@
     try{const s=(window.NUVEM&&window.NUVEM.site)?JSON.parse(JSON.stringify(window.NUVEM.site)):JSON.parse(localStorage.getItem(CHAVE)); if(s&&typeof s==="object"){const r=mesclar(s,padrao);
       if((r.links||[]).map(l=>l.titulo).join("|")==="Solicitar orçamento|Ver portfólio|Behance|LinkedIn|WhatsApp") r.links=clone(padrao.links); /* ordem antiga de exemplo */
       if((r.processo||[]).map(p=>p.t).join("|")==="Briefing|Criação|Apresentação e ajustes|Entrega") r.processo=clone(padrao.processo); /* texto antigo de exemplo */
+      if(r.textos&&r.textos.heroTitB==="Crio visuais que dão forma à *história* da sua marca") r.textos.heroTitB=padrao.textos.heroTitB; /* destaque novo em "sua marca" */
       (r.processo||[]).forEach(p=>{const d=padrao.processo.find(x=>x.t===p.t);if(d&&p.tEn===undefined){p.tEn=d.tEn;p.dEn=p.d===d.d?d.dEn:""}});return r}}catch(e){}
     return clone(padrao);
   }

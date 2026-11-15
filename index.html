@@ -15,6 +15,7 @@
 <meta property="og:locale" content="pt_BR">
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"Lumara Silva","description":"Designer de marca e visual: identidade visual, design para social media e alinhamento visual.","url":"https://lumarasilva.com.br/","image":"https://lumarasilva.com.br/img/compartilhar.jpg","email":"contato@lumarasilva.com.br","areaServed":"BR","address":{"@type":"PostalAddress","addressLocality":"Rio de Janeiro","addressRegion":"RJ","addressCountry":"BR"},"founder":{"@type":"Person","name":"Lumara Silva","jobTitle":"Designer"},"sameAs":["https://www.behance.net/lumarasilva","https://www.instagram.com/lumaraslva","https://www.linkedin.com/in/lumarasilva","https://br.pinterest.com/lumaraslva"]}</script>
+<link rel="icon" type="image/svg+xml" href="img/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
 <link rel="apple-touch-icon" href="img/favicon-180.png">
 <link rel="preload" href="fonts/inter-tight-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -259,7 +260,7 @@
 <main id="topo">
   <div class="hero-b">
     <p class="ola"><span data-t="ola1">Olá</span> <img src="img/avatar.webp" alt="" width="240" height="240"> <span data-t="ola2">Eu sou a Lumara</span></p>
-    <h1 data-t="heroTit">Crio visuais que dão forma à <strong class="destaque">história</strong> da sua&nbsp;marca</h1>
+    <h1 data-t="heroTit">Crio visuais que dão forma à <strong class="destaque">história</strong> da <strong class="destaque">sua&nbsp;marca</strong></h1>
     <p class="sub" data-html="heroSub">Designer com cinco anos de experiência<br>em <strong>identidade visual</strong> e <strong>design gráfico</strong>.</p>
     <div class="pilha" id="pilha" aria-hidden="true"></div>
   </div>
@@ -367,10 +368,10 @@ const textos = {
 };
 
 Object.entries(CFG.textosEn||{}).forEach(([k,v])=>{if(v&&k!=="heroTitB")textos.en[k]=v});
-const htmlEN={heroTit:'I create visuals that give shape to your&nbsp;brand\'s <strong class="destaque">story</strong>',heroSub:'Designer with five years of experience<br>in <strong>visual identity</strong> and <strong>graphic design</strong>.'};
-const titB=(CFG.textos.heroTitB||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])).replace(/\*(.+?)\*/,'<strong class="destaque">$1</strong>').replace(/sua marca/gi,m=>m.replace(" ","&nbsp;"));
+const htmlEN={heroTit:'I create visuals that give shape to <strong class="destaque">your&nbsp;brand\'s</strong> <strong class="destaque">story</strong>',heroSub:'Designer with five years of experience<br>in <strong>visual identity</strong> and <strong>graphic design</strong>.'};
+const titB=(CFG.textos.heroTitB||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])).replace(/\*(.+?)\*/g,'<strong class="destaque">$1</strong>').replace(/sua marca/gi,m=>m.replace(" ","&nbsp;"));
 if(titB) document.querySelector('[data-t="heroTit"]').innerHTML=titB;
-const titBEn=(CFG.textosEn&&CFG.textosEn.heroTitB||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])).replace(/\*(.+?)\*/,'<strong class="destaque">$1</strong>');
+const titBEn=(CFG.textosEn&&CFG.textosEn.heroTitB||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])).replace(/\*(.+?)\*/g,'<strong class="destaque">$1</strong>');
 if(titBEn) htmlEN.heroTit=titBEn;
 /* separa o título em palavras para a queda; "sua marca" (com espaço fixo) e a palavra em destaque caem juntas */
 let textoCaiu=false;
