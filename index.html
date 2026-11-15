@@ -144,15 +144,17 @@
 
 
   /* sobre */
-  .sobre{background:var(--azul);color:var(--texto)}
+  /* fundo de prancheta (blueprint), igual à página de links */
+  .sobre{background-color:var(--azul-esc);background-image:linear-gradient(rgba(242,239,233,.13) 1px,transparent 1px),linear-gradient(90deg,rgba(242,239,233,.13) 1px,transparent 1px);background-size:28px 28px;background-position:center top;color:#F2EFE9}
+  .sobre .foto{outline:1.5px solid rgba(242,239,233,.75);outline-offset:10px}
   .sobre .grid{display:grid;grid-template-columns:minmax(220px,4fr) 7fr;gap:clamp(2rem,6vw,5rem);align-items:start}
   .foto{aspect-ratio:4/5;border-radius:16px;overflow:hidden;background:#111}
   .foto img{width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block}
   .sobre h2{margin-bottom:1.5rem}
   .sobre p{font-size:clamp(1.1rem,1.6vw,1.3rem);line-height:1.5;max-width:46ch}
   .sobre p+p{margin-top:1rem}
-  .fatos{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid rgba(45,45,45,.25)}
-  .fatos dt{font-size:.9rem;font-weight:500;color:#1F2A33}
+  .fatos{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid rgba(242,239,233,.4)}
+  .fatos dt{font-size:.9rem;font-weight:500;color:#E3EBF3}
   .fatos dd{font-size:1rem;margin-top:.2rem;font-weight:500}
 
   /* serviços em caixas que abrem */
