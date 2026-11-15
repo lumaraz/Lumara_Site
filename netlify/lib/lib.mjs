@@ -157,13 +157,15 @@ function corpoHTML(texto, assunto = "") {
   </table>
 </td></tr></table></body></html>`;
 }
-export async function enviarEmail(para, assunto, corpo) {
+export async function enviarEmail(para, assunto, corpo, anexos) {
   const c = correio();
   if (!c) throw new Error("E-mail não configurado (GMAIL_USER e GMAIL_APP_PASSWORD)");
   await c.sendMail({
     from: `"Lumara Silva" <${process.env.GMAIL_USER || "teste@exemplo.com"}>`,
     to: para, subject: assunto, text: corpo, html: corpoHTML(corpo, assunto),
+    ...(anexos ? { attachments: anexos } : {}),
   });
+  if (process.env.EMAIL_TESTE) console.log("EMAIL", para, "|", assunto, "|", (anexos || []).map((x) => `${x.filename}:${String(x.content).length}`).join(","));
 }
 /* Coloca na fila e tenta enviar na hora; se falhar, o lembrete diário tenta de novo */
 export async function mandar(para, assunto, corpo) {

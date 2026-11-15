@@ -51,6 +51,10 @@ function processarEventos(){
         const pj=S.projetos.find(y=>y.orc===o.id); if(pj){const ck=pj.check.find(k=>/pagamento/i.test(k[0]));if(ck)ck[1]=1}
         window.SEM_ENVIO=!!x.emailEnviado; registrarEmail("pago",c.email,{nome:c.nome.split(" ")[0],agenda:SITE.carregar().integracoes.agenda||"(link de agendamento)",portal:linkPortal(c)}); window.SEM_ENVIO=false;
         if(x.receipt_url&&l) l.comprovante=x.receipt_url;
+        if(x.difDesconto>0&&!S.caixa.some(y=>y.difDe===x.transaction_nsu)){
+          S.caixa.push({id:uid("L"),orc:o.id,projeto:pj?pj.id:undefined,desc:`${c.empresa}, diferença do desconto Pix (pago no cartão)`,tipo:"entrada",cat:"Projeto",valor:x.difDesconto,data:dia(3),pago:false,cliente:c.id,difDe:x.transaction_nsu});
+          notas.push(`${c.empresa} pagou no cartão o valor com desconto do Pix: a diferença de ${brl(x.difDesconto)} foi lançada como parcela.`);
+        }
         notas.push(`${c.empresa} pagou a entrada por ${x.forma}.`);
       }
       if(x.tipo==="contrato"){
@@ -150,7 +154,7 @@ function render(){
   m.innerHTML=({inicio,pedidos,orcamentos,contratos,projetos,calendario,portfolio,clientes,caixa,conteudo,emails,equipe})[view]();
   m.querySelectorAll(".tabela").forEach(t=>{const h=[...t.querySelectorAll("thead th")].map(x=>x.textContent);t.querySelectorAll("tbody tr").forEach(r=>[...r.children].forEach((td,i)=>td.setAttribute("data-label",h[i]||"")))});
   if(view==="projetos") ligarKanban();
-  if(view==="inicio") carregarVisitas();
+  if(view==="inicio"){ carregarVisitas(); carregarFalhas(); }
   if(view==="orcamentos"&&orcAberto) ligarEditor();
   fecharMenu();
 }
@@ -194,6 +198,7 @@ function inicio(){
         <div style="text-align:right"><span class="tag ${d<=0?"st-atrasado":"st-pendente"}">${d<0?"Atrasado":d===0?"Responder hoje":"Responder até "+fmtLongo(lim)}</span><div><button class="btn peq sec" style="margin-top:.35rem" onclick="verPedido('${p.id}')">Abrir</button></div></div></div>`}).join(""):`<p class="vazio">Nenhum pedido esperando. Tudo respondido.</p>`}
     </section>
     ${admin()?(()=>{const nf=notasPendentes();return nf.length?`<section class="painel"><h2>Notas fiscais para emitir</h2>${nf.map(l=>{const t=nfTomador(l);return `<div class="item-lista"><div><strong>${esc(cli(l.cliente).empresa)}</strong><div class="sub">${brl(l.valor)} · pago em ${fmt(l.pagoEm||l.data)} · ${t.exigida==="sim"?"obrigatória (CNPJ)":t.exigida==="opcional"?"pessoa física: opcional":"confirme se é CNPJ"}</div></div><button class="btn peq" onclick="emitirNota('${l.id}')">Emitir nota</button></div>`}).join("")}</section>`:""})():""}
+    ${window.NUVEM_ADMIN&&admin()?`<section class="painel" id="pn-falhas" hidden style="grid-column:1/-1"></section>`:""}
     ${window.NUVEM_ADMIN?`<section class="painel" id="pn-visitas" style="grid-column:1/-1"><h2>Visitas do site</h2><p class="vazio">Carregando…</p></section>`:""}
     <section class="painel"><h2>Prazos dos próximos 7 dias</h2>
       ${semana.length?semana.map(p=>{const d=diasAte(p.prazo);return `<div class="item-lista"><div><strong>${esc(p.titulo)}</strong><div class="sub">${esc(cli(p.cliente).empresa)} · ${p.etapa}</div></div>
@@ -995,6 +1000,24 @@ function editarEmail(k){const m=S.emails.modelos[k];
    `<button class="btn" id="em-ok">Salvar mensagem</button>`);
   $("#em-ok").onclick=()=>{m.assunto=$("#em-a").value;m.corpo=$("#em-c").value;salvar();fechar();render();toast("Mensagem salva.")}}
 function verEmail(id){const h=S.emails.historico.find(x=>x.id===id);abrir(h.assunto,"Para "+esc(h.para),`<div class="email-prev">${esc(h.corpo)}</div>`)}
+
+/* ============ E-MAILS QUE NÃO SAÍRAM (início) ============ */
+async function carregarFalhas(){
+  const el=$("#pn-falhas"); if(!el||!window.NUVEM_ADMIN) return;
+  let l=[]; try{ l=await NUVEM_ADMIN.falhasEmail(dia(-14)) }catch(e){ return }
+  if(!document.body.contains(el)) return;
+  if(!l.length){ el.hidden=true; return }
+  const motivo=e=>/535|Invalid login|Username and Password|BadCredentials/i.test(e||"")?"A senha de app do Gmail parou de funcionar. Crie uma nova no Google e troque no Netlify (GMAIL_APP_PASSWORD).":
+    /não configurado/i.test(e||"")?"O e-mail do site não está configurado no Netlify.":/550|5\.1\.1|No such user|does not exist/i.test(e||"")?"O endereço do destinatário parece não existir. Confira o e-mail do cliente.":"O Gmail recusou o envio. Tente de novo; se continuar, avise quem cuida do site.";
+  el.hidden=false;
+  el.innerHTML=`<h2>E-mails que não saíram</h2>
+    <p style="margin:.25rem 0 1rem">${l.length===1?"1 e-mail":`${l.length} e-mails`} dos últimos 14 dias não ${l.length===1?"foi enviado":"foram enviados"}. ${esc(motivo(l[0].erro))}</p>
+    ${l.slice(0,5).map(m=>`<div class="item-lista"><div><strong>${esc(m.assunto||"(sem assunto)")}</strong><div class="sub">${esc(m.para)} · ${fmt(String(m.criado).slice(0,10))}</div></div></div>`).join("")}
+    <div style="margin-top:1rem"><button class="btn" id="falhas-reenviar">Tentar enviar de novo</button></div>`;
+  $("#falhas-reenviar").onclick=async e=>{const b=e.currentTarget;b.disabled=true;b.textContent="Enviando…";
+    const r=await NUVEM_ADMIN.reenviar().catch(()=>({}));
+    toast(r&&r.enviados?`${r.enviados} e-mail(s) enviados.`:"Ainda não foi possível enviar. Confira o motivo acima.");carregarFalhas()};
+}
 
 /* ============ VISITAS (início) ============ */
 async function carregarVisitas(){

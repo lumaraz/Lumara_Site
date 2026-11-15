@@ -13,6 +13,7 @@
   let base = {}, baseCfg = {};
   let pendEv = [], pendPed = [], marcarEv = false, ultimoEv = 0;
   let pendente = null, salvando = false, timer = null, falhas = 0;
+  let visto = "";
 
   /* ---------- sessão ---------- */
   function lerSessao() { try { return JSON.parse(localStorage.getItem(SK)); } catch (e) { return null; } }
@@ -133,8 +134,8 @@
   }
   async function hidratar() {
     const [regs, cfgs, evs] = await Promise.all([
-      tudo("registros?select=tipo,id,dados"),
-      rest("config?select=chave,dados"),
+      tudo("registros?select=tipo,id,dados,atualizado"),
+      rest("config?select=chave,dados,atualizado"),
       tudo("eventos?processado=is.null&select=id,tipo,dados&order=id"),
     ]);
     const C = {}; cfgs.forEach((c) => (C[c.chave] = c.dados));
@@ -162,6 +163,7 @@
     pendEv = outros.map((e) => e.id);
     ultimoEv = evs.reduce((m, e) => Math.max(m, e.id), 0);
     if (!ultimoEv) { const u = await rest("eventos?select=id&order=id.desc&limit=1"); ultimoEv = u[0] ? u[0].id : 0; }
+    visto = [...regs.map((r) => r.atualizado || ""), ...cfgs.map((c) => c.atualizado || "")].reduce((a, b) => (b > a ? b : a), "");
   }
 
   /* ---------- salvar no banco ---------- */
@@ -295,6 +297,33 @@
     } catch (e) { console.error(e); }
   }
 
+  /* ---------- mudanças feitas em outro aparelho ---------- */
+  let avisoOutro = false;
+  async function conferirOutroAparelho() {
+    if (document.hidden || !sessao || !visto || pendente || salvando) return;
+    try {
+      const [rg, cf] = await Promise.all([
+        rest(`registros?atualizado=gt.${encodeURIComponent(visto)}&select=tipo,id,dados,atualizado&limit=200`),
+        rest(`config?atualizado=gt.${encodeURIComponent(visto)}&select=chave,dados,atualizado`),
+      ]);
+      if (!rg.length && !cf.length) return;
+      const novoVisto = [...rg, ...cf].map((x) => x.atualizado).reduce((a, b) => (b > a ? b : a), visto);
+      // o que eu mesma salvei volta igual ao que tenho: não conta
+      const mesmo = (a, b) => JSON.stringify(ordenar(a)) === JSON.stringify(ordenar(b));
+      const deFora = rg.some((r) => !(base[r.tipo] && base[r.tipo].has(r.id) && mesmo(r.dados, JSON.parse(base[r.tipo].get(r.id)))))
+        || cf.some((c) => ["geral", "emails", "catalogo", "site", "portfolio"].includes(c.chave) && !(baseCfg[c.chave] && mesmo(c.dados, JSON.parse(baseCfg[c.chave]))));
+      if (!deFora) { visto = novoVisto; return; }
+      const ocupada = document.getElementById("gaveta")?.classList.contains("on") || /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || "");
+      if (!ocupada) { location.reload(); return; }
+      if (!avisoOutro) { avisoOutro = true; sinc("Há mudanças feitas em outro aparelho. Ao fechar o que está editando, a página se atualiza.", false); }
+    } catch (e) { console.error(e); }
+  }
+  function ordenar(v) {
+    if (Array.isArray(v)) return v.map(ordenar);
+    if (v && typeof v === "object") return Object.keys(v).sort().reduce((o, k) => ((o[k] = ordenar(v[k])), o), {});
+    return v;
+  }
+
   /* ---------- início ---------- */
   async function iniciar() {
     if (!sessao.email) { // volta de convite ou recuperação: descobre o e-mail pelo próprio login
@@ -354,14 +383,17 @@
     vazio, email, api, papel: "admin", eu: "lumara",
     equipeBanco: () => rest("equipe?select=email,nome,papel&order=nome"),
     visitas: (desde) => tudo(`visitas?dia=gte.${desde}&select=dia,pagina,origem,n`),
+    falhasEmail: (desde) => rest(`envios?status=eq.erro&criado=gte.${desde}&select=id,para,assunto,erro,criado&order=id.desc&limit=50`),
+    reenviar: async () => { const r = await fetch("/api/enviar", { method: "POST", headers: { Authorization: "Bearer " + (await token()) } }); return r.json().catch(() => ({})); },
     antes() {
       const orig = window.reduzir;
       if (typeof orig === "function") window.reduzir = async (...a) => subir(await orig(...a));
     },
     depois() {
       if (window.NUVEM_ADMIN.salvarAoAbrir) { window.NUVEM_ADMIN.salvarAoAbrir = false; try { salvar(); } catch (e) {} }
-      setInterval(buscarNovos, 45000);
-      document.addEventListener("visibilitychange", () => { if (!document.hidden) buscarNovos(); });
+      setInterval(() => { buscarNovos(); conferirOutroAparelho(); }, 45000);
+      document.addEventListener("visibilitychange", () => { if (!document.hidden) { buscarNovos(); conferirOutroAparelho(); } });
+      document.addEventListener("click", () => { if (avisoOutro) setTimeout(conferirOutroAparelho, 400); });
       sinc("Tudo salvo");
     },
     async sair() {
