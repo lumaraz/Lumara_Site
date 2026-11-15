@@ -111,6 +111,8 @@ let usuario=window.NUVEM_ADMIN?NUVEM_ADMIN.eu:"lumara";
 const admin=()=>window.NUVEM_ADMIN?NUVEM_ADMIN.papel==="admin":usuario==="lumara";
 const cli=id=>S.clientes.find(c=>c.id===id)||{};
 const pessoa=id=>S.equipe.find(p=>p.id===id)||{};
+/* quem está na equipe hoje (sem removidos; no site publicado, só quem tem login) */
+const ativos=(manter)=>S.equipe.filter(p=>p.id===manter||(!p.removido&&(p.email||!window.NUVEM_ADMIN)));
 const totalOrc=o=>o.itens.reduce((a,i)=>a+(+i.v||0),0);
 const iniciais=n=>n.split(" ").filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase();
 
@@ -393,7 +395,7 @@ function projetos(){
   const vis=S.projetos.filter(p=>filtroResp==="todos"||p.resp===filtroResp);
   return `<div class="cab"><div><h1>Projetos</h1><p>Arraste os cartões entre as etapas, como no Trello. No celular, segure o cartão por um instante antes de arrastar. Abra um cartão para ver etiquetas, comentários, anexos e as artes enviadas ao cliente.</p></div></div>
   <div class="filtros"><button aria-pressed="${filtroResp==="todos"}" onclick="filtroResp='todos';render()">Todos</button>
-   ${S.equipe.map(p=>`<button aria-pressed="${filtroResp===p.id}" onclick="filtroResp='${p.id}';render()">${esc(p.nome.split(" ")[0])}</button>`).join("")}</div>
+   ${ativos().map(p=>`<button aria-pressed="${filtroResp===p.id}" onclick="filtroResp='${p.id}';render()">${esc(p.nome.split(" ")[0])}</button>`).join("")}</div>
   <div class="kanban" role="list" aria-label="Etapas dos projetos">${ETAPAS.map(et=>{const cs=vis.filter(p=>p.etapa===et);return `<div role="listitem" class="coluna" data-etapa="${et}" aria-labelledby="col-${ETAPAS.indexOf(et)}">
     <h2 class="col-cab" id="col-${ETAPAS.indexOf(et)}">${et}<span aria-label="${cs.length} cartões">${cs.length}</span></h2>
     <div class="cartoes">${cs.map(cartao).join("")}</div>
@@ -467,7 +469,7 @@ function verProjeto(id,aba){
     <div class="cmp"><label for="pj-p">Prazo</label><input id="pj-p" type="date" value="${p.prazo}"></div>
     <div class="cmp"><label for="pj-c">Cliente</label><select id="pj-c">${S.clientes.map(c=>`<option value="${c.id}" ${c.id===p.cliente?"selected":""}>${esc(c.empresa)}</option>`).join("")}</select></div>
     <div class="cmp"><label for="pj-s">Serviço</label><select id="pj-s">${Object.keys(SERV).slice(0,4).map(s=>`<option ${s===p.servico?"selected":""}>${s}</option>`).join("")}</select></div>
-    <div class="cmp"><label for="pj-r">Responsável</label><select id="pj-r">${S.equipe.map(e=>`<option value="${e.id}" ${e.id===p.resp?"selected":""}>${esc(e.nome)}</option>`).join("")}</select></div>
+    <div class="cmp"><label for="pj-r">Responsável</label><select id="pj-r">${ativos(p.resp).map(e=>`<option value="${e.id}" ${e.id===p.resp?"selected":""}>${esc(e.nome)}</option>`).join("")}</select></div>
     ${admin()?`<div class="cmp"><label>Valor do projeto</label><div style="padding:.55rem 0;font-weight:600">${brl(p.valor||0)}</div></div>`:""}
   </div>
   <fieldset class="cmp" style="border:0"><legend style="font-size:.85rem;font-weight:600;margin-bottom:.4rem">Etiquetas</legend>
@@ -575,7 +577,7 @@ function editarPost(id){
       <div class="cmp"><label for="po-d">Data de publicação</label><input id="po-d" type="date" value="${p.data}"></div>
       <div class="cmp"><label for="po-f">Formato</label><select id="po-f">${FORMATOS.map(f=>`<option ${f===p.formato?"selected":""}>${f}</option>`).join("")}</select></div>
       <div class="cmp"><label for="po-s">Situação</label><select id="po-s">${Object.entries(ST_POST).map(([k,[n]])=>`<option value="${k}" ${k===p.status?"selected":""}>${n}</option>`).join("")}</select></div>
-      <div class="cmp"><label for="po-r">Responsável</label><select id="po-r">${S.equipe.map(e=>`<option value="${e.id}" ${e.id===p.resp?"selected":""}>${esc(e.nome)}</option>`).join("")}</select></div>
+      <div class="cmp"><label for="po-r">Responsável</label><select id="po-r">${ativos(p.resp).map(e=>`<option value="${e.id}" ${e.id===p.resp?"selected":""}>${esc(e.nome)}</option>`).join("")}</select></div>
     </div>
     <div class="cmp"><label for="po-t">Tema</label><input id="po-t" value="${esc(p.tema)}" placeholder="Ex.: Promoção de aniversariante"></div>
     <div class="cmp"><label for="po-l">Legenda</label><textarea id="po-l" style="min-height:120px">${esc(p.legenda)}</textarea></div>
@@ -1022,13 +1024,13 @@ async function carregarVisitas(){
 /* ============ EQUIPE ============ */
 const PAPEIS={admin:["Administradora","Tudo, incluindo caixa e valores"],equipe:["Equipe","Pedidos, projetos, calendário e clientes, sem valores"]};
 function equipe(){
-  const lista=S.equipe.filter(p=>p.email||!window.NUVEM_ADMIN);
+  const lista=ativos();
   const eu=pessoa(usuario);
   return `<div class="cab"><div><h1>Equipe</h1><p>Cada pessoa entra com o próprio e-mail e senha e vê só o que o papel dela permite.</p></div>
    ${admin()?`<div class="acoes"><button class="btn" onclick="novaPessoa()">Adicionar pessoa</button></div>`:""}</div>
   <div class="tab-wrap"><table class="tabela"><thead><tr><th>Pessoa</th><th>Papel</th><th>O que vê</th>${admin()?"<th><span class=\"sr-only\">Ações</span></th>":""}</tr></thead><tbody>
   ${lista.map(p=>`<tr><td><span style="display:flex;gap:.6rem;align-items:center"><span class="avatar" style="--c:${p.cor}">${iniciais(p.nome)}</span><span><strong>${esc(p.nome)}</strong>${p.email?`<br><span class="mut" style="font-size:.85rem">${esc(p.email)}</span>`:""}</span></span></td>
-    <td>${esc(p.papel||"")}${p.convite?` <span class="tag st-rascunho">convite enviado</span>`:""}</td><td class="mut">${esc(p.acesso||"")}</td>
+    <td>${esc(p.papel||"")} ${p.convite?`<span class="tag st-rascunho">convite enviado</span>`:p.aceito?`<span class="tag st-aprovado">ativa</span>`:""}</td><td class="mut">${esc(p.acesso||"")}</td>
     ${admin()?`<td style="white-space:nowrap">${p.email&&p.id!==eu.id?`<button class="btn peq sec" onclick="convidarDeNovo('${p.id}')">Reenviar convite</button> <button class="btn peq perigo" onclick="removerPessoa('${p.id}')">Remover</button>`:p.id===eu.id?`<span class="mut">Você</span>`:""}</td>`:""}</tr>`).join("")}
   </tbody></table></div>`;
 }

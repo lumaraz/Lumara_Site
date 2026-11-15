@@ -316,6 +316,7 @@
         || (minha.papel === "admin" && S0.equipe.find((x) => x.id === "lumara" && !x.email));
       if (!p) { p = { id: "p" + Math.random().toString(36).slice(2, 9), nome: minha.nome || email, cor: "#86BBD8" }; S0.equipe.push(p); }
       p.email = email;
+      if (p.convite || !p.aceito) { delete p.convite; delete p.removido; p.aceito = p.aceito || new Date().toISOString(); window.NUVEM_ADMIN.salvarAoAbrir = true; }
       if (minha.papel === "admin") { p.papel = "Administradora"; p.acesso = "Tudo, incluindo caixa e valores"; }
       else { p.papel = "Equipe"; p.acesso = "Pedidos, projetos, calendário e clientes, sem valores"; }
       window.NUVEM_ADMIN.eu = p.id;
@@ -358,6 +359,7 @@
       if (typeof orig === "function") window.reduzir = async (...a) => subir(await orig(...a));
     },
     depois() {
+      if (window.NUVEM_ADMIN.salvarAoAbrir) { window.NUVEM_ADMIN.salvarAoAbrir = false; try { salvar(); } catch (e) {} }
       setInterval(buscarNovos, 45000);
       document.addEventListener("visibilitychange", () => { if (!document.hidden) buscarNovos(); });
       sinc("Tudo salvo");

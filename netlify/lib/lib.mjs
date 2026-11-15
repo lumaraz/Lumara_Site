@@ -102,10 +102,10 @@ const BOTOES = [
   [/\/orcamento\.html/, "Pedir orçamento"],
 ];
 const rotulo = (u) => (BOTOES.find(([r]) => r.test(u)) || [, "Abrir o link"])[1];
-const linkInline = (t) => t.replace(/(https?:\/\/[^\s<]+)/g, (u) => `<a href="${u}" style="color:#2F5F8A;text-decoration:underline">${rotulo(u).toLowerCase()}</a>`);
+const linkInline = (t) => t.replace(/(https?:\/\/[^\s<]+)/g, (u) => `<a href="${u}" style="color:#2D2D2D;text-decoration:underline">${rotulo(u).toLowerCase()}</a>`);
 function botao(u) {
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:6px 0 22px"><tr><td style="border-radius:999px;background:#2D2D2D">
-    <a href="${u}" style="display:inline-block;padding:13px 26px;font-family:Helvetica,Arial,sans-serif;font-size:15px;font-weight:bold;color:#FFFFFF;text-decoration:none;border-radius:999px">${rotulo(u)}</a></td></tr></table>`;
+    <a href="${u}" style="display:inline-block;padding:13px 26px;font-family:Helvetica,Arial,sans-serif;font-size:15px;font-weight:bold;color:#FAFAFF;text-decoration:none;border-radius:999px">${rotulo(u)}</a></td></tr></table>`;
 }
 function corpoHTML(texto, assunto = "") {
   const img = (n) => `${SITE_URL}/img/${n}`;
@@ -127,7 +127,7 @@ function corpoHTML(texto, assunto = "") {
         html += `<p style="margin:0 0 18px;font-family:Helvetica,Arial,sans-serif;font-size:22px;line-height:1.3;font-weight:bold;color:#2D2D2D">${t}</p>`;
       } else {
         if (!preheader) preheader = par.join(" ").replace(/<[^>]+>/g, "");
-        html += `<p style="margin:0 0 16px;font-family:Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#3A3A3A">${t}</p>`;
+        html += `<p style="margin:0 0 16px;font-family:Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#2D2D2D">${t}</p>`;
       }
       primeiro = false; par = [];
     };
@@ -143,16 +143,16 @@ function corpoHTML(texto, assunto = "") {
   }
   const assinatura = temAssinatura ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:8px"><tr>
       <td style="padding-right:12px;vertical-align:middle"><img src="${img("avatar-email.jpg")}" width="44" height="44" alt="" style="display:block;border-radius:50%;border:0"></td>
-      <td style="vertical-align:middle;font-family:Helvetica,Arial,sans-serif"><div style="font-size:15px;font-weight:bold;color:#2D2D2D">Lumara Silva</div><div style="font-size:13px;color:#6B655E">Designer de marca e visual</div></td></tr></table>` : "";
+      <td style="vertical-align:middle;font-family:Helvetica,Arial,sans-serif"><div style="font-size:15px;font-weight:bold;color:#2D2D2D">Lumara Silva</div><div style="font-size:13px;color:#2D2D2D">Designer de marca e visual</div></td></tr></table>` : "";
   return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>${escH(assunto)}</title></head>
-<body style="margin:0;padding:0;background:#F2EEE9">
-<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#F2EEE9">${escH(preheader).slice(0, 140)}</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F2EEE9"><tr><td align="center" style="padding:28px 14px">
+<body style="margin:0;padding:0;background:#F2EFE9">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#F2EFE9">${escH(preheader).slice(0, 140)}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F2EFE9"><tr><td align="center" style="padding:28px 14px">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px">
     <tr><td style="padding:0 6px 18px"><a href="${SITE_URL}"><img src="${img("logo-azul.png")}" width="132" height="22" alt="Lumara Silva" style="display:block;border:0;height:22px;width:132px"></a></td></tr>
-    <tr><td style="background:#FFFFFF;border:1px solid #E4DDD3;border-radius:18px;padding:34px 30px 30px">${html}${assinatura}</td></tr>
-    <tr><td style="padding:20px 6px 0;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:1.7;color:#7A736B">
-      <a href="${SITE_URL}" style="color:#7A736B">lumarasilva.com.br</a> &nbsp;·&nbsp; <a href="https://wa.me/5521989967803" style="color:#7A736B">WhatsApp (21) 98996-7803</a><br>
+    <tr><td style="background:#FAFAFF;border:1px solid #CCCCCC;border-radius:18px;padding:34px 30px 30px">${html}${assinatura}</td></tr>
+    <tr><td style="padding:20px 6px 0;font-family:Helvetica,Arial,sans-serif;font-size:12px;line-height:1.7;color:#2D2D2D">
+      <a href="${SITE_URL}" style="color:#2D2D2D">lumarasilva.com.br</a> &nbsp;·&nbsp; <a href="https://wa.me/5521989967803" style="color:#2D2D2D">WhatsApp (21) 98996-7803</a><br>
       Dúvidas? É só responder este e-mail.</td></tr>
   </table>
 </td></tr></table></body></html>`;

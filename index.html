@@ -24,13 +24,13 @@
 
   :root{
     --bege:#F2EFE9;      /* fundo */
-    --claro:#FBFAF7;     /* caixas sobre o fundo */
+    --claro:#FAFAFF;     /* caixas sobre o fundo */
     --azul:#86BBD8;      /* destaque */
     --azul-esc:#3A6EA5;  /* azul para textos e botões */
     --texto:#2D2D2D;     /* cinza do texto */
     --marrom:#462D26;    /* secundária */
-    --linha:#DAD4CA;
-    --suave:#6B6560;
+    --linha:#CCCCCC;
+    --suave:#2D2D2D;
     --titulo:"Inter Tight",system-ui,sans-serif;
     --corpo:"Inter Tight",system-ui,sans-serif;
     --onda:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 240' preserveAspectRatio='none'%3E%3Cpath d='M0 120 C12.5 108 25 108 37.5 120 S62.5 132 75 120 S93 108 100 116 V240 H0Z'/%3E%3C/svg%3E");
@@ -44,7 +44,7 @@
   h1,h2,h3{font-family:var(--titulo);font-weight:800;letter-spacing:-.04em}
 
   .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-  .pular{position:absolute;left:1rem;top:-4rem;z-index:100;background:var(--texto);color:var(--bege);padding:.6rem 1rem;border-radius:8px;text-decoration:none}
+  .pular{position:absolute;left:1rem;top:-4rem;z-index:100;background:var(--texto);color:#FAFAFF;padding:.6rem 1rem;border-radius:8px;text-decoration:none}
   .pular:focus{top:1rem}
   /* topo */
   header{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bege) 90%,transparent);backdrop-filter:blur(8px)}
@@ -56,7 +56,7 @@
   nav a:hover{text-decoration:underline;text-underline-offset:4px}
   .lang{display:inline-flex;gap:0;padding:2px;border:1px solid var(--linha);border-radius:99px;background:var(--claro);cursor:pointer;font:inherit;font-size:.78rem;font-weight:600;color:var(--suave)}
   .lang span{padding:.22rem .55rem;border-radius:99px}
-  .lang span.ativo{background:var(--texto);color:var(--bege)}
+  .lang span.ativo{background:var(--texto);color:#FAFAFF}
 
   /* hero */
   .hero{padding:clamp(3rem,9vw,7rem) 0 clamp(3rem,7vw,5.5rem)}
@@ -65,8 +65,8 @@
   .hero h1 .l2{padding-left:clamp(1.5rem,14vw,12rem);color:var(--azul-esc);font-weight:300}
   .hero-pe{display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:end;margin-top:clamp(2rem,4vw,3rem)}
   .hero-pe p{max-width:36ch;font-size:clamp(1.1rem,1.7vw,1.35rem);line-height:1.45}
-  .botao{display:inline-block;background:var(--azul-esc);color:#fff;text-decoration:none;padding:.9rem 1.5rem;border-radius:99px;font-weight:600;white-space:nowrap;border:0;font-family:inherit;font-size:1rem}
-  .botao:hover{background:#2C5682}
+  .botao{display:inline-block;background:var(--azul-esc);color:#FAFAFF;text-decoration:none;padding:.9rem 1.5rem;border-radius:99px;font-weight:600;white-space:nowrap;border:0;font-family:inherit;font-size:1rem}
+  .botao:hover{background:#2D2D2D}
   .cta-trab{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem 2rem;margin-top:clamp(2.5rem,5vw,4rem);padding:clamp(1.4rem,3vw,2rem) clamp(1.4rem,3vw,2.25rem);border:1.5px solid var(--texto);border-radius:18px}
   .cta-trab p{font-size:clamp(1.15rem,2vw,1.5rem);line-height:1.35;letter-spacing:-.01em;max-width:34ch}
   .cta-trab p strong{font-weight:700}
@@ -80,8 +80,8 @@
   .redondo{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;flex:none;text-decoration:none;box-shadow:0 1px 0 rgba(45,45,45,.08)}
   .logo-b{background:var(--claro);border:1px solid var(--linha);overflow:hidden}
   .logo-b img{width:100%;height:100%;object-fit:cover}
-  .contato-b{background:var(--azul-esc);color:#fff}
-  .contato-b:hover{background:#2C5682}
+  .contato-b{background:var(--azul-esc);color:#FAFAFF}
+  .contato-b:hover{background:#2D2D2D}
   .redondo svg,.pilula svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
   .pilula{display:flex;align-items:center;gap:.2rem;background:color-mix(in srgb,var(--claro) 88%,transparent);backdrop-filter:blur(10px);border:1px solid var(--linha);border-radius:99px;padding:.3rem .4rem;height:52px}
   .pilula a{display:flex;align-items:center;gap:.45rem;text-decoration:none;padding:.45rem .8rem;border-radius:99px;font-weight:500}
@@ -134,7 +134,7 @@
   .grade-trab{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(1.25rem,2.6vw,2.25rem) clamp(1rem,2vw,1.75rem)}
   .grade-trab li[hidden]{display:none}
   .grade-trab a{display:block;text-decoration:none;color:inherit}
-  .gt-img{aspect-ratio:4/3;border-radius:14px;overflow:hidden;background:var(--c);display:grid;place-items:center;color:#fff;font-weight:700;font-size:3rem;letter-spacing:-.04em}
+  .gt-img{aspect-ratio:4/3;border-radius:14px;overflow:hidden;background:var(--c);display:grid;place-items:center;color:#FAFAFF;font-weight:700;font-size:3rem;letter-spacing:-.04em}
   .gt-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
   .grade-trab a:hover .gt-img img{transform:scale(1.05)}
   .gt-info{display:flex;justify-content:space-between;align-items:center;gap:.75rem;margin-top:.85rem}
@@ -148,16 +148,16 @@
 
   /* sobre */
   /* fundo de prancheta (blueprint), igual à página de links */
-  .sobre{background-color:var(--azul-esc);background-image:linear-gradient(rgba(242,239,233,.13) 1px,transparent 1px),linear-gradient(90deg,rgba(242,239,233,.13) 1px,transparent 1px);background-size:28px 28px;background-position:center top;color:#F2EFE9}
+  .sobre{background-color:var(--azul-esc);background-image:linear-gradient(rgba(242,239,233,.13) 1px,transparent 1px),linear-gradient(90deg,rgba(242,239,233,.13) 1px,transparent 1px);background-size:28px 28px;background-position:center top;color:#FAFAFF}
   .sobre .foto{outline:1.5px solid rgba(242,239,233,.75);outline-offset:10px}
   .sobre .grid{display:grid;grid-template-columns:minmax(220px,4fr) 7fr;gap:clamp(2rem,6vw,5rem);align-items:start}
-  .foto{aspect-ratio:4/5;border-radius:16px;overflow:hidden;background:#111}
+  .foto{aspect-ratio:4/5;border-radius:16px;overflow:hidden;background:#0B0B0B}
   .foto img{width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block}
   .sobre h2{margin-bottom:1.5rem}
   .sobre p{font-size:clamp(1.1rem,1.6vw,1.3rem);line-height:1.5;max-width:46ch}
   .sobre p+p{margin-top:1rem}
   .fatos{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid rgba(242,239,233,.4)}
-  .fatos dt{font-size:.9rem;font-weight:500;color:#E3EBF3}
+  .fatos dt{font-size:.9rem;font-weight:500;color:#FAFAFF}
   .fatos dd{font-size:1rem;margin-top:.2rem;font-weight:500}
 
   /* serviços em caixas que abrem */
@@ -184,14 +184,14 @@
   .precos{padding:0 1.4rem 1.4rem;max-width:calc(66ch + 2.8rem)}
   .precos .linha-preco{display:flex;justify-content:space-between;gap:1rem;padding:.55rem 0;border-top:1px solid color-mix(in srgb,currentColor 25%,transparent);font-size:.98rem}
   .precos .linha-preco strong{font-weight:700;white-space:nowrap}
-  .precos small{display:block;opacity:.8;font-size:.82rem;margin-top:.4rem}
+  .precos small{display:block;font-size:.82rem;margin-top:.4rem}
 
   /* como eu trabalho */
   .etapas{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;margin-top:2.5rem;counter-reset:etapa}
   .etapas li{counter-increment:etapa;border-top:2px solid var(--texto);padding-top:1rem}
-  .etapas li::before{content:counter(etapa,decimal-leading-zero);display:block;font-size:.85rem;font-weight:700;color:var(--azul-esc);margin-bottom:.5rem}
+  .etapas li::before{content:counter(etapa,decimal-leading-zero);display:block;font-size:.85rem;font-weight:700;color:var(--texto);margin-bottom:.5rem}
   .etapas h3{font-size:1.25rem;font-weight:700;letter-spacing:-.025em;margin-bottom:.4rem}
-  .etapas p{font-size:.98rem;color:#45403B}
+  .etapas p{font-size:.98rem;color:#2D2D2D}
   #processo{padding-top:0}
 
   /* depoimentos */
@@ -219,15 +219,15 @@
   .redes a{display:grid;grid-template-columns:1fr auto 1.1rem;gap:1rem;align-items:center;padding:.8rem 0;border-bottom:1px solid var(--linha);text-decoration:none;font-weight:500}
   .redes .h{color:var(--suave);font-weight:400;font-size:.95rem}
   .redes svg{width:1.1rem;height:1.1rem;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
-  .redes a:hover{color:var(--azul-esc)}
+  .redes a:hover{text-decoration:underline;text-underline-offset:4px}
   .redes a:hover svg{transform:translate(2px,-2px)}
   @media (max-width:820px){.grade-contato{grid-template-columns:1fr}}
 
-  footer{background:var(--texto);color:var(--bege);padding:3rem 0 calc(2rem + 52px);font-size:.9rem}
+  footer{background:var(--texto);color:#FAFAFF;padding:3rem 0 calc(2rem + 52px);font-size:.9rem}
   footer .wrap{display:flex;justify-content:space-between;align-items:end;gap:1.5rem;flex-wrap:wrap}
   footer img{height:34px;width:auto;display:block;margin-bottom:1rem}
-  footer a{color:var(--bege);text-underline-offset:4px}
-  footer a:hover{color:var(--azul)}
+  footer a{color:#FAFAFF;text-underline-offset:4px}
+  footer a:hover{text-decoration:underline;text-underline-offset:4px}
   footer .links{display:flex;gap:1.25rem}
 
   /* transição entre páginas */
@@ -254,7 +254,7 @@
 
 <header class="topo-b">
   <nav class="pilula" aria-label="Principal">
-    <a href="#trabalhos"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.6"/></svg><span data-t="navTrab">Trabalhos</span></a>
+    <a href="#trabalhos"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.6"/></svg><span data-t="navTrab">Portfólio</span></a>
     <a href="#sobre"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5a4.5 4.5 0 0 0 7 0M9 9.5h.01M15 9.5h.01"/></svg><span data-t="navSobre">Sobre</span></a>
     <a href="#servicos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/></svg><span data-t="navServ">Serviços</span></a>
     <a href="#contato"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span data-t="navContato">Contato</span></a>
@@ -273,7 +273,7 @@
   <section id="trabalhos">
     <div class="wrap">
       <div class="trab-topo">
-        <h2 data-t="trabTit">Trabalhos selecionados</h2>
+        <h2 data-t="trabTit">Portfólio</h2>
         <div class="filtros" role="group" aria-label="Filtrar por área" id="filtros"></div>
       </div>
       <ul class="grade-trab" id="grade-trab"></ul>
@@ -358,15 +358,15 @@
 const projetos = PORTFOLIO.carregar().filter(p=>p.publicado);
 const areas = Object.assign({todos:{pt:"Todos",en:"All"}}, PORTFOLIO.AREAS);
 /* cor de cada área: a mesma das caixas de serviço */
-const COR_AREA={identidade:["#5E5A55","#fff"],social:["#462D26","#F2EFE9"],outros:["#86BBD8","#2D2D2D"]};
+const COR_AREA={identidade:["#2D2D2D","#FAFAFF"],social:["#3A6EA5","#FAFAFF"],outros:["#86BBD8","#2D2D2D"]};
 const corArea=k=>{const c=COR_AREA[k];return c?`--ac:${c[0]};--fc:${c[1]}`:""};
 const CFG = SITE.carregar();
 /* textos editados na área da equipe substituem os padrões em português */
 Object.entries(CFG.textos).forEach(([k,v])=>{ if(!v||k==="heroTitB") return; document.querySelectorAll(`[data-t="${k}"]`).forEach(el=>el.textContent=v); });
 const textos = {
-  en:{ctaTrab1:"Liked what you saw?",ctaTrab2:"Let's create your brand's identity.",navTrab:"Work",navSobre:"About",navServ:"Services",navContato:"Contact",
+  en:{ctaTrab1:"Liked what you saw?",ctaTrab2:"Let's create your brand's identity.",navTrab:"Portfolio",navSobre:"About",navServ:"Services",navContato:"Contact",
       heroTxt:"Brand and visual designer in Rio de Janeiro. I build identities that tell each brand's story in its own way.",
-      heroBtn:"Request a quote",ola1:"Hello",ola2:"I'm Lumara",heroTit:"",heroSub:"",trabTit:"Selected work",sobreTit:"Hi, I'm Lumara.",
+      heroBtn:"Request a quote",ola1:"Hello",ola2:"I'm Lumara",heroTit:"",heroSub:"",trabTit:"Portfolio",sobreTit:"Hi, I'm Lumara.",
       sobre1:"I'm a designer from Rio de Janeiro with over five years of experience, focused on visual identity and graphic design.",
       sobre2:"My passion for design shows in the creativity I use to tell each brand's story visually, in a unique way. I love new challenges that make me think outside the box and explore new ideas.",
       fBase:"Based in",fForm:"Education",fFormV:"Graphic & Digital Design, Instituto Infnet",fFerr:"Tools",
@@ -459,7 +459,7 @@ const ic={
   alvo:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/>'
 };
 /* fundo e cor do texto, alternando para nenhuma vizinha repetir */
-const CORES=[["#3A6EA5","#fff"],["#86BBD8","#2D2D2D"],["#462D26","#F2EFE9"],["#E4DDD1","#2D2D2D"],["#2D2D2D","#F2EFE9"]];
+const CORES=[["#3A6EA5","#FAFAFF"],["#86BBD8","#2D2D2D"],["#462D26","#F2EFE9"],["#CCCCCC","#2D2D2D"],["#2D2D2D","#F2EFE9"]];
 const PALAVRAS=[
   ["Identidade visual","estrela","Visual identity"],["Olhar humano","olho","Human touch"],["Cores","pincel","Color"],["Tipografia","letra","Typography"],["Propósito","alvo","Purpose"],
   ["Social media","coracao","Social media"],["Criatividade","faisca","Creativity"],["Alinhamento visual","grade","Visual alignment"],["Curiosidade","lupa","Curiosity"]
@@ -518,11 +518,11 @@ function renderConteudo(){
   const e=t=>String(t??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const en=lang==="en", padr=SITE.padrao.processo;
   /* serviços: vêm da área da equipe; abertos ou fechados conforme a escolha dela, e mantêm o que o visitante abriu */
-  const claro=c=>["#86BBD8","#E4DDD1","#F2EFE9"].includes(String(c).toUpperCase());
+  const claro=c=>["#86BBD8","#CCCCCC","#F2EFE9"].includes(String(c).toUpperCase());
   const box=document.getElementById("servicos-lista");
   const abertos=box.children.length?new Set([...box.querySelectorAll('.serv[data-aberto="true"]')].map(x=>x.dataset.id)):null;
   box.innerHTML=(CFG.servicos||[]).filter(sv=>sv.t).map((sv,k)=>{const ab=abertos?abertos.has(sv.id):!!CFG.servicosAbertos, n=String(k+1).padStart(2,"0");
-    return `<div class="serv" data-id="${e(sv.id)}" data-aberto="${ab}" style="--bg:${e(sv.cor)};--fg:${claro(sv.cor)?"#2D2D2D":(sv.cor==="#3A6EA5"?"#fff":"#F2EFE9")}">
+    return `<div class="serv" data-id="${e(sv.id)}" data-aberto="${ab}" style="--bg:${e(sv.cor)};--fg:${claro(sv.cor)?"#2D2D2D":(sv.cor==="#3A6EA5"?"#FAFAFF":"#F2EFE9")}">
       <button aria-expanded="${ab}" aria-controls="sv-${k}"><span class="n">${n}</span><h3>${e(en&&sv.tEn||sv.t)}</h3><span class="mais" aria-hidden="true">+</span></button>
       <div class="painel" id="sv-${k}"><div>${(en&&sv.pEn||sv.p)?`<p>${e(en&&sv.pEn||sv.p)}</p>`:""}${(en&&sv.iEn||sv.i)?`<p class="ideal">${e(en&&sv.iEn||sv.i)}</p>`:""}<div class="precos" data-serv="${e(sv.id)}"></div></div></div></div>`}).join("");
   /* etapas: usa o inglês salvo; se a etapa for a padrão, usa a tradução padrão */

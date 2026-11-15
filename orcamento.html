@@ -10,18 +10,18 @@
 <link rel="preload" href="fonts/inter-tight-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/fontes.css">
 <style>
-  .lang{display:inline-flex;padding:2px;border:1px solid #DAD4CA;border-radius:99px;background:#FBFAF7;cursor:pointer;font:inherit;font-size:.78rem;font-weight:600;color:#6B6560}
+  .lang{display:inline-flex;padding:2px;border:1px solid #CCCCCC;border-radius:99px;background:#FAFAFF;cursor:pointer;font:inherit;font-size:.78rem;font-weight:600;color:#2D2D2D}
   .lang span{padding:.22rem .55rem;border-radius:99px}
-  .lang span.ativo{background:#2D2D2D;color:#F2EFE9}
+  .lang span.ativo{background:#2D2D2D;color:#FAFAFF}
   .btn-link{display:inline-flex;align-items:center;text-decoration:none;font-weight:600;font-size:.95rem;color:var(--texto,#2D2D2D);border:1px solid currentColor;border-radius:99px;padding:.5rem 1.1rem;white-space:nowrap}
-  .btn-link:hover{background:#2D2D2D;color:#F2EFE9;border-color:#2D2D2D}
+  .btn-link:hover{background:#2D2D2D;color:#FAFAFF;border-color:#2D2D2D}
 
-  .consent{display:flex;gap:.7rem;align-items:flex-start;font-weight:400;font-size:.95rem;line-height:1.5;padding:1rem;border:1px solid #B9B1A6;border-radius:8px}
+  .consent{display:flex;gap:.7rem;align-items:flex-start;font-weight:400;font-size:.95rem;line-height:1.5;padding:1rem;border:1px solid #CCCCCC;border-radius:8px}
   .consent input{accent-color:var(--mar);width:1.15rem;height:1.15rem;margin-top:.2rem;flex:none}
-  .campo.invalido .consent{border-color:#A3283A}
+  .campo.invalido .consent{border-color:#462D26}
   .sr-only{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
   .opc{font-weight:400;color:var(--cinza);font-size:.9rem}
-:root{--papel:#F2EFE9;--tinta:#2D2D2D;--mar:#3A6EA5;--ipe:#86BBD8;--mata:#462D26;--nevoa:#DAD4CA;--cinza:#6B6560;--f:"Inter Tight",system-ui,sans-serif;--titulo:"Inter Tight",system-ui,sans-serif}
+:root{--papel:#F2EFE9;--tinta:#2D2D2D;--mar:#3A6EA5;--ipe:#86BBD8;--mata:#462D26;--nevoa:#CCCCCC;--cinza:#2D2D2D;--f:"Inter Tight",system-ui,sans-serif;--titulo:"Inter Tight",system-ui,sans-serif}
   *{box-sizing:border-box;margin:0;padding:0}
   body{background:var(--papel);color:var(--tinta);font-family:var(--f);font-size:1.0625rem;line-height:1.55;-webkit-font-smoothing:antialiased}
   a{color:inherit}
@@ -34,7 +34,7 @@
   h1{font-family:var(--titulo);font-size:clamp(2.6rem,6vw,4.6rem);line-height:.95;font-weight:800;letter-spacing:-.05em}
   .intro p{margin-top:1.25rem;max-width:40ch}
   .intro ul{list-style:none;margin-top:1.5rem;border-top:1px solid var(--nevoa)}
-  .intro li{padding:.75rem 0;border-bottom:1px solid var(--nevoa);font-size:.97rem;color:#2c3743}
+  .intro li{padding:.75rem 0;border-bottom:1px solid var(--nevoa);font-size:.97rem;color:#2D2D2D}
   .intro li strong{color:var(--tinta)}
 
   .passos{display:flex;gap:.5rem;margin-bottom:2rem}
@@ -46,24 +46,24 @@
   .campo{margin-bottom:1.5rem}
   label,.leg{display:block;font-weight:600;margin-bottom:.45rem}
   .dica{display:block;font-weight:400;color:var(--cinza);font-size:.9rem;margin-top:-.25rem;margin-bottom:.5rem}
-  input[type=text],input[type=email],input[type=tel],input[type=url],textarea{width:100%;font:inherit;padding:.8rem .95rem;border:1px solid #B9B1A6;background:transparent;border-radius:8px;color:var(--tinta)}
+  input[type=text],input[type=email],input[type=tel],input[type=url],textarea{width:100%;font:inherit;padding:.8rem .95rem;border:1px solid #CCCCCC;background:transparent;border-radius:8px;color:var(--tinta)}
   input:focus,textarea:focus{outline:none;border-color:var(--tinta);box-shadow:0 0 0 3px rgba(58,110,165,.2)}
   textarea{min-height:110px;resize:vertical}
   .opcoes{display:grid;gap:.5rem}
   .opcoes.duas{grid-template-columns:1fr 1fr}
-  .opcao{display:flex;gap:.65rem;align-items:center;padding:.7rem .9rem;border:1px solid #B9B1A6;border-radius:8px;cursor:pointer;background:transparent;font-weight:400}
+  .opcao{display:flex;gap:.65rem;align-items:center;padding:.7rem .9rem;border:1px solid #CCCCCC;border-radius:8px;cursor:pointer;background:transparent;font-weight:400}
   .opcao:has(input:checked){border-color:var(--mar);background:transparent;box-shadow:inset 0 0 0 1px var(--mar)}
   .opcao input{accent-color:var(--tinta);width:1.05rem;height:1.05rem}
-  .upload{border:1.5px dashed #9AA39A;border-radius:8px;padding:1.25rem;text-align:center;color:var(--cinza);cursor:pointer;display:block;font-weight:400}
+  .upload{border:1.5px dashed #2D2D2D;border-radius:8px;padding:1.25rem;text-align:center;color:var(--cinza);cursor:pointer;display:block;font-weight:400}
   .upload input{position:absolute;width:1px;height:1px;opacity:0}
   .upload:focus-within{outline:3px solid var(--mar)}
   .arquivos{font-size:.9rem;margin-top:.5rem;color:var(--tinta)}
-  .erro{color:#A3283A;font-size:.9rem;margin-top:.35rem;display:none}
+  .erro{color:#2D2D2D;font-size:.9rem;margin-top:.35rem;display:none}
   .campo.invalido .erro{display:block}
-  .campo.invalido input,.campo.invalido textarea{border-color:#A3283A}
+  .campo.invalido input,.campo.invalido textarea{border-color:#462D26}
   .nav{display:flex;justify-content:space-between;gap:1rem;margin-top:2rem}
-  .botao{font:inherit;font-weight:600;border:0;background:var(--mar);color:#fff;color:var(--papel);padding:.85rem 1.5rem;border-radius:99px;cursor:pointer}
-  .botao:hover{background:#2C5682}
+  .botao{font:inherit;font-weight:600;border:0;background:var(--mar);color:#FAFAFF;color:var(--papel);padding:.85rem 1.5rem;border-radius:99px;cursor:pointer}
+  .botao:hover{background:#2D2D2D}
   .botao.sec{background:none;color:var(--tinta);border:1px solid var(--tinta)}
   .oculto{display:none!important}
   .enviado{padding:2rem 0}
@@ -82,9 +82,9 @@
 <style>/* espaço para o selo do Netlify no canto */body{padding-bottom:56px}@media print{body{padding-bottom:0}}</style>
 </head>
 <body>
-<a class="pular" href="#form" style="position:absolute;left:1rem;top:-4rem;z-index:100;background:#2D2D2D;color:#F2EFE9;padding:.6rem 1rem;border-radius:8px" onfocus="this.style.top='1rem'" onblur="this.style.top='-4rem'">Pular para o formulário</a>
+<a class="pular" href="#form" style="position:absolute;left:1rem;top:-4rem;z-index:100;background:#2D2D2D;color:#FAFAFF;padding:.6rem 1rem;border-radius:8px" onfocus="this.style.top='1rem'" onblur="this.style.top='-4rem'">Pular para o formulário</a>
 <header>
-  <a class="marca" href="index.html"><img src="img/logo-escuro.svg" alt="Lumara Silva" width="1552" height="366" style="height:30px;width:auto;display:block"></a>
+  <a class="marca" href="index.html"><img src="img/logo-escuro.svg" alt="Lumara Silva" width="1552" height="366" style="height:clamp(36px,4vw,46px);width:auto;display:block"></a>
   <span style="display:flex;gap:.6rem;align-items:center"><button class="lang" id="idioma" aria-label="Switch to English" lang="en"><span class="ativo">PT</span><span>EN</span></button><a class="btn-link" href="index.html">Voltar ao site</a></span>
 </header>
 
@@ -261,7 +261,7 @@ async function enviar(){
     const r=await fetch("/api/pedido",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)}); ok=r.ok}catch(e){}
   avancar.disabled=false; avancar.textContent=txt;
   if(!ok){let er=document.getElementById("erro-envio");
-    if(!er){er=document.createElement("p");er.id="erro-envio";er.setAttribute("role","alert");er.style.cssText="color:#9b2c1f;margin-top:.8rem;width:100%";avancar.parentNode.after(er)}
+    if(!er){er=document.createElement("p");er.id="erro-envio";er.setAttribute("role","alert");er.style.cssText="color:#2D2D2D;font-weight:600;margin-top:.8rem;width:100%";avancar.parentNode.after(er)}
     er.textContent=en?"We couldn't send your request. Please check your connection and try again, or message me on WhatsApp.":"Não foi possível enviar agora. Confira sua conexão e tente de novo, ou me chame no WhatsApp.";
     return}
   form.classList.add("oculto");

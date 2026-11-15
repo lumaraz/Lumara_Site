@@ -10,15 +10,15 @@
 <link rel="preload" href="fonts/inter-tight-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/fontes.css">
 <style>
-  :root{--bege:#F2EFE9;--azul:#86BBD8;--azul-esc:#3A6EA5;--texto:#2D2D2D;--linha:#DAD4CA;--suave:#6B6560}
+  :root{--bege:#F2EFE9;--azul:#86BBD8;--azul-esc:#3A6EA5;--texto:#2D2D2D;--linha:#CCCCCC;--suave:#2D2D2D}
   *{box-sizing:border-box;margin:0;padding:0}
   body{background:var(--bege);color:var(--texto);font-family:"Inter Tight",system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;padding:1.5rem 1rem 3rem}
   :focus-visible{outline:3px solid var(--azul-esc);outline-offset:3px;border-radius:4px}
   .barra{width:min(760px,100%);margin:0 auto 1rem;display:flex;justify-content:space-between;gap:.6rem;align-items:center}
   .barra a{color:var(--azul-esc)}
-  .botao{background:var(--azul-esc);color:#fff;border:0;border-radius:99px;padding:.7rem 1.3rem;font:inherit;font-weight:600;cursor:pointer}
-  .botao:hover{background:#2C5682}
-  .recibo{width:min(760px,100%);margin:0 auto;background:#fff;border-radius:12px;padding:clamp(1.5rem,5vw,3.5rem);box-shadow:0 14px 34px -22px rgba(45,45,45,.45)}
+  .botao{background:var(--azul-esc);color:#FAFAFF;border:0;border-radius:99px;padding:.7rem 1.3rem;font:inherit;font-weight:600;cursor:pointer}
+  .botao:hover{background:#2D2D2D}
+  .recibo{width:min(760px,100%);margin:0 auto;background:#FAFAFF;border-radius:12px;padding:clamp(1.5rem,5vw,3.5rem);box-shadow:0 14px 34px -22px rgba(45,45,45,.45)}
   .topo{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;border-bottom:2px solid var(--texto);padding-bottom:1rem}
   .topo img{height:34px;width:auto}
   .topo div{text-align:right;color:var(--suave);font-size:.92rem}
@@ -32,7 +32,7 @@
   .ass{margin-top:3.5rem;width:min(320px,100%);border-top:1px solid var(--texto);padding-top:.5rem;font-size:.92rem}
   .ass span{display:block;color:var(--suave);font-size:.85rem}
   .pe{margin-top:2.5rem;display:flex;justify-content:space-between;gap:1rem;color:var(--suave);font-size:.85rem;flex-wrap:wrap}
-  @media print{body{background:#fff;padding:0}.barra{display:none}.recibo{box-shadow:none;border-radius:0;width:100%}@page{size:A4;margin:18mm}}
+  @media print{body{background:#FAFAFF;padding:0}.barra{display:none}.recibo{box-shadow:none;border-radius:0;width:100%}@page{size:A4;margin:18mm}}
 </style>
 <style>/* espaço para o selo do Netlify no canto */body{padding-bottom:56px}@media print{body{padding-bottom:0}}</style>
 </head>
