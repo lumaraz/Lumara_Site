@@ -352,6 +352,7 @@
   window.NUVEM_ADMIN = {
     vazio, email, api, papel: "admin", eu: "lumara",
     equipeBanco: () => rest("equipe?select=email,nome,papel&order=nome"),
+    visitas: (desde) => tudo(`visitas?dia=gte.${desde}&select=dia,pagina,origem,n`),
     antes() {
       const orig = window.reduzir;
       if (typeof orig === "function") window.reduzir = async (...a) => subir(await orig(...a));

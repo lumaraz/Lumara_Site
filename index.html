@@ -67,6 +67,9 @@
   .hero-pe p{max-width:36ch;font-size:clamp(1.1rem,1.7vw,1.35rem);line-height:1.45}
   .botao{display:inline-block;background:var(--azul-esc);color:#fff;text-decoration:none;padding:.9rem 1.5rem;border-radius:99px;font-weight:600;white-space:nowrap;border:0;font-family:inherit;font-size:1rem}
   .botao:hover{background:#2C5682}
+  .cta-trab{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem 2rem;margin-top:clamp(2.5rem,5vw,4rem);padding:clamp(1.4rem,3vw,2rem) clamp(1.4rem,3vw,2.25rem);border:1.5px solid var(--texto);border-radius:18px}
+  .cta-trab p{font-size:clamp(1.15rem,2vw,1.5rem);line-height:1.35;letter-spacing:-.01em;max-width:34ch}
+  .cta-trab p strong{font-weight:700}
 
   section{padding:clamp(3.5rem,7vw,5.5rem) 0;scroll-margin-top:84px}
   #contato{padding-top:clamp(1rem,3vw,2rem)}
@@ -274,6 +277,10 @@
         <div class="filtros" role="group" aria-label="Filtrar por área" id="filtros"></div>
       </div>
       <ul class="grade-trab" id="grade-trab"></ul>
+      <div class="cta-trab">
+        <p><span data-t="ctaTrab1">Gostou do que viu?</span> <strong data-t="ctaTrab2">Vamos criar a identidade da sua marca.</strong></p>
+        <a class="botao" href="orcamento.html"><span data-t="btnOrc">Solicitar orçamento</span></a>
+      </div>
     </div>
   </section>
 
@@ -357,7 +364,7 @@ const CFG = SITE.carregar();
 /* textos editados na área da equipe substituem os padrões em português */
 Object.entries(CFG.textos).forEach(([k,v])=>{ if(!v||k==="heroTitB") return; document.querySelectorAll(`[data-t="${k}"]`).forEach(el=>el.textContent=v); });
 const textos = {
-  en:{navTrab:"Work",navSobre:"About",navServ:"Services",navContato:"Contact",
+  en:{ctaTrab1:"Liked what you saw?",ctaTrab2:"Let's create your brand's identity.",navTrab:"Work",navSobre:"About",navServ:"Services",navContato:"Contact",
       heroTxt:"Brand and visual designer in Rio de Janeiro. I build identities that tell each brand's story in its own way.",
       heroBtn:"Request a quote",ola1:"Hello",ola2:"I'm Lumara",heroTit:"",heroSub:"",trabTit:"Selected work",sobreTit:"Hi, I'm Lumara.",
       sobre1:"I'm a designer from Rio de Janeiro with over five years of experience, focused on visual identity and graphic design.",
@@ -539,5 +546,6 @@ document.getElementById("ano").textContent=new Date().getFullYear();
 render();
 </script>
 <script src="js/volta.js"></script>
+<script src="js/visita.js" defer></script>
 </body>
 </html>

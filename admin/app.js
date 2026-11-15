@@ -148,6 +148,7 @@ function render(){
   m.innerHTML=({inicio,pedidos,orcamentos,contratos,projetos,calendario,portfolio,clientes,caixa,conteudo,emails,equipe})[view]();
   m.querySelectorAll(".tabela").forEach(t=>{const h=[...t.querySelectorAll("thead th")].map(x=>x.textContent);t.querySelectorAll("tbody tr").forEach(r=>[...r.children].forEach((td,i)=>td.setAttribute("data-label",h[i]||"")))});
   if(view==="projetos") ligarKanban();
+  if(view==="inicio") carregarVisitas();
   if(view==="orcamentos"&&orcAberto) ligarEditor();
   fecharMenu();
 }
@@ -191,6 +192,7 @@ function inicio(){
         <div style="text-align:right"><span class="tag ${d<=0?"st-atrasado":"st-pendente"}">${d<0?"Atrasado":d===0?"Responder hoje":"Responder até "+fmtLongo(lim)}</span><div><button class="btn peq sec" style="margin-top:.35rem" onclick="verPedido('${p.id}')">Abrir</button></div></div></div>`}).join(""):`<p class="vazio">Nenhum pedido esperando. Tudo respondido.</p>`}
     </section>
     ${admin()?(()=>{const nf=notasPendentes();return nf.length?`<section class="painel"><h2>Notas fiscais para emitir</h2>${nf.map(l=>{const t=nfTomador(l);return `<div class="item-lista"><div><strong>${esc(cli(l.cliente).empresa)}</strong><div class="sub">${brl(l.valor)} · pago em ${fmt(l.pagoEm||l.data)} · ${t.exigida==="sim"?"obrigatória (CNPJ)":t.exigida==="opcional"?"pessoa física: opcional":"confirme se é CNPJ"}</div></div><button class="btn peq" onclick="emitirNota('${l.id}')">Emitir nota</button></div>`}).join("")}</section>`:""})():""}
+    ${window.NUVEM_ADMIN?`<section class="painel" id="pn-visitas" style="grid-column:1/-1"><h2>Visitas do site</h2><p class="vazio">Carregando…</p></section>`:""}
     <section class="painel"><h2>Prazos dos próximos 7 dias</h2>
       ${semana.length?semana.map(p=>{const d=diasAte(p.prazo);return `<div class="item-lista"><div><strong>${esc(p.titulo)}</strong><div class="sub">${esc(cli(p.cliente).empresa)} · ${p.etapa}</div></div>
         <span class="tag ${d<0?"st-atrasado":d<=2?"st-pendente":"st-andamento"}">${d<0?`Atrasado ${-d} dia${d<-1?"s":""}`:d===0?"Hoje":fmtLongo(p.prazo)}</span></div>`}).join(""):`<p class="vazio">Nenhum prazo nesta semana.</p>`}
@@ -991,6 +993,31 @@ function editarEmail(k){const m=S.emails.modelos[k];
    `<button class="btn" id="em-ok">Salvar mensagem</button>`);
   $("#em-ok").onclick=()=>{m.assunto=$("#em-a").value;m.corpo=$("#em-c").value;salvar();fechar();render();toast("Mensagem salva.")}}
 function verEmail(id){const h=S.emails.historico.find(x=>x.id===id);abrir(h.assunto,"Para "+esc(h.para),`<div class="email-prev">${esc(h.corpo)}</div>`)}
+
+/* ============ VISITAS (início) ============ */
+async function carregarVisitas(){
+  const el=$("#pn-visitas"); if(!el||!window.NUVEM_ADMIN) return;
+  const dias=[...Array(30)].map((_,i)=>dia(i-29)), desde=dias[0];
+  let l=[]; try{ l=await NUVEM_ADMIN.visitas(desde) }catch(e){ el.innerHTML=`<h2>Visitas do site</h2><p class="vazio">Não foi possível carregar as visitas agora.</p>`; return }
+  if(!document.body.contains(el)) return;
+  const porDia=Object.fromEntries(dias.map(d=>[d,0])), pag={}, ori={};
+  l.forEach(v=>{ if(v.dia in porDia) porDia[v.dia]+=v.n; pag[v.pagina]=(pag[v.pagina]||0)+v.n; if(v.origem!=="interno") ori[v.origem]=(ori[v.origem]||0)+v.n });
+  const total=Object.values(porDia).reduce((a,b)=>a+b,0), hoje=porDia[dias[29]]||0, mx=Math.max(1,...Object.values(porDia));
+  const chegadas=Object.values(ori).reduce((a,b)=>a+b,0);
+  const nomePag=p=>p==="início"?"Página inicial":p==="links"?"Página de links":p==="orcamento"?"Pedido de orçamento":p==="privacidade"?"Privacidade":
+    p.startsWith("projeto:")?((PF.find(x=>x.slug===p.slice(8))||{}).nome||"Projeto")+" (projeto)":p;
+  const top=(o,n)=>Object.entries(o).sort((a,b)=>b[1]-a[1]).slice(0,n);
+  if(!total){ el.innerHTML=`<h2>Visitas do site</h2><p class="vazio">Ainda não há visitas contadas nos últimos 30 dias. A contagem começa a partir de hoje e não inclui a equipe.</p>`; return }
+  el.innerHTML=`<h2>Visitas do site <span class="mut" style="font-weight:400;font-size:.85rem">últimos 30 dias</span></h2>
+    <dl class="numeros" style="margin:.5rem 0 1rem"><div class="num"><dt>Páginas vistas</dt><dd>${total}</dd></div><div class="num"><dt>Hoje</dt><dd>${hoje}</dd></div><div class="num"><dt>Chegadas de fora</dt><dd>${chegadas}</dd></div></dl>
+    <div role="img" aria-label="Páginas vistas por dia nos últimos 30 dias, total ${total}" style="display:flex;align-items:flex-end;gap:3px;height:90px;margin-bottom:1.25rem">
+      ${dias.map(d=>`<span title="${fmt(d)}: ${porDia[d]}" style="flex:1;min-width:0;height:${Math.max(2,Math.round(porDia[d]/mx*90))}px;background:${d===dias[29]?"var(--tinta,#2D2D2D)":"#86BBD8"};border-radius:3px 3px 0 0"></span>`).join("")}
+    </div>
+    <div class="grade2" style="gap:1.5rem">
+      <div><h3 style="font-size:.95rem;margin-bottom:.4rem">Páginas mais vistas</h3>${top(pag,6).map(([p,n])=>`<div class="item-lista"><span>${esc(nomePag(p))}</span><strong>${n}</strong></div>`).join("")}</div>
+      <div><h3 style="font-size:.95rem;margin-bottom:.4rem">De onde vieram</h3>${chegadas?top(ori,6).map(([o,n])=>`<div class="item-lista"><span>${esc(o==="direto"?"Direto (link digitado ou salvo)":o)}</span><strong>${Math.round(n/chegadas*100)}%</strong></div>`).join(""):`<p class="vazio">Sem chegadas de fora ainda.</p>`}</div>
+    </div>`;
+}
 
 /* ============ EQUIPE ============ */
 const PAPEIS={admin:["Administradora","Tudo, incluindo caixa e valores"],equipe:["Equipe","Pedidos, projetos, calendário e clientes, sem valores"]};
