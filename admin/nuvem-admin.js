@@ -156,7 +156,7 @@
     setOrig.call(localStorage, "lumara_admin", JSON.stringify(S));
     if (C.site) setOrig.call(localStorage, "lumara_site", JSON.stringify(C.site)); else localStorage.removeItem("lumara_site");
     if (C.portfolio) setOrig.call(localStorage, "lumara_portfolio_v4", JSON.stringify(C.portfolio)); else localStorage.removeItem("lumara_portfolio_v4");
-    const ped = evs.filter((e) => e.tipo === "pedido"), outros = evs.filter((e) => e.tipo !== "pedido");
+    const ped = evs.filter((e) => e.tipo === "pedido"), outros = evs.filter((e) => e.tipo !== "pedido" && podeProcessar(e.tipo));
     setOrig.call(localStorage, "lumara_pedidos", JSON.stringify(ped.map((e) => e.dados)));
     setOrig.call(localStorage, "lumara_eventos", JSON.stringify(outros.map((e) => Object.assign({}, e.dados, { tipo: e.tipo }))));
     pendPed = ped.map((e) => ({ ev: e.id, id: e.dados.id }));
@@ -165,6 +165,10 @@
     if (!ultimoEv) { const u = await rest("eventos?select=id&order=id.desc&limit=1"); ultimoEv = u[0] ? u[0].id : 0; }
     visto = [...regs.map((r) => r.atualizado || ""), ...cfgs.map((c) => c.atualizado || "")].reduce((a, b) => (b > a ? b : a), "");
   }
+
+  /* quem é "Equipe" não mexe em dinheiro: aprovação e pagamentos ficam para a administradora */
+  const ehAdmin = () => window.NUVEM_ADMIN && window.NUVEM_ADMIN.papel === "admin";
+  const podeProcessar = (tipo) => ehAdmin() || !["aprovado", "pago", "parcela"].includes(tipo);
 
   /* ---------- salvar no banco ---------- */
   function sinc(txt, erro) { const el = document.getElementById("sinc"); if (el) { el.textContent = txt; el.style.color = erro ? "#9b2c1f" : ""; } }
@@ -176,6 +180,7 @@
     const agora = new Date().toISOString(), up = [], dels = [], novo = {};
     try {
       TIPOS.forEach((t) => {
+        if (t === "caixa" && !ehAdmin()) { novo[t] = base[t] || new Map(); return; }
         const atual = new Map();
         (S[t] || []).forEach((x, i) => {
           if (!x || !x.id) return;
@@ -277,7 +282,7 @@
       const evs = await rest(`eventos?processado=is.null&id=gt.${ultimoEv}&select=id,tipo,dados&order=id`);
       if (!evs.length) return;
       ultimoEv = evs[evs.length - 1].id;
-      const ped = evs.filter((e) => e.tipo === "pedido"), outros = evs.filter((e) => e.tipo !== "pedido");
+      const ped = evs.filter((e) => e.tipo === "pedido"), outros = evs.filter((e) => e.tipo !== "pedido" && podeProcessar(e.tipo));
       ped.forEach((e) => {
         const p = e.dados; pendPed.push({ ev: e.id, id: p.id });
         if (!S.pedidos.find((x) => x.id === p.id)) {
@@ -333,12 +338,12 @@
     }
     const quem = await rest("equipe?select=email,papel,nome");
     if (!quem.some((x) => x.email === String(sessao.email).toLowerCase())) { gravarSessao(null); mostrarLogin("Este e-mail não tem acesso à área da equipe."); return; }
-    sinc("Carregando…");
-    await hidratar();
-    // quem está usando: liga o login à pessoa da lista da equipe
+    // quem está usando: o papel decide o que ela carrega e salva
     const email = String(sessao.email || "").toLowerCase();
     const minha = quem.find((x) => x.email === email);
     window.NUVEM_ADMIN.papel = minha.papel;
+    sinc("Carregando…");
+    await hidratar();
     try {
       const S0 = JSON.parse(localStorage.getItem("lumara_admin"));
       let p = S0.equipe.find((x) => (x.email || "").toLowerCase() === email)
