@@ -306,14 +306,14 @@
      seguem em linhas automáticas com "grade" imagens cada. largas: formato antigo (imagem em linha inteira). */
   const PROPORCOES={original:"Manter o formato original","1/1":"Quadrado (1:1)","4/5":"Retrato (4:5)","3/4":"Retrato (3:4)","16/9":"Paisagem (16:9)"};
   function layout(p){
-    const cols=Math.min(5,Math.max(1,+p.grade||1));
+    const cols=Math.min(10,Math.max(1,+p.grade||1));
     return {cols,prop:p.proporcao||(cols===3?"3/4":"original"),largas:p.largas||[]};
   }
   /* imagens fora da galeria ficam guardadas no projeto, mas não aparecem no site */
   function visiveis(p){const oc=p.ocultas||[];return (p.galeria||[]).filter(u=>!oc.includes(u))}
   function linhas(p){
     const tot=visiveis(p).length, L=layout(p), out=[]; let i=0;
-    (p.linhas||[]).forEach(n=>{if(i<tot){const k=Math.min(Math.max(1,+n||1),5);out.push({n:k,ini:i,qtd:Math.min(k,tot-i),auto:false});i+=k}});
+    (p.linhas||[]).forEach(n=>{if(i<tot){const k=Math.min(Math.max(1,+n||1),10);out.push({n:k,ini:i,qtd:Math.min(k,tot-i),auto:false});i+=k}});
     while(i<tot){let k=L.cols;
       if(!(p.linhas||[]).length&&L.largas.length){if(L.largas.includes(i))k=1;else{let j=i;while(j<tot&&j-i<L.cols&&!L.largas.includes(j))j++;k=Math.max(1,j-i)}}
       out.push({n:k,ini:i,qtd:Math.min(k,tot-i),auto:true});i+=k}
@@ -332,7 +332,8 @@
     .galeria:not([data-prop="original"]) .g-linha:not([data-n="1"]) img{aspect-ratio:var(--prop);object-fit:cover}
     .galeria[data-prop="original"] .g-linha:not([data-n="1"]){display:flex}
     .galeria[data-prop="original"] .g-linha:not([data-n="1"]) img{flex:var(--r,1) 1 0;min-width:0;width:auto;height:auto}
-    @media (max-width:760px){.g-linha[data-n="3"],.g-linha[data-n="4"],.g-linha[data-n="5"]{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))}
+    @media (max-width:760px){.g-linha:not([data-n="1"]):not([data-n="2"]){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))}
+      .g-linha[data-n="6"],.g-linha[data-n="7"],.g-linha[data-n="8"],.g-linha[data-n="9"],.g-linha[data-n="10"]{grid-template-columns:repeat(3,minmax(0,1fr))!important}
       .galeria .g-linha[data-n] img{width:100%!important;min-width:0}}`;
   window.PORTFOLIO={AREAS,carregar,salvar,restaurar,slugify,padrao,paragrafos,layout,linhas,visiveis,galeriaHTML,PROPORCOES,CSS_GALERIA};
 })();

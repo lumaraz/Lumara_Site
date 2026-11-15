@@ -630,7 +630,7 @@ function editarPF(id){
    <div class="bloco"><h3>Galeria do projeto</h3><p class="mut">Até 20 imagens, na ordem em que aparecem na página.</p>
      <div class="linha2" style="margin-top:.6rem">
        <div class="cmp"><label for="pf-pr">Formato das imagens</label><select id="pf-pr">${Object.entries(PORTFOLIO.PROPORCOES).map(([k,v])=>`<option value="${k}" ${PORTFOLIO.layout(p).prop===k?"selected":""}>${v}</option>`).join("")}</select></div>
-       <div class="cmp"><label for="pf-g">Linhas automáticas: imagens por linha</label><select id="pf-g">${[1,2,3,4,5].map(n=>`<option value="${n}" ${PORTFOLIO.layout(p).cols===n?"selected":""}>${n}</option>`).join("")}</select></div></div>
+       <div class="cmp"><label for="pf-g">Linhas automáticas: imagens por linha</label><select id="pf-g">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option value="${n}" ${PORTFOLIO.layout(p).cols===n?"selected":""}>${n}</option>`).join("")}</select></div></div>
      <p class="mut">Monte a galeria linha por linha: em cada linha, escolha quantas imagens ela tem. As setas mudam a ordem. As imagens que sobrarem seguem nas linhas automáticas. “Excluir linha” tira a linha do site e guarda as imagens dela em “Fora da galeria”, de onde dá para trazer de volta.</p>
      <div class="linhas-ed" id="pf-gal"></div>
      <h3 style="margin-top:1rem">Prévia da galeria</h3><div class="pf-prev" id="pf-prev" tabindex="0" role="region" aria-label="Prévia da galeria"></div>
@@ -649,7 +649,7 @@ function editarPF(id){
     p.grade=+$("#pf-g").value; p.proporcao=$("#pf-pr").value;
     const L=PORTFOLIO.linhas(p), vis=PORTFOLIO.visiveis(p), temAuto=L.some(r=>r.auto);
     $("#pf-gal").innerHTML=(L.length?L.map((r,ri)=>`<div class="linha-ed${r.auto?" linha-auto":""}"><div class="linha-ed-cab"><strong>Linha ${ri+1}${r.auto?' <span class="mut">(automática)</span>':""}</strong>
-        <span style="display:flex;gap:.5rem;align-items:center"><label>Imagens nesta linha <select data-linha="${ri}" aria-label="Imagens na linha ${ri+1}">${[1,2,3,4,5].map(n=>`<option ${n===r.n?"selected":""}>${n}</option>`).join("")}</select></label>
+        <span style="display:flex;gap:.5rem;align-items:center"><label>Imagens nesta linha <select data-linha="${ri}" aria-label="Imagens na linha ${ri+1}">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option ${n===r.n?"selected":""}>${n}</option>`).join("")}</select></label>
         <button type="button" class="btn peq sec" data-excluir="${ri}">Excluir linha<span class="sr-only"> ${ri+1}</span></button></span></div>
       <div class="mini-gal">${vis.slice(r.ini,r.ini+r.qtd).map((g,j)=>{const k=r.ini+j;return `<figure class="gal-item"><img src="${srcPF(g)}" alt="Imagem ${k+1}">
         <span class="gal-acoes"><button type="button" data-mv="${k}" data-d="-1" aria-label="Mover imagem ${k+1} para trás" ${k===0?"disabled":""}>‹</button><span class="gal-n">${k+1}</span><button type="button" data-mv="${k}" data-d="1" aria-label="Mover imagem ${k+1} para frente" ${k===vis.length-1?"disabled":""}>›</button></span>
