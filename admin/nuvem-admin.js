@@ -297,10 +297,30 @@
 
   /* ---------- início ---------- */
   async function iniciar() {
+    if (!sessao.email) { // volta de convite ou recuperação: descobre o e-mail pelo próprio login
+      const r = await fetch(BASE + "/auth/v1/user", { headers: { apikey: KEY, Authorization: "Bearer " + (await token()) } });
+      const u = await r.json().catch(() => ({}));
+      sessao.email = u.email || ""; gravarSessao(sessao);
+    }
     const quem = await rest("equipe?select=email,papel,nome");
-    if (!quem.length) { gravarSessao(null); mostrarLogin("Este e-mail não tem acesso à área da equipe."); return; }
+    if (!quem.some((x) => x.email === String(sessao.email).toLowerCase())) { gravarSessao(null); mostrarLogin("Este e-mail não tem acesso à área da equipe."); return; }
     sinc("Carregando…");
     await hidratar();
+    // quem está usando: liga o login à pessoa da lista da equipe
+    const email = String(sessao.email || "").toLowerCase();
+    const minha = quem.find((x) => x.email === email);
+    window.NUVEM_ADMIN.papel = minha.papel;
+    try {
+      const S0 = JSON.parse(localStorage.getItem("lumara_admin"));
+      let p = S0.equipe.find((x) => (x.email || "").toLowerCase() === email)
+        || (minha.papel === "admin" && S0.equipe.find((x) => x.id === "lumara" && !x.email));
+      if (!p) { p = { id: "p" + Math.random().toString(36).slice(2, 9), nome: minha.nome || email, cor: "#86BBD8" }; S0.equipe.push(p); }
+      p.email = email;
+      if (minha.papel === "admin") { p.papel = "Administradora"; p.acesso = "Tudo, incluindo caixa e valores"; }
+      else { p.papel = "Equipe"; p.acesso = "Pedidos, projetos, calendário e clientes, sem valores"; }
+      window.NUVEM_ADMIN.eu = p.id;
+      setOrig.call(localStorage, "lumara_admin", JSON.stringify(S0));
+    } catch (e) { console.error(e); }
     ligarGravacao();
     esconderLogin();
     const q = document.getElementById("quem"); if (q) q.textContent = sessao.email || quem[0].email;
@@ -323,8 +343,15 @@
     catch (e) { console.error(e); if (!document.getElementById("login")) mostrarLogin(sessao ? "Não foi possível carregar os dados. Confira a conexão e entre de novo." : ""); }
   }
 
+  async function api(rota, corpo) {
+    const r = await fetch("/api/" + rota, { method: "POST", headers: { "Content-Type": "application/json", Authorization: "Bearer " + (await token()) }, body: JSON.stringify(corpo) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.erro || "erro");
+    return j;
+  }
   window.NUVEM_ADMIN = {
-    vazio, email,
+    vazio, email, api, papel: "admin", eu: "lumara",
+    equipeBanco: () => rest("equipe?select=email,nome,papel&order=nome"),
     antes() {
       const orig = window.reduzir;
       if (typeof orig === "function") window.reduzir = async (...a) => subir(await orig(...a));

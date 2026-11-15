@@ -107,8 +107,8 @@ function carregar(){
 }
 addEventListener("storage",e=>{if(e.key==="lumara_eventos"&&processarEventos()){salvar();render();if(notas.length){toast(notas.join(" "));notas=[]}}});
 function salvar(){try{localStorage.setItem("lumara_admin",JSON.stringify(S))}catch(e){}}
-let usuario="lumara";
-const admin=()=>usuario==="lumara";
+let usuario=window.NUVEM_ADMIN?NUVEM_ADMIN.eu:"lumara";
+const admin=()=>window.NUVEM_ADMIN?NUVEM_ADMIN.papel==="admin":usuario==="lumara";
 const cli=id=>S.clientes.find(c=>c.id===id)||{};
 const pessoa=id=>S.equipe.find(p=>p.id===id)||{};
 const totalOrc=o=>o.itens.reduce((a,i)=>a+(+i.v||0),0);
@@ -943,13 +943,56 @@ function editarEmail(k){const m=S.emails.modelos[k];
 function verEmail(id){const h=S.emails.historico.find(x=>x.id===id);abrir(h.assunto,"Para "+esc(h.para),`<div class="email-prev">${esc(h.corpo)}</div>`)}
 
 /* ============ EQUIPE ============ */
+const PAPEIS={admin:["Administradora","Tudo, incluindo caixa e valores"],equipe:["Equipe","Pedidos, projetos, calendário e clientes, sem valores"]};
 function equipe(){
+  const lista=S.equipe.filter(p=>p.email||!window.NUVEM_ADMIN);
+  const eu=pessoa(usuario);
   return `<div class="cab"><div><h1>Equipe</h1><p>Cada pessoa entra com o próprio e-mail e senha e vê só o que o papel dela permite.</p></div>
-   </div>
-  <div class="tab-wrap"><table class="tabela"><thead><tr><th>Pessoa</th><th>Papel</th><th>O que vê</th></tr></thead><tbody>
-  ${S.equipe.map(p=>`<tr><td><span style="display:flex;gap:.6rem;align-items:center"><span class="avatar" style="--c:${p.cor}">${iniciais(p.nome)}</span><strong>${esc(p.nome)}</strong></span></td><td>${p.papel}</td><td class="mut">${p.acesso}</td></tr>`).join("")}
-  </tbody></table></div>
-  <p class="mut" style="margin-top:1rem">Para dar acesso a outra pessoa, o login dela precisa ser criado no Supabase e o e-mail incluído na lista da equipe.</p>`;
+   ${admin()?`<div class="acoes"><button class="btn" onclick="novaPessoa()">Adicionar pessoa</button></div>`:""}</div>
+  <div class="tab-wrap"><table class="tabela"><thead><tr><th>Pessoa</th><th>Papel</th><th>O que vê</th>${admin()?"<th><span class=\"sr-only\">Ações</span></th>":""}</tr></thead><tbody>
+  ${lista.map(p=>`<tr><td><span style="display:flex;gap:.6rem;align-items:center"><span class="avatar" style="--c:${p.cor}">${iniciais(p.nome)}</span><span><strong>${esc(p.nome)}</strong>${p.email?`<br><span class="mut" style="font-size:.85rem">${esc(p.email)}</span>`:""}</span></span></td>
+    <td>${esc(p.papel||"")}${p.convite?` <span class="tag st-rascunho">convite enviado</span>`:""}</td><td class="mut">${esc(p.acesso||"")}</td>
+    ${admin()?`<td style="white-space:nowrap">${p.email&&p.id!==eu.id?`<button class="btn peq sec" onclick="convidarDeNovo('${p.id}')">Reenviar convite</button> <button class="btn peq perigo" onclick="removerPessoa('${p.id}')">Remover</button>`:p.id===eu.id?`<span class="mut">Você</span>`:""}</td>`:""}</tr>`).join("")}
+  </tbody></table></div>`;
+}
+function novaPessoa(){
+  abrir("Adicionar pessoa","A pessoa recebe um e-mail para criar a própria senha.",
+   `<div class="cmp"><label for="np-nome">Nome</label><input id="np-nome" autocomplete="off"></div>
+    <div class="cmp"><label for="np-email">E-mail</label><input id="np-email" type="email" autocomplete="off"></div>
+    <div class="cmp"><label for="np-papel">Papel</label><select id="np-papel"><option value="equipe">Equipe: pedidos, projetos, calendário e clientes, sem valores</option><option value="admin">Administradora: tudo, incluindo caixa e valores</option></select></div>
+    <p class="mut" id="np-erro" role="alert"></p>`,
+   `<button class="btn" id="np-ok">Enviar convite</button>`);
+  $("#np-ok").onclick=async()=>{
+    const nome=$("#np-nome").value.trim(), email=$("#np-email").value.trim().toLowerCase(), papel=$("#np-papel").value, er=$("#np-erro");
+    if(!nome){er.textContent="Digite o nome.";$("#np-nome").focus();return}
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){er.textContent="Digite um e-mail válido.";$("#np-email").focus();return}
+    if(S.equipe.some(p=>(p.email||"")===email)){er.textContent="Essa pessoa já está na equipe. Use “Reenviar convite”.";return}
+    const b=$("#np-ok"); b.disabled=true; b.textContent="Enviando…"; er.textContent="";
+    try{
+      if(window.NUVEM_ADMIN) await NUVEM_ADMIN.api("equipe",{acao:"convidar",nome,email,papel});
+      const cores=["#86BBD8","#462D26","#5E5A55","#2E5E7A","#9C6B4E"];
+      S.equipe.push({id:uid("p"),nome,email,papel:PAPEIS[papel][0],acesso:PAPEIS[papel][1],cor:cores[S.equipe.length%cores.length],convite:new Date().toISOString()});
+      salvar();fechar();render();toast(`Convite enviado para ${email}.`);
+    }catch(e){b.disabled=false;b.textContent="Enviar convite";er.textContent="Não foi possível enviar o convite: "+e.message+"."}
+  };
+}
+async function convidarDeNovo(id){
+  const p=pessoa(id);
+  try{ await NUVEM_ADMIN.api("equipe",{acao:"convidar",nome:p.nome,email:p.email,papel:p.papel==="Administradora"?"admin":"equipe"});
+    p.convite=new Date().toISOString();salvar();render();toast(`Convite reenviado para ${p.email}.`) }
+  catch(e){toast("Não foi possível reenviar: "+e.message+".")}
+}
+function removerPessoa(id){
+  const p=pessoa(id);
+  abrir("Remover "+esc(p.nome),"A pessoa deixa de entrar na área da equipe na hora.",
+   `<p>O histórico do que ${esc(p.nome.split(" ")[0])} fez (comentários, projetos) continua no sistema.</p><p class="mut" id="rp-erro" role="alert"></p>`,
+   `<button class="btn sec" onclick="fechar()">Cancelar</button><button class="btn perigo" id="rp-ok">Remover acesso</button>`);
+  $("#rp-ok").onclick=async()=>{
+    const b=$("#rp-ok"); b.disabled=true;
+    try{ if(window.NUVEM_ADMIN) await NUVEM_ADMIN.api("equipe",{acao:"remover",email:p.email});
+      p.email="";p.removido=new Date().toISOString();p.papel="Sem acesso";p.acesso="";salvar();fechar();render();toast(`${p.nome} não tem mais acesso.`) }
+    catch(e){b.disabled=false;$("#rp-erro").textContent="Não foi possível remover: "+e.message+"."}
+  };
 }
 
 /* ============ início ============ */

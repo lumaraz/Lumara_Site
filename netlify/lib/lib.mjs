@@ -93,6 +93,7 @@ function correio() {
 const escH = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 /* E-mail em HTML com a identidade do site (tabelas e estilos inline, para funcionar no Gmail e no Outlook) */
 const BOTOES = [
+  [/\/auth\/v1\/verify/, "Criar minha senha"],
   [/\/contrato\.html/, "Ler e assinar o contrato"],
   [/\/proposta\.html/, "Ver a proposta"],
   [/\/cliente\.html/, "Abrir meu portal"],
@@ -200,6 +201,27 @@ export async function daEquipe(req) {
   const u = await r.json();
   const l = await db(`equipe?email=eq.${q(String(u.email || "").toLowerCase())}&select=email,papel`);
   return l[0] || null;
+}
+
+/* Login (Supabase Auth): convite ou recuperação, com link para criar a senha */
+export async function linkDeSenha(email) {
+  const pedir = async (type) => {
+    const r = await fetch(`${DB}/auth/v1/admin/generate_link`, { method: "POST", headers: cabecalhos(),
+      body: JSON.stringify({ type, email, redirect_to: `${SITE_URL}/admin/` }) });
+    const j = await r.json().catch(() => ({}));
+    return { ok: r.ok, j };
+  };
+  let { ok, j } = await pedir("invite");
+  if (!ok) ({ ok, j } = await pedir("recovery")); // a pessoa já tinha login
+  const link = j.action_link || (j.properties && j.properties.action_link);
+  if (!ok || !link) throw new Error("Auth: " + JSON.stringify(j).slice(0, 200));
+  return link;
+}
+export async function apagarLogin(email) {
+  const r = await fetch(`${DB}/auth/v1/admin/users?page=1&per_page=1000`, { headers: cabecalhos() });
+  const j = await r.json().catch(() => ({}));
+  const u = (j.users || []).find((x) => String(x.email || "").toLowerCase() === email);
+  if (u) await fetch(`${DB}/auth/v1/admin/users/${u.id}`, { method: "DELETE", headers: cabecalhos() });
 }
 
 export const json = (dados, status = 200, extra = {}) =>
