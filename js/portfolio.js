@@ -6,7 +6,7 @@
 window.urlLimpa=window.urlLimpa||function(u){u=String(u||"").trim();if(!u)return u;
   if(/^(https?:|mailto:|tel:|#)/i.test(u)) return u.replace(/^http:\/\/(www\.)?lumarasilva\.com\.br/i,"https://lumarasilva.com.br");
   const s=u.replace(/^(\.\.\/|\.\/|\/)/,"");
-  if(/^index\.html#trabalhos$/i.test(s)) return "/#projetos";
+  if(/^index\.html#tra\w+$/i.test(s)) return "/#projetos"; /* âncora antiga do portfólio */
   if(/^index\.html(#.*)?$/i.test(s)) return "/"+(s.split("#")[1]?"#"+s.split("#")[1]:"");
   if(/^(orcamento|privacidade|links)\.html/i.test(s)) return "/"+s.replace(/\.html/i,"");
   if(/^(www\.)?[a-z0-9-]+(\.[a-z0-9-]+)+(\/|\?|$)/i.test(s)&&!/^[^/]+\.html?\b/i.test(s)) return "https://"+s;
