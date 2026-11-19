@@ -56,13 +56,17 @@
   .lang{display:inline-flex;padding:2px;border:1px solid var(--linha);border-radius:99px;background:var(--claro);cursor:pointer;font:inherit;font-size:.78rem;font-weight:600;color:var(--suave)}
   .lang span{padding:.22rem .55rem;border-radius:99px}
   .lang span.ativo{background:var(--texto);color:#FAFAFF}
-  header nav{display:flex;gap:.6rem;align-items:center}
-  .acoes{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:space-between;border-top:1px solid var(--texto);margin-top:clamp(2.5rem,6vw,4rem);padding:2rem 0 4rem}
-  .botao{display:inline-block;background:var(--azul-esc);color:#FAFAFF;text-decoration:none;padding:1rem 1.8rem;border-radius:99px;font-weight:600;font-size:1.05rem}
+  header nav{display:flex;gap:.6rem;align-items:center;flex:none}
+  .vl-curto{display:none}
+  @media (max-width:560px){header .wrap{gap:.6rem}header nav{gap:.4rem}.vl-longo{display:none}.vl-curto{display:inline}header .btn-link{padding:.45rem .8rem;font-size:.9rem}}
+  .acoes{display:flex;flex-wrap:wrap;gap:1rem 1.5rem;align-items:center;justify-content:space-between;border-top:1px solid var(--linha);margin-top:clamp(2.5rem,6vw,4rem);padding:1.5rem 0 3.5rem}
+  .botao{display:inline-block;background:var(--azul-prof);color:#FAFAFF;text-decoration:none;padding:.7rem 1.25rem;border-radius:99px;font-weight:600;font-size:.95rem}
   .botao:hover{background:#2D2D2D}
-  .prox{text-decoration:none;text-align:right}
-  .prox small{display:block;color:var(--suave)}
-  .prox strong{font-size:1.4rem;font-weight:700;letter-spacing:-.03em}
+  .acoes .chama{display:flex;align-items:center;gap:.9rem;flex-wrap:wrap;color:var(--suave);font-size:.98rem}
+  .prox{text-decoration:none;text-align:right;display:inline-flex;align-items:baseline;gap:.6rem}
+  .prox small{color:var(--suave);font-size:.9rem}
+  .prox strong{font-size:1.15rem;font-weight:700;letter-spacing:-.02em}
+  .prox:hover strong{color:var(--azul-esc)}
   .vazio{padding:5rem 0}
   @view-transition{navigation:auto}
   @media (max-width:760px){.topo-proj,.texto{grid-template-columns:1fr}.ficha{grid-template-columns:1fr 1fr}.meta{text-align:left}.prox{text-align:left}}
@@ -72,7 +76,7 @@
 <body>
 <header><div class="wrap">
   <a class="marca" href="/"><img src="img/logo-escuro.svg" alt="Lumara Silva" width="1552" height="366"></a>
-  <nav aria-label="Projeto"><button class="lang" id="idioma" aria-label="Switch to English" lang="en"><span class="ativo">PT</span><span>EN</span></button></nav>
+  <nav aria-label="Projeto"><button class="lang" id="idioma" aria-label="Switch to English" lang="en"><span class="ativo">PT</span><span>EN</span></button><a class="btn-link" href="/" id="voltar-site"><span class="vl-longo">Voltar ao site</span><span class="vl-curto">← Voltar</span></a></nav>
 </div></header>
 <main id="conteudo" class="wrap"></main>
 
@@ -84,14 +88,15 @@ const esc=t=>String(t??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&g
 const sigla=n=>n.split(/\s+/).filter(w=>/^[A-ZÀ-Ú]/.test(w)).slice(0,2).map(w=>w[0]).join("");
 let lang="pt"; try{if(localStorage.getItem("lumara_lang")==="en")lang="en"}catch(e){}
 const L={
-  pt:{todos:"Todos os projetos",ano:"Ano",area:"Área",cliente:"Cliente",orc:"Solicitar orçamento",prox:"Próximo projeto",img:"imagem",de:"de",capa:"Capa do projeto",nf:"Projeto não encontrado",nfp:"Ele pode ter sido despublicado.",nfl:"Veja todos os projetos",abre:"(abre em nova aba)"},
-  en:{todos:"All projects",ano:"Year",area:"Field",cliente:"Client",orc:"Request a quote",prox:"Next project",img:"image",de:"of",capa:"Project cover",nf:"Project not found",nfp:"It may have been unpublished.",nfl:"See all work",abre:"(opens in a new tab)"}
+  pt:{todos:"Todos os projetos",ano:"Ano",area:"Área",cliente:"Cliente",orc:"Começar um projeto",chama:"Tem um projeto em mente?",volta:"Voltar ao site",voltaC:"← Voltar",prox:"Próximo projeto",img:"imagem",de:"de",capa:"Capa do projeto",nf:"Projeto não encontrado",nfp:"Ele pode ter sido despublicado.",nfl:"Veja todos os projetos",abre:"(abre em nova aba)"},
+  en:{todos:"All projects",ano:"Year",area:"Field",cliente:"Client",orc:"Start a project",chama:"Have a project in mind?",volta:"Back to the site",voltaC:"← Back",prox:"Next project",img:"image",de:"of",capa:"Project cover",nf:"Project not found",nfp:"It may have been unpublished.",nfl:"See all projects",abre:"(opens in a new tab)"}
 };
 function mostrar(rolar){
   const T=L[lang], en=lang==="en";
   document.documentElement.lang=en?"en":"pt-BR";
   const b=document.getElementById("idioma"); b.children[0].classList.toggle("ativo",!en); b.children[1].classList.toggle("ativo",en);
   b.setAttribute("aria-label",en?"Mudar para português":"Switch to English"); b.setAttribute("lang",en?"pt-BR":"en");
+  const vs=document.getElementById("voltar-site"); vs.children[0].textContent=T.volta; vs.children[1].textContent=T.voltaC; 
   const lista=PORTFOLIO.carregar().filter(p=>p.publicado), slug=(()=>{const m=location.pathname.match(/\/projetos\/([^/?#]+)/);return m?decodeURIComponent(m[1]):location.hash.slice(1)})();
   if(!/\/projetos\//.test(location.pathname)&&slug) history.replaceState(null,"","/projetos/"+encodeURIComponent(slug));
   const i=lista.findIndex(p=>p.slug===slug), p=lista[i], m=document.getElementById("conteudo");
@@ -114,8 +119,8 @@ function mostrar(rolar){
    </div>`}
   ${p.galeria&&p.galeria.length?PORTFOLIO.galeriaHTML(p,esc,(k,n)=>`${esc(p.nome)}, ${T.img} ${k+1} ${T.de} ${n}`):""}
   <div class="acoes">
-    <div><a class="botao" href="/orcamento">${T.orc}</a></div>
-    ${lista.length>1?`<a class="prox" href="/projetos/${prox.slug}"><small>${T.prox}</small><strong>${esc(prox.nome)}</strong></a>`:""}
+    <div class="chama"><span>${T.chama}</span><a class="botao" href="/orcamento">${T.orc}</a></div>
+    ${lista.length>1?`<a class="prox" href="/projetos/${encodeURIComponent(prox.slug)}"><small>${T.prox}</small><strong>${esc(prox.nome)} →</strong></a>`:""}
   </div>`;
   if(rolar!==false) scrollTo(0,0);
 }

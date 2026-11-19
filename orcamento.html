@@ -38,9 +38,14 @@
   header{height:64px;display:flex;align-items:center;justify-content:space-between;width:min(1180px,100% - 2.5rem);margin-inline:auto}
   .marca{text-decoration:none;view-transition-name:marca}
   header a.voltar{font-size:.95rem}
+  .topo-acoes{display:flex;gap:.6rem;align-items:center;flex:none}
+  .vl-curto{display:none}
+  @media (max-width:560px){header{gap:.6rem}.topo-acoes{gap:.4rem}.vl-longo{display:none}.vl-curto{display:inline}.btn-link{padding:.45rem .8rem;font-size:.9rem}}
+  .cond{border-left:3px solid var(--mar);padding-left:1rem}
   .pagina{display:grid;grid-template-columns:5fr 7fr;gap:clamp(2rem,6vw,5rem);width:min(1180px,100% - 2.5rem);margin:clamp(2rem,6vw,4rem) auto 5rem}
   .intro{position:sticky;top:2rem;align-self:start}
-  h1{font-family:var(--titulo);font-size:clamp(2.6rem,6vw,4.6rem);line-height:.95;font-weight:800;letter-spacing:-.05em}
+  h1{font-family:var(--titulo);font-size:clamp(2.3rem,5.4vw,4.3rem);line-height:1.08;font-weight:800;letter-spacing:-.05em}
+  h1 span{display:block}
   .intro p{margin-top:1.25rem;max-width:40ch}
   .intro ul{list-style:none;margin-top:1.5rem;border-top:1px solid var(--nevoa)}
   .intro li{padding:.75rem 0;border-bottom:1px solid var(--nevoa);font-size:.97rem;color:#2D2D2D}
@@ -94,12 +99,12 @@
 <a class="pular" href="#form" style="position:absolute;left:1rem;top:-4rem;z-index:100;background:#2D2D2D;color:#FAFAFF;padding:.6rem 1rem;border-radius:8px" onfocus="this.style.top='1rem'" onblur="this.style.top='-4rem'">Pular para o formulário</a>
 <header>
   <a class="marca" href="/"><img src="img/logo-escuro.svg" alt="Lumara Silva" width="1552" height="366" style="height:clamp(36px,4vw,46px);width:auto;display:block"></a>
-  <span style="display:flex;gap:.6rem;align-items:center"><button class="lang" id="idioma" aria-label="Switch to English" lang="en"><span class="ativo">PT</span><span>EN</span></button><a class="btn-link" href="/">Voltar ao site</a></span>
+  <span class="topo-acoes"><button class="lang" id="idioma" aria-label="Switch to English" lang="en"><span class="ativo">PT</span><span>EN</span></button><a class="btn-link" href="/"><span class="vl-longo">Voltar ao site</span><span class="vl-curto">← Voltar</span></a></span>
 </header>
 
 <main class="pagina">
   <aside class="intro">
-    <h1>Vamos começar seu projeto</h1>
+    <h1><span>Vamos começar</span><span>seu projeto</span></h1>
     <p>Este formulário é o nosso primeiro contato. Ele me ajuda a entender o momento do seu negócio, como sua marca quer ser percebida e o que você espera do projeto. Fale do jeito mais natural possível: o orçamento é personalizado.</p>
     <ul>
       <li><strong>Resposta em até 2 dias úteis</strong>, com o orçamento em PDF no seu e-mail.</li>
@@ -169,9 +174,22 @@
             <label class="opcao"><input type="radio" name="servico" value="Não sei ainda"> Ainda não sei</label>
           </div>
         </div>
+        <div id="campos-social" class="oculto cond">
+          <div class="campo"><label for="postsSemana">Quantos posts por semana você precisa?</label><span class="dica">Ex.: 3 posts por semana</span><input id="postsSemana" name="postsSemana" type="text" aria-describedby="e-postsSemana" data-social><p class="erro" id="e-postsSemana">Diga quantos posts por semana você precisa.</p></div>
+          <div class="campo">
+            <span class="leg" id="l-dur">Qual a duração pretendida do contrato?</span>
+            <div class="opcoes duas" role="radiogroup" aria-labelledby="l-dur">
+              <label class="opcao"><input type="radio" name="duracaoContrato" value="3 meses" checked> 3 meses</label>
+              <label class="opcao"><input type="radio" name="duracaoContrato" value="6 meses"> 6 meses</label>
+              <label class="opcao"><input type="radio" name="duracaoContrato" value="12 meses"> 12 meses</label>
+              <label class="opcao"><input type="radio" name="duracaoContrato" value="Ainda não sei"> Ainda não sei</label>
+            </div>
+          </div>
+        </div>
         <div class="campo"><label for="objetivos">Objetivos e expectativas</label><span class="dica">Ex.: meu negócio cresceu e quero investir nele…</span><textarea id="objetivos" name="objetivos" required aria-describedby="e-objetivos"></textarea><p class="erro" id="e-objetivos">Conte o que você espera do projeto.</p></div>
-        <div class="campo"><label for="trabalho">Fale mais sobre o trabalho <span class="opc">(opcional)</span></label><span class="dica">Ex.: preciso do serviço X para resolver Y, estou começando do zero…</span><textarea id="trabalho" name="trabalho"></textarea></div>
-        <div class="campo"><label for="prazo">Prazo ideal <span class="opc">(opcional)</span></label><span class="dica">Ex.: até março, sem pressa…</span><input id="prazo" name="prazo" type="text"></div>
+        <div class="campo"><label for="trabalho">Fale mais sobre o trabalho</label><span class="dica">Ex.: preciso do serviço X para resolver Y, estou começando do zero…</span><textarea id="trabalho" name="trabalho" required aria-describedby="e-trabalho"></textarea><p class="erro" id="e-trabalho">Conte um pouco mais sobre o trabalho.</p></div>
+        <div class="campo"><label for="prazo">Prazo ideal</label><span class="dica">Ex.: até março, sem pressa…</span><input id="prazo" name="prazo" type="text" required aria-describedby="e-prazo"><p class="erro" id="e-prazo">Diga qual seria o prazo ideal.</p></div>
+        <div class="campo"><label for="investimento">O quanto você está disposto a investir no projeto? <span class="opc">(opcional)</span></label><input id="investimento" name="investimento" type="text" placeholder="Ex.: entre R$ 1.500 e R$ 3.000, ou ainda estou avaliando"></div>
         <div class="campo"><label for="refs">Referências <span class="opc">(opcional)</span></label><span class="dica">Links de projetos que você gosta.</span><textarea id="refs" name="refs" style="min-height:80px"></textarea></div>
         <div class="campo">
           <label class="upload">Ou envie imagens de referência <span class="opc">(opcional, até 6 imagens)</span>
@@ -185,6 +203,8 @@
             <label class="opcao"><input type="radio" name="origem" value="Instagram" checked> Instagram</label>
             <label class="opcao"><input type="radio" name="origem" value="Pinterest"> Pinterest</label>
             <label class="opcao"><input type="radio" name="origem" value="LinkedIn"> LinkedIn</label>
+            <label class="opcao"><input type="radio" name="origem" value="Behance"> Behance</label>
+            <label class="opcao"><input type="radio" name="origem" value="Google"> Google</label>
             <label class="opcao"><input type="radio" name="origem" value="Indicação"> Indicação</label>
             <label class="opcao"><input type="radio" name="origem" value="Outro"> Outro</label>
           </div>
@@ -215,7 +235,7 @@
 <script>
 /* os serviços vêm da área da equipe */
 const SERVICOS=SITE.carregar().servicos.filter(s=>s.t);
-document.getElementById("opcoes-servico").outerHTML=SERVICOS.map((s,k)=>`<label class="opcao"><input type="radio" name="servico" value="${String(s.pedido||s.t).replace(/"/g,"&quot;")}" ${k===0?"checked":""}> ${String(s.t).replace(/</g,"&lt;")}</label>`).join("");
+document.getElementById("opcoes-servico").outerHTML=SERVICOS.map((s,k)=>`<label class="opcao"><input type="radio" name="servico" data-id="${String(s.id||"").replace(/"/g,"&quot;")}" value="${String(s.pedido||s.t).replace(/"/g,"&quot;")}" ${k===0?"checked":""}> ${String(s.t).replace(/</g,"&lt;")}</label>`).join("");
 var tr=t=>t;
 const form=document.getElementById("form"), etapas=[...form.querySelectorAll("fieldset")];
 const voltar=document.getElementById("voltar"), avancar=document.getElementById("avancar");
@@ -232,6 +252,7 @@ function mostrar(i){
 function valida(i){
   let ok=true, primeiro=null;
   etapas[i].querySelectorAll("[required]:not([type=checkbox])").forEach(el=>{
+    if(el.closest(".oculto")) return;
     let v=el.value.trim();
     let bom = el.type==="email" ? /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v) : el.id==="nome" ? v.split(/\s+/).length>=2 : v.length>0;
     el.closest(".campo").classList.toggle("invalido",!bom);
@@ -246,6 +267,12 @@ function valida(i){
   if(primeiro) primeiro.focus();
   return ok;
 }
+/* campos extras quando o serviço é design para social media */
+const ehSocial=()=>{const r=form.querySelector("input[name=servico]:checked");return !!r&&(r.dataset.id==="social"||/social/i.test(r.value))};
+function campoSocial(){const on=ehSocial();document.getElementById("campos-social").classList.toggle("oculto",!on);
+  form.querySelectorAll("[data-social]").forEach(el=>{el.required=on;if(!on)el.closest(".campo").classList.remove("invalido")})}
+form.addEventListener("change",e=>{if(e.target.name==="servico")campoSocial()});
+campoSocial();
 form.querySelectorAll("input[name=contato]").forEach(r=>r.addEventListener("change",()=>{
   document.getElementById("campo-zap").classList.toggle("oculto",form.contato.value!=="WhatsApp")}));
 document.getElementById("imagens").addEventListener("change",e=>{
@@ -263,6 +290,7 @@ function reduzirImg(f,max=1400){return new Promise(ok=>{const r=new FileReader()
 async function enviar(){
   const en=document.documentElement.lang==="en";
   const d=Object.fromEntries(new FormData(form)); delete d.imagens;
+  if(!ehSocial()){delete d.postsSemana;delete d.duracaoContrato}
   const fs=[...document.getElementById("imagens").files].filter(f=>f.type.startsWith("image/")).slice(0,6);
   avancar.disabled=true; const txt=avancar.textContent; avancar.textContent=en?"Sending…":"Enviando…";
   let ok=false;
@@ -287,7 +315,7 @@ try{const pf=JSON.parse(localStorage.getItem("lumara_prefill")||"null"); if(pf){
 }}catch(e){}
 mostrar(0);
 /* ===== idioma: o formulário segue a escolha feita no site ===== */
-const EN={"Pular para o formulário": "Skip to the form", "Voltar ao site": "Back to the site", "Vamos começar seu projeto": "Let's start your project", "Este formulário é o nosso primeiro contato. Ele me ajuda a entender o momento do seu negócio, como sua marca quer ser percebida e o que você espera do projeto. Fale do jeito mais natural possível: o orçamento é personalizado.": "This form is our first contact. It helps me understand where your business is right now, how your brand wants to be seen and what you expect from the project. Answer as naturally as you like: every quote is tailored.", "Resposta em até 2 dias úteis": "Reply within 2 business days", ", com o orçamento em PDF no seu e-mail.": ", with the quote as a PDF in your inbox.", "Seus dados são usados só para responder a este pedido. Veja a": "Your data is only used to answer this request. See the", "política de privacidade": "privacy policy", "Dúvidas rápidas sobre briefing ou serviços? Me chame no Instagram,": "Quick questions about the briefing or services? Message me on Instagram,", "Sobre você": "About you", "Etapa 1 de 3. Campos sem “opcional” são obrigatórios.": "Step 1 of 3. Fields without “optional” are required.", "Nome e sobrenome": "First and last name", "Digite seu nome e sobrenome.": "Enter your first and last name.", "Seu melhor e-mail": "Your best email", "Digite um e-mail válido, como nome@empresa.com.": "Enter a valid email, like name@company.com.", "Cidade e estado": "City and state/country", "Diga de onde você é.": "Tell me where you're based.", "Posso entrar em contato pelo WhatsApp?": "Can I contact you on WhatsApp?", "Sim, por favor": "Yes, please", "Prefiro por e-mail": "I prefer email", "Seu WhatsApp": "Your WhatsApp", "Digite o número com DDD.": "Enter the number with area code.", "Seu negócio": "Your business", "Etapa 2 de 3": "Step 2 of 3", "Conte sobre o seu negócio": "Tell me about your business", "Qual é o nome da empresa e em que área ela atua?": "What's the company name and what field is it in?", "Conte um pouco sobre o seu negócio.": "Tell me a bit about your business.", "Seu papel no negócio": "Your role in the business", "Sou fundador(a)": "I'm the founder", "Sou um dos sócios": "I'm one of the partners", "Faço parte da equipe": "I'm part of the team", "Redes sociais e site": "Social media and website", "(opcional)": "(optional)", "Coloque o @ e o link do site, se tiver.": "Add your @ and website link, if you have one.", "Há quanto tempo a empresa existe?": "How long has the business existed?", "Tipo de negócio": "Business size", "Ainda não tenho CNPJ, estou começando": "Not registered yet, I'm just starting", "MEI (trabalho sozinho/a)": "Sole proprietor (I work alone)", "Microempresa (2 a 10 funcionários)": "Micro business (2 to 10 people)", "Pequena empresa (10 a 50)": "Small business (10 to 50)", "Média empresa (50 a 100)": "Medium business (50 to 100)", "Grande empresa (mais de 100)": "Large business (over 100)", "O projeto": "The project", "Etapa 3 de 3": "Step 3 of 3", "Qual serviço você procura?": "Which service are you looking for?", "Identidade visual": "Visual identity", "Design para social media": "Social media design", "Alinhamento visual": "Visual alignment", "Ainda não sei": "Not sure yet", "Objetivos e expectativas": "Goals and expectations", "Ex.: meu negócio cresceu e quero investir nele…": "E.g. my business has grown and I want to invest in it…", "Conte o que você espera do projeto.": "Tell me what you expect from the project.", "Fale mais sobre o trabalho": "Tell me more about the work", "Ex.: preciso do serviço X para resolver Y, estou começando do zero…": "E.g. I need service X to solve Y, I'm starting from scratch…", "Prazo ideal": "Ideal timeline", "Ex.: até março, sem pressa…": "E.g. by March, no rush…", "Referências": "References", "Links de projetos que você gosta.": "Links to work you like.", "Ou envie imagens de referência": "Or upload reference images", "(opcional, até 6 imagens)": "(optional, up to 6 images)", "Como você me encontrou?": "How did you find me?", "Indicação": "Referral", "Outro": "Other", "Li a": "I have read the", "(abre em nova aba)": "(opens in a new tab)", "e autorizo o uso dos meus dados para receber o orçamento e ser contatado(a) sobre este pedido.": "and I allow my data to be used to receive the quote and be contacted about this request.", "Para enviar, marque a autorização de uso dos dados.": "To send, check the data use authorization.", "Voltar": "Back", "Continuar": "Continue", "Enviar pedido": "Send request", "Pedido enviado. Obrigada!": "Request sent. Thank you!", "Recebi suas respostas. Em até 2 dias úteis você recebe o orçamento em PDF no e-mail": "I've received your answers. Within 2 business days you'll get the quote as a PDF at", "Seus dados de contato já foram preenchidos. Confira e continue.": "Your contact details are already filled in. Check them and continue.", "Rio de Janeiro - RJ": "Rio de Janeiro, Brazil", "Pedir orçamento — Lumara Silva": "Request a quote — Lumara Silva"};
+const EN={"Pular para o formulário": "Skip to the form", "Voltar ao site": "Back to the site", "Vamos começar": "Let's start", "seu projeto": "your project", "← Voltar": "← Back", "Este formulário é o nosso primeiro contato. Ele me ajuda a entender o momento do seu negócio, como sua marca quer ser percebida e o que você espera do projeto. Fale do jeito mais natural possível: o orçamento é personalizado.": "This form is our first contact. It helps me understand where your business is right now, how your brand wants to be seen and what you expect from the project. Answer as naturally as you like: every quote is tailored.", "Resposta em até 2 dias úteis": "Reply within 2 business days", ", com o orçamento em PDF no seu e-mail.": ", with the quote as a PDF in your inbox.", "Seus dados são usados só para responder a este pedido. Veja a": "Your data is only used to answer this request. See the", "política de privacidade": "privacy policy", "Dúvidas rápidas sobre briefing ou serviços? Me chame no Instagram,": "Quick questions about the briefing or services? Message me on Instagram,", "Sobre você": "About you", "Etapa 1 de 3. Campos sem “opcional” são obrigatórios.": "Step 1 of 3. Fields without “optional” are required.", "Nome e sobrenome": "First and last name", "Digite seu nome e sobrenome.": "Enter your first and last name.", "Seu melhor e-mail": "Your best email", "Digite um e-mail válido, como nome@empresa.com.": "Enter a valid email, like name@company.com.", "Cidade e estado": "City and state/country", "Diga de onde você é.": "Tell me where you're based.", "Posso entrar em contato pelo WhatsApp?": "Can I contact you on WhatsApp?", "Sim, por favor": "Yes, please", "Prefiro por e-mail": "I prefer email", "Seu WhatsApp": "Your WhatsApp", "Digite o número com DDD.": "Enter the number with area code.", "Seu negócio": "Your business", "Etapa 2 de 3": "Step 2 of 3", "Conte sobre o seu negócio": "Tell me about your business", "Qual é o nome da empresa e em que área ela atua?": "What's the company name and what field is it in?", "Conte um pouco sobre o seu negócio.": "Tell me a bit about your business.", "Seu papel no negócio": "Your role in the business", "Sou fundador(a)": "I'm the founder", "Sou um dos sócios": "I'm one of the partners", "Faço parte da equipe": "I'm part of the team", "Redes sociais e site": "Social media and website", "(opcional)": "(optional)", "Coloque o @ e o link do site, se tiver.": "Add your @ and website link, if you have one.", "Há quanto tempo a empresa existe?": "How long has the business existed?", "Tipo de negócio": "Business size", "Ainda não tenho CNPJ, estou começando": "Not registered yet, I'm just starting", "MEI (trabalho sozinho/a)": "Sole proprietor (I work alone)", "Microempresa (2 a 10 funcionários)": "Micro business (2 to 10 people)", "Pequena empresa (10 a 50)": "Small business (10 to 50)", "Média empresa (50 a 100)": "Medium business (50 to 100)", "Grande empresa (mais de 100)": "Large business (over 100)", "O projeto": "The project", "Etapa 3 de 3": "Step 3 of 3", "Qual serviço você procura?": "Which service are you looking for?", "Identidade visual": "Visual identity", "Design para social media": "Social media design", "Alinhamento visual": "Visual alignment", "Ainda não sei": "Not sure yet", "Objetivos e expectativas": "Goals and expectations", "Ex.: meu negócio cresceu e quero investir nele…": "E.g. my business has grown and I want to invest in it…", "Conte o que você espera do projeto.": "Tell me what you expect from the project.", "Fale mais sobre o trabalho": "Tell me more about the work", "Ex.: preciso do serviço X para resolver Y, estou começando do zero…": "E.g. I need service X to solve Y, I'm starting from scratch…", "Prazo ideal": "Ideal timeline", "Ex.: até março, sem pressa…": "E.g. by March, no rush…", "Referências": "References", "Links de projetos que você gosta.": "Links to work you like.", "Ou envie imagens de referência": "Or upload reference images", "(opcional, até 6 imagens)": "(optional, up to 6 images)", "Como você me encontrou?": "How did you find me?", "Indicação": "Referral", "Conte um pouco mais sobre o trabalho.": "Tell me a bit more about the work.", "Diga qual seria o prazo ideal.": "Tell me your ideal timeline.", "O quanto você está disposto a investir no projeto?": "How much are you willing to invest in the project?", "Ex.: entre R$ 1.500 e R$ 3.000, ou ainda estou avaliando": "E.g. between R$ 1,500 and R$ 3,000, or still deciding", "Quantos posts por semana você precisa?": "How many posts per week do you need?", "Ex.: 3 posts por semana": "E.g. 3 posts per week", "Diga quantos posts por semana você precisa.": "Tell me how many posts per week you need.", "Qual a duração pretendida do contrato?": "How long do you plan the contract to run?", "3 meses": "3 months", "6 meses": "6 months", "12 meses": "12 months", "Outro": "Other", "Li a": "I have read the", "(abre em nova aba)": "(opens in a new tab)", "e autorizo o uso dos meus dados para receber o orçamento e ser contatado(a) sobre este pedido.": "and I allow my data to be used to receive the quote and be contacted about this request.", "Para enviar, marque a autorização de uso dos dados.": "To send, check the data use authorization.", "Voltar": "Back", "Continuar": "Continue", "Enviar pedido": "Send request", "Pedido enviado. Obrigada!": "Request sent. Thank you!", "Recebi suas respostas. Em até 2 dias úteis você recebe o orçamento em PDF no e-mail": "I've received your answers. Within 2 business days you'll get the quote as a PDF at", "Seus dados de contato já foram preenchidos. Confira e continue.": "Your contact details are already filled in. Check them and continue.", "Rio de Janeiro - RJ": "Rio de Janeiro, Brazil", "Pedir orçamento — Lumara Silva": "Request a quote — Lumara Silva"};
 SERVICOS.forEach(s=>{if(s.tEn)EN[s.t]=s.tEn});
 let idioma="pt";
 tr=t=>idioma==="en"?(EN[t]||t):t;
