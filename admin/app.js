@@ -12,7 +12,7 @@ function uteis(iso,n){const d=new Date(iso.slice(0,10)+"T00:00:00");while(n>0){d
 const uid=p=>p+Array.from(crypto.getRandomValues(new Uint8Array(10)),b=>"abcdefghijkmnpqrstuvwxyz23456789"[b%32]).join("");
 function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("on"),4200)}
 
-const SERV={"Identidade visual":"#3A6EA5","Social media":"#462D26","Alinhamento visual":"#86BBD8","Editorial":"#2D2D2D","UX/UI":"#B9772A","Não sei ainda":"#A39C94"};
+const SERV={"Identidade visual":"#3A6EA5","Social media":"#23446A","Alinhamento visual":"#86BBD8","Editorial":"#2D2D2D","UX/UI":"#23446A","Não sei ainda":"#A39C94"};
 const ETAPAS=["Briefing","Criação","Apresentação","Ajustes","Entrega final","Concluído"];
 const CAT_E=["Projeto","Social media mensal","Outros"];
 const CAT_S=["Ferramentas e assinaturas","Impostos (DAS)","Freelancers","Equipamento","Marketing","Banco de imagens e fontes","Outros"];
@@ -214,7 +214,7 @@ function pedidos(){
     .sort((a,b)=>b.recebido.localeCompare(a.recebido));
   const f=[["abertos","Em aberto"],["novo","Novos"],["aprovado","Aprovados"],["recusado","Recusados"],["todos","Todos"]];
   return `<div class="cab"><div><h1>Pedidos</h1><p>Respostas do formulário de orçamento do site. O prazo de resposta é de 2 dias úteis.</p></div>
-    <a class="btn sec" href="../orcamento.html">Ver formulário do site</a></div>
+    <a class="btn sec" href="/orcamento">Ver formulário do site</a></div>
   <div class="filtros">${f.map(([k,n])=>`<button aria-pressed="${filtroPed===k}" onclick="filtroPed='${k}';render()">${n}</button>`).join("")}</div>
   <div class="tab-wrap"><table class="tabela"><thead><tr><th>Nome</th><th>Serviço</th><th>Recebido</th><th>Responder até</th><th>Status</th></tr></thead><tbody>
   ${l.length?l.map(p=>{const lim=uteis(p.recebido,2),d=diasAte(lim);return `<tr class="clicavel" onclick="verPedido('${p.id}')">
@@ -406,7 +406,7 @@ function projetos(){
     <div class="cartoes">${cs.map(cartao).join("")}</div>
     ${et!=="Concluído"?`<button class="add-cartao" onclick="novoCartao(this,'${et}')">+ Adicionar cartão</button>`:""}</div>`}).join("")}</div>`;
 }
-const ETQ={urgente:["Urgente","#A3283A"],cliente:["Aguardando cliente","#9A5F12"],revisao:["Em revisão","#3A6EA5"],grafica:["Gráfica","#462D26"],interno:["Interno","#5E5A55"]};
+const ETQ={urgente:["Urgente","#A3283A"],cliente:["Aguardando cliente","#23446A"],revisao:["Em revisão","#3A6EA5"],grafica:["Gráfica","#23446A"],interno:["Interno","#5E5A55"]};
 const icoComent='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>', icoClipe='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 12l6-6a3 3 0 0 1 4 4l-8 8a5 5 0 0 1-7-7l7-7"/></svg>';
 function cartao(p){
   const d=diasAte(p.prazo), fe=p.check.filter(c=>c[1]).length, r=pessoa(p.resp);
@@ -545,7 +545,7 @@ function editarModelo(){
 
 /* ============ CALENDÁRIO ============ */
 let mesCal=0, filtroCal="tudo";
-const ST_POST={ideia:["Ideia","#A39C94"],producao:["Em produção","#B9772A"],aprovacao:["Aguardando cliente","#3A6EA5"],ajustes:["Ajustes pedidos","#A3283A"],aprovado:["Aprovado","#2F6B4F"],publicado:["Publicado","#462D26"]};
+const ST_POST={ideia:["Ideia","#A39C94"],producao:["Em produção","#23446A"],aprovacao:["Aguardando cliente","#3A6EA5"],ajustes:["Ajustes pedidos","#A3283A"],aprovado:["Aprovado","#2F6B4F"],publicado:["Publicado","#23446A"]};
 const FORMATOS=["Feed","Carrossel","Reels","Stories"];
 function eventosCal(){
   const ev=[];
@@ -600,14 +600,14 @@ function editarPost(id){
 
 /* ============ PORTFÓLIO DO SITE ============ */
 let PF=PORTFOLIO.carregar();
-const PF_CORES=[["#3A6EA5","Azul escuro"],["#86BBD8","Azul claro"],["#462D26","Marrom"],["#2D2D2D","Cinza"]];
+const PF_CORES=[["#3A6EA5","Azul escuro"],["#86BBD8","Azul claro"],["#23446A","Azul profundo"],["#2D2D2D","Cinza"]];
 function salvarPF(msg){if(PORTFOLIO.salvar(PF)){if(msg)toast(msg)}else toast("Não foi possível salvar o portfólio. Confira a conexão e tente de novo.")}
 const srcPF=u=>!u||/^(data:|blob:|https?:)/.test(u)?u:"../"+u;
 const thumbPF=p=>`<span class="pf-thumb" style="--c:${p.cor};${p.cor==="#86BBD8"?"color:#2D2D2D":""}">${p.capa?`<img src="${srcPF(p.capa)}" alt="">`:esc(iniciais(p.nome))}</span>`;
 function portfolio(){
   const pub=PF.filter(p=>p.publicado).length;
   return `<div class="cab"><div><h1>Portfólio do site</h1><p>${pub} de ${PF.length} projetos publicados. A ordem daqui é a ordem do site.</p></div>
-   <div class="acoes"><a class="btn sec" href="../index.html#trabalhos">Ver no site</a><button class="btn" onclick="editarPF()">Novo projeto</button></div></div>
+   <div class="acoes"><a class="btn sec" href="/#projetos">Ver no site</a><button class="btn" onclick="editarPF()">Novo projeto</button></div></div>
   <ul class="pf-lista">${PF.map((p,i)=>`<li class="pf-item ${p.publicado?"":"oculto-site"}">
     <span class="pf-ordem"><button aria-label="Subir ${esc(p.nome)}" onclick="moverPF(${i},-1)" ${i===0?"disabled":""}>↑</button><button aria-label="Descer ${esc(p.nome)}" onclick="moverPF(${i},1)" ${i===PF.length-1?"disabled":""}>↓</button></span>
     ${thumbPF(p)}
@@ -652,7 +652,7 @@ function editarPF(id){
    <label class="chave"><input type="checkbox" id="pf-pub" ${p.publicado?"checked":""}> Publicado no site</label>`;
   abrir(novo?"Novo projeto":p.nome,novo?"Aparece no site quando estiver publicado":esc(PORTFOLIO.AREAS[p.area]?.pt||""),corpo,
     `${novo?"":`<button class="btn perigo" id="pf-del">Excluir</button>`}<button class="btn" id="pf-ok">Salvar</button>`,
-    novo?"":`<button class="btn peq sec" onclick="copiarTexto(new URL('../projetos/${p.slug}',location.href).href,'Link do projeto copiado.')">Copiar link</button><a class="btn peq sec" href="../projeto.html#${p.slug}">Abrir página</a>`);
+    novo?"":`<button class="btn peq sec" onclick="copiarTexto(new URL('../projetos/${p.slug}',location.href).href,'Link do projeto copiado.')">Copiar link</button><a class="btn peq sec" href="/projetos/${p.slug}">Abrir página</a>`);
   p.largas=p.largas||[]; p.ocultas=p.ocultas||[];
   const gal=()=>{
     p.grade=+$("#pf-g").value; p.proporcao=$("#pf-pr").value;
@@ -870,7 +870,7 @@ function relatorios(){
   const barras=(l,cor)=>{const mx=Math.max(...l.map(x=>x[1]),1);return l.map(([k,v])=>`<div class="rel-l"><span>${esc(k)}</span><span class="rel-b"><i style="width:${Math.max(4,v/mx*100)}%;background:${cor}"></i></span><strong>${brl(v)}</strong></div>`).join("")||`<p class="mut">Nenhum orçamento aprovado nos últimos 12 meses.</p>`};
   return `<div class="grade2" style="margin-bottom:1.5rem">
     <section class="painel"><h2>Aprovados por serviço</h2><p class="mut" style="margin:-.4rem 0 .8rem">Últimos 12 meses, valor total dos orçamentos</p>${barras(porServ,"#3A6EA5")}</section>
-    <section class="painel"><h2>Aprovados por origem do cliente</h2><p class="mut" style="margin:-.4rem 0 .8rem">De onde vieram os clientes que fecharam</p>${barras(porOrig,"#462D26")}</section></div>`;
+    <section class="painel"><h2>Aprovados por origem do cliente</h2><p class="mut" style="margin:-.4rem 0 .8rem">De onde vieram os clientes que fecharam</p>${barras(porOrig,"#23446A")}</section></div>`;
 }
 function quitar(id){const x=S.caixa.find(l=>l.id===id);x.pago=true;salvar();render();toast(`${x.desc}: marcado como ${x.tipo==="entrada"?"recebido":"pago"}.`)}
 function novoLanc(){
@@ -893,7 +893,7 @@ function novoLanc(){
 let C=SITE.carregar();
 const TEXTOS=[["heroTitB","Título da abertura (palavra entre *asteriscos* fica em destaque)"],["sobre1","Sobre: 1º parágrafo"],["sobre2","Sobre: 2º parágrafo"]];
 (C.servicos||[]).forEach(sv=>{if(sv.pedido&&!SERV[sv.pedido])SERV[sv.pedido]=sv.cor});
-const CORES_SV=[["#3A6EA5","Azul escuro"],["#86BBD8","Azul claro"],["#462D26","Marrom"],["#2D2D2D","Grafite"],["#E4DDD1","Bege"]];
+const CORES_SV=[["#3A6EA5","Azul escuro"],["#86BBD8","Azul claro"],["#23446A","Azul profundo"],["#2D2D2D","Grafite"],["#E4DDD1","Bege"]];
 function moverLink(i,d){const j=i+d;[C.links[i],C.links[j]]=[C.links[j],C.links[i]];render()}
 function moverSv(i,d){const j=i+d;[C.servicos[i],C.servicos[j]]=[C.servicos[j],C.servicos[i]];render()}
 function getP(o,p){return p.split(".").reduce((a,k)=>a?.[k],o)}
@@ -905,7 +905,7 @@ function campo(path,label,tipo="text",extra=""){const v=getP(C,path)??"";const i
 function conteudo(){
   const P=C.precos;
   return `<div class="cab"><div><h1>Conteúdo do site</h1><p>O que você salvar aqui aparece no site na hora. Campos de texto vazios mantêm o texto atual do site.</p></div>
-   <div class="acoes"><a class="btn sec" href="../index.html">Ver o site</a><a class="btn sec" href="../links.html">Ver página de links</a></div></div>
+   <div class="acoes"><a class="btn sec" href="/">Ver o site</a><a class="btn sec" href="/links">Ver página de links</a></div></div>
   <form class="secoes-cfg" id="form-cfg" onsubmit="return false">
    <section class="painel"><h2>Serviços</h2>
      <p class="mut" style="margin-bottom:.9rem">Os serviços aparecem no site nesta ordem, cada um em uma caixa da cor escolhida, e também viram opções no formulário de orçamento.</p>
@@ -971,7 +971,7 @@ function conteudo(){
 document.addEventListener("input",e=>{const t=e.target; if(!t.dataset||!t.dataset.k||view!=="conteudo") return;
   setP(C,t.dataset.k,t.dataset.tipo==="bool"?t.checked:t.dataset.tipo==="num"?+t.value:t.value)});
 document.addEventListener("change",e=>{const t=e.target; if(t.tagName==="SELECT"&&t.dataset.k&&view==="conteudo") setP(C,t.dataset.k,t.value)});
-function salvarCfg(){C.servicos=C.servicos.filter(sv=>sv.t.trim());C.servicos.forEach(sv=>{if(!sv.pedido)sv.pedido=sv.t;if(!SERV[sv.pedido])SERV[sv.pedido]=sv.cor});C.depoimentos=C.depoimentos.filter(d=>d.nome||d.texto);C.links=C.links.filter(l=>l.titulo||l.url);C.processo=C.processo.filter(p=>p.t||p.d);
+function salvarCfg(){C.servicos=C.servicos.filter(sv=>sv.t.trim());C.servicos.forEach(sv=>{if(!sv.pedido)sv.pedido=sv.t;if(!SERV[sv.pedido])SERV[sv.pedido]=sv.cor});C.depoimentos=C.depoimentos.filter(d=>d.nome||d.texto);C.links=C.links.filter(l=>l.titulo||l.url);C.links.forEach(l=>{l.url=urlLimpa(l.url)});C.processo=C.processo.filter(p=>p.t||p.d);
   if(SITE.salvar(C)){render();toast("Conteúdo salvo e publicado no site.")}else toast("Não foi possível salvar.")}
 
 /* ============ E-MAILS AUTOMÁTICOS ============ */
@@ -1072,7 +1072,7 @@ function novaPessoa(){
     const b=$("#np-ok"); b.disabled=true; b.textContent="Enviando…"; er.textContent="";
     try{
       if(window.NUVEM_ADMIN) await NUVEM_ADMIN.api("equipe",{acao:"convidar",nome,email,papel});
-      const cores=["#86BBD8","#462D26","#5E5A55","#2E5E7A","#9C6B4E"];
+      const cores=["#86BBD8","#23446A","#5E5A55","#2E5E7A","#23446A"];
       S.equipe.push({id:uid("p"),nome,email,papel:PAPEIS[papel][0],acesso:PAPEIS[papel][1],cor:cores[S.equipe.length%cores.length],convite:new Date().toISOString()});
       salvar();fechar();render();toast(`Convite enviado para ${email}.`);
     }catch(e){b.disabled=false;b.textContent="Enviar convite";er.textContent="Não foi possível enviar o convite: "+e.message+"."}

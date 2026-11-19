@@ -9,8 +9,8 @@
 <meta property="og:site_name" content="Lumara Silva">
 <meta property="og:title" content="Pedir orçamento — Lumara Silva">
 <meta property="og:description" content="Conte sobre a sua marca e receba um orçamento de identidade visual ou social media em até 2 dias úteis.">
-<meta property="og:url" content="https://lumarasilva.com.br/orcamento.html">
-<meta property="og:image" content="https://lumarasilva.com.br/img/compartilhar-2026.jpg">
+<meta property="og:url" content="https://lumarasilva.com.br/orcamento">
+<meta property="og:image" content="https://lumarasilva.com.br/og-image.jpg">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
@@ -27,10 +27,10 @@
 
   .consent{display:flex;gap:.7rem;align-items:flex-start;font-weight:400;font-size:.95rem;line-height:1.5;padding:1rem;border:1px solid #CCCCCC;border-radius:8px}
   .consent input{accent-color:var(--mar);width:1.15rem;height:1.15rem;margin-top:.2rem;flex:none}
-  .campo.invalido .consent{border-color:#462D26}
+  .campo.invalido .consent{border-color:#23446A}
   .sr-only{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
   .opc{font-weight:400;color:var(--cinza);font-size:.9rem}
-:root{--papel:#F2EFE9;--tinta:#2D2D2D;--mar:#3A6EA5;--ipe:#86BBD8;--mata:#462D26;--nevoa:#CCCCCC;--cinza:#2D2D2D;--f:"Inter Tight",system-ui,sans-serif;--titulo:"Inter Tight",system-ui,sans-serif}
+:root{--papel:#F2EFE9;--tinta:#2D2D2D;--mar:#3A6EA5;--ipe:#86BBD8;--mata:#23446A;--nevoa:#CCCCCC;--cinza:#2D2D2D;--f:"Inter Tight",system-ui,sans-serif;--titulo:"Inter Tight",system-ui,sans-serif}
   *{box-sizing:border-box;margin:0;padding:0}
   body{background:var(--papel);color:var(--tinta);font-family:var(--f);font-size:1.0625rem;line-height:1.55;-webkit-font-smoothing:antialiased}
   a{color:inherit}
@@ -69,7 +69,7 @@
   .arquivos{font-size:.9rem;margin-top:.5rem;color:var(--tinta)}
   .erro{color:#2D2D2D;font-size:.9rem;margin-top:.35rem;display:none}
   .campo.invalido .erro{display:block}
-  .campo.invalido input,.campo.invalido textarea{border-color:#462D26}
+  .campo.invalido input,.campo.invalido textarea{border-color:#23446A}
   .nav{display:flex;justify-content:space-between;gap:1rem;margin-top:2rem}
   .botao{font:inherit;font-weight:600;border:0;background:var(--mar);color:#FAFAFF;color:var(--papel);padding:.85rem 1.5rem;border-radius:99px;cursor:pointer}
   .botao:hover{background:#2D2D2D}
@@ -93,8 +93,8 @@
 <body>
 <a class="pular" href="#form" style="position:absolute;left:1rem;top:-4rem;z-index:100;background:#2D2D2D;color:#FAFAFF;padding:.6rem 1rem;border-radius:8px" onfocus="this.style.top='1rem'" onblur="this.style.top='-4rem'">Pular para o formulário</a>
 <header>
-  <a class="marca" href="index.html"><img src="img/logo-escuro.svg" alt="Lumara Silva" width="1552" height="366" style="height:clamp(36px,4vw,46px);width:auto;display:block"></a>
-  <span style="display:flex;gap:.6rem;align-items:center"><button class="lang" id="idioma" aria-label="Switch to English" lang="en"><span class="ativo">PT</span><span>EN</span></button><a class="btn-link" href="index.html">Voltar ao site</a></span>
+  <a class="marca" href="/"><img src="img/logo-escuro.svg" alt="Lumara Silva" width="1552" height="366" style="height:clamp(36px,4vw,46px);width:auto;display:block"></a>
+  <span style="display:flex;gap:.6rem;align-items:center"><button class="lang" id="idioma" aria-label="Switch to English" lang="en"><span class="ativo">PT</span><span>EN</span></button><a class="btn-link" href="/">Voltar ao site</a></span>
 </header>
 
 <main class="pagina">
@@ -103,7 +103,7 @@
     <p>Este formulário é o nosso primeiro contato. Ele me ajuda a entender o momento do seu negócio, como sua marca quer ser percebida e o que você espera do projeto. Fale do jeito mais natural possível: o orçamento é personalizado.</p>
     <ul>
       <li><strong>Resposta em até 2 dias úteis</strong>, com o orçamento em PDF no seu e-mail.</li>
-      <li>Seus dados são usados só para responder a este pedido. Veja a <a href="privacidade.html">política de privacidade</a>.</li>
+      <li>Seus dados são usados só para responder a este pedido. Veja a <a href="/privacidade">política de privacidade</a>.</li>
       <li>Dúvidas rápidas sobre briefing ou serviços? Me chame no Instagram, <a href="https://www.instagram.com/lumaraslva" target="_blank" rel="noopener">@lumaraslva</a>.</li>
     </ul>
   </aside>
@@ -172,7 +172,7 @@
         <div class="campo"><label for="objetivos">Objetivos e expectativas</label><span class="dica">Ex.: meu negócio cresceu e quero investir nele…</span><textarea id="objetivos" name="objetivos" required aria-describedby="e-objetivos"></textarea><p class="erro" id="e-objetivos">Conte o que você espera do projeto.</p></div>
         <div class="campo"><label for="trabalho">Fale mais sobre o trabalho <span class="opc">(opcional)</span></label><span class="dica">Ex.: preciso do serviço X para resolver Y, estou começando do zero…</span><textarea id="trabalho" name="trabalho"></textarea></div>
         <div class="campo"><label for="prazo">Prazo ideal <span class="opc">(opcional)</span></label><span class="dica">Ex.: até março, sem pressa…</span><input id="prazo" name="prazo" type="text"></div>
-        <div class="campo"><label for="refs">Referências <span class="opc">(opcional)</span></label><span class="dica">Links de trabalhos que você gosta.</span><textarea id="refs" name="refs" style="min-height:80px"></textarea></div>
+        <div class="campo"><label for="refs">Referências <span class="opc">(opcional)</span></label><span class="dica">Links de projetos que você gosta.</span><textarea id="refs" name="refs" style="min-height:80px"></textarea></div>
         <div class="campo">
           <label class="upload">Ou envie imagens de referência <span class="opc">(opcional, até 6 imagens)</span>
             <input type="file" id="imagens" name="imagens" accept="image/*" multiple>
@@ -191,7 +191,7 @@
         </div>
         <div class="campo" id="campo-lgpd">
           <label class="consent"><input type="checkbox" id="lgpd" name="lgpd" value="sim" required aria-describedby="e-lgpd">
-            <span>Li a <a href="privacidade.html">política de privacidade</a> e autorizo o uso dos meus dados para receber o orçamento e ser contatado(a) sobre este pedido.</span></label>
+            <span>Li a <a href="/privacidade">política de privacidade</a> e autorizo o uso dos meus dados para receber o orçamento e ser contatado(a) sobre este pedido.</span></label>
           <p class="erro" id="e-lgpd">Para enviar, marque a autorização de uso dos dados.</p>
         </div>
       </fieldset>
@@ -205,7 +205,7 @@
     <div class="enviado oculto" id="enviado" role="status">
       <h2>Pedido enviado. Obrigada!</h2>
       <p>Recebi suas respostas. Em até 2 dias úteis você recebe o orçamento em PDF no e-mail <strong id="em"></strong>.</p>
-      <p style="margin-top:1.5rem"><a class="botao" href="index.html" style="text-decoration:none;display:inline-block">Voltar ao site</a></p>
+      <p style="margin-top:1.5rem"><a class="botao" href="/" style="text-decoration:none;display:inline-block">Voltar ao site</a></p>
     </div>
   </section>
 </main>
@@ -287,7 +287,7 @@ try{const pf=JSON.parse(localStorage.getItem("lumara_prefill")||"null"); if(pf){
 }}catch(e){}
 mostrar(0);
 /* ===== idioma: o formulário segue a escolha feita no site ===== */
-const EN={"Pular para o formulário": "Skip to the form", "Voltar ao site": "Back to the site", "Vamos começar seu projeto": "Let's start your project", "Este formulário é o nosso primeiro contato. Ele me ajuda a entender o momento do seu negócio, como sua marca quer ser percebida e o que você espera do projeto. Fale do jeito mais natural possível: o orçamento é personalizado.": "This form is our first contact. It helps me understand where your business is right now, how your brand wants to be seen and what you expect from the project. Answer as naturally as you like: every quote is tailored.", "Resposta em até 2 dias úteis": "Reply within 2 business days", ", com o orçamento em PDF no seu e-mail.": ", with the quote as a PDF in your inbox.", "Seus dados são usados só para responder a este pedido. Veja a": "Your data is only used to answer this request. See the", "política de privacidade": "privacy policy", "Dúvidas rápidas sobre briefing ou serviços? Me chame no Instagram,": "Quick questions about the briefing or services? Message me on Instagram,", "Sobre você": "About you", "Etapa 1 de 3. Campos sem “opcional” são obrigatórios.": "Step 1 of 3. Fields without “optional” are required.", "Nome e sobrenome": "First and last name", "Digite seu nome e sobrenome.": "Enter your first and last name.", "Seu melhor e-mail": "Your best email", "Digite um e-mail válido, como nome@empresa.com.": "Enter a valid email, like name@company.com.", "Cidade e estado": "City and state/country", "Diga de onde você é.": "Tell me where you're based.", "Posso entrar em contato pelo WhatsApp?": "Can I contact you on WhatsApp?", "Sim, por favor": "Yes, please", "Prefiro por e-mail": "I prefer email", "Seu WhatsApp": "Your WhatsApp", "Digite o número com DDD.": "Enter the number with area code.", "Seu negócio": "Your business", "Etapa 2 de 3": "Step 2 of 3", "Conte sobre o seu negócio": "Tell me about your business", "Qual é o nome da empresa e em que área ela atua?": "What's the company name and what field is it in?", "Conte um pouco sobre o seu negócio.": "Tell me a bit about your business.", "Seu papel no negócio": "Your role in the business", "Sou fundador(a)": "I'm the founder", "Sou um dos sócios": "I'm one of the partners", "Faço parte da equipe": "I'm part of the team", "Redes sociais e site": "Social media and website", "(opcional)": "(optional)", "Coloque o @ e o link do site, se tiver.": "Add your @ and website link, if you have one.", "Há quanto tempo a empresa existe?": "How long has the business existed?", "Tipo de negócio": "Business size", "Ainda não tenho CNPJ, estou começando": "Not registered yet, I'm just starting", "MEI (trabalho sozinho/a)": "Sole proprietor (I work alone)", "Microempresa (2 a 10 funcionários)": "Micro business (2 to 10 people)", "Pequena empresa (10 a 50)": "Small business (10 to 50)", "Média empresa (50 a 100)": "Medium business (50 to 100)", "Grande empresa (mais de 100)": "Large business (over 100)", "O projeto": "The project", "Etapa 3 de 3": "Step 3 of 3", "Qual serviço você procura?": "Which service are you looking for?", "Identidade visual": "Visual identity", "Design para social media": "Social media design", "Alinhamento visual": "Visual alignment", "Ainda não sei": "Not sure yet", "Objetivos e expectativas": "Goals and expectations", "Ex.: meu negócio cresceu e quero investir nele…": "E.g. my business has grown and I want to invest in it…", "Conte o que você espera do projeto.": "Tell me what you expect from the project.", "Fale mais sobre o trabalho": "Tell me more about the work", "Ex.: preciso do serviço X para resolver Y, estou começando do zero…": "E.g. I need service X to solve Y, I'm starting from scratch…", "Prazo ideal": "Ideal timeline", "Ex.: até março, sem pressa…": "E.g. by March, no rush…", "Referências": "References", "Links de trabalhos que você gosta.": "Links to work you like.", "Ou envie imagens de referência": "Or upload reference images", "(opcional, até 6 imagens)": "(optional, up to 6 images)", "Como você me encontrou?": "How did you find me?", "Indicação": "Referral", "Outro": "Other", "Li a": "I have read the", "(abre em nova aba)": "(opens in a new tab)", "e autorizo o uso dos meus dados para receber o orçamento e ser contatado(a) sobre este pedido.": "and I allow my data to be used to receive the quote and be contacted about this request.", "Para enviar, marque a autorização de uso dos dados.": "To send, check the data use authorization.", "Voltar": "Back", "Continuar": "Continue", "Enviar pedido": "Send request", "Pedido enviado. Obrigada!": "Request sent. Thank you!", "Recebi suas respostas. Em até 2 dias úteis você recebe o orçamento em PDF no e-mail": "I've received your answers. Within 2 business days you'll get the quote as a PDF at", "Seus dados de contato já foram preenchidos. Confira e continue.": "Your contact details are already filled in. Check them and continue.", "Rio de Janeiro - RJ": "Rio de Janeiro, Brazil", "Pedir orçamento — Lumara Silva": "Request a quote — Lumara Silva"};
+const EN={"Pular para o formulário": "Skip to the form", "Voltar ao site": "Back to the site", "Vamos começar seu projeto": "Let's start your project", "Este formulário é o nosso primeiro contato. Ele me ajuda a entender o momento do seu negócio, como sua marca quer ser percebida e o que você espera do projeto. Fale do jeito mais natural possível: o orçamento é personalizado.": "This form is our first contact. It helps me understand where your business is right now, how your brand wants to be seen and what you expect from the project. Answer as naturally as you like: every quote is tailored.", "Resposta em até 2 dias úteis": "Reply within 2 business days", ", com o orçamento em PDF no seu e-mail.": ", with the quote as a PDF in your inbox.", "Seus dados são usados só para responder a este pedido. Veja a": "Your data is only used to answer this request. See the", "política de privacidade": "privacy policy", "Dúvidas rápidas sobre briefing ou serviços? Me chame no Instagram,": "Quick questions about the briefing or services? Message me on Instagram,", "Sobre você": "About you", "Etapa 1 de 3. Campos sem “opcional” são obrigatórios.": "Step 1 of 3. Fields without “optional” are required.", "Nome e sobrenome": "First and last name", "Digite seu nome e sobrenome.": "Enter your first and last name.", "Seu melhor e-mail": "Your best email", "Digite um e-mail válido, como nome@empresa.com.": "Enter a valid email, like name@company.com.", "Cidade e estado": "City and state/country", "Diga de onde você é.": "Tell me where you're based.", "Posso entrar em contato pelo WhatsApp?": "Can I contact you on WhatsApp?", "Sim, por favor": "Yes, please", "Prefiro por e-mail": "I prefer email", "Seu WhatsApp": "Your WhatsApp", "Digite o número com DDD.": "Enter the number with area code.", "Seu negócio": "Your business", "Etapa 2 de 3": "Step 2 of 3", "Conte sobre o seu negócio": "Tell me about your business", "Qual é o nome da empresa e em que área ela atua?": "What's the company name and what field is it in?", "Conte um pouco sobre o seu negócio.": "Tell me a bit about your business.", "Seu papel no negócio": "Your role in the business", "Sou fundador(a)": "I'm the founder", "Sou um dos sócios": "I'm one of the partners", "Faço parte da equipe": "I'm part of the team", "Redes sociais e site": "Social media and website", "(opcional)": "(optional)", "Coloque o @ e o link do site, se tiver.": "Add your @ and website link, if you have one.", "Há quanto tempo a empresa existe?": "How long has the business existed?", "Tipo de negócio": "Business size", "Ainda não tenho CNPJ, estou começando": "Not registered yet, I'm just starting", "MEI (trabalho sozinho/a)": "Sole proprietor (I work alone)", "Microempresa (2 a 10 funcionários)": "Micro business (2 to 10 people)", "Pequena empresa (10 a 50)": "Small business (10 to 50)", "Média empresa (50 a 100)": "Medium business (50 to 100)", "Grande empresa (mais de 100)": "Large business (over 100)", "O projeto": "The project", "Etapa 3 de 3": "Step 3 of 3", "Qual serviço você procura?": "Which service are you looking for?", "Identidade visual": "Visual identity", "Design para social media": "Social media design", "Alinhamento visual": "Visual alignment", "Ainda não sei": "Not sure yet", "Objetivos e expectativas": "Goals and expectations", "Ex.: meu negócio cresceu e quero investir nele…": "E.g. my business has grown and I want to invest in it…", "Conte o que você espera do projeto.": "Tell me what you expect from the project.", "Fale mais sobre o trabalho": "Tell me more about the work", "Ex.: preciso do serviço X para resolver Y, estou começando do zero…": "E.g. I need service X to solve Y, I'm starting from scratch…", "Prazo ideal": "Ideal timeline", "Ex.: até março, sem pressa…": "E.g. by March, no rush…", "Referências": "References", "Links de projetos que você gosta.": "Links to work you like.", "Ou envie imagens de referência": "Or upload reference images", "(opcional, até 6 imagens)": "(optional, up to 6 images)", "Como você me encontrou?": "How did you find me?", "Indicação": "Referral", "Outro": "Other", "Li a": "I have read the", "(abre em nova aba)": "(opens in a new tab)", "e autorizo o uso dos meus dados para receber o orçamento e ser contatado(a) sobre este pedido.": "and I allow my data to be used to receive the quote and be contacted about this request.", "Para enviar, marque a autorização de uso dos dados.": "To send, check the data use authorization.", "Voltar": "Back", "Continuar": "Continue", "Enviar pedido": "Send request", "Pedido enviado. Obrigada!": "Request sent. Thank you!", "Recebi suas respostas. Em até 2 dias úteis você recebe o orçamento em PDF no e-mail": "I've received your answers. Within 2 business days you'll get the quote as a PDF at", "Seus dados de contato já foram preenchidos. Confira e continue.": "Your contact details are already filled in. Check them and continue.", "Rio de Janeiro - RJ": "Rio de Janeiro, Brazil", "Pedir orçamento — Lumara Silva": "Request a quote — Lumara Silva"};
 SERVICOS.forEach(s=>{if(s.tEn)EN[s.t]=s.tEn});
 let idioma="pt";
 tr=t=>idioma==="en"?(EN[t]||t):t;

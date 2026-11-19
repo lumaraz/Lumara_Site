@@ -72,7 +72,7 @@
   .login input:focus-visible,.login button:focus-visible{outline:3px solid #86BBD8;outline-offset:2px}
   .login .entrar{font:inherit;background:#2D2D2D;color:#fff;border:0;border-radius:999px;padding:.8rem 1rem;cursor:pointer;font-size:.95rem}
   .login .entrar[disabled]{opacity:.6;cursor:wait}
-  .login .link{background:none;border:0;color:#462D26;text-decoration:underline;cursor:pointer;font:inherit;font-size:.85rem;justify-self:start;padding:0}
+  .login .link{background:none;border:0;color:#23446A;text-decoration:underline;cursor:pointer;font:inherit;font-size:.85rem;justify-self:start;padding:0}
   .login .erro{color:#9b2c1f}.login .ok{color:#2F6B4F}`;
   function mostrarLogin(msg, modo = "entrar") {
     let el = document.getElementById("login");

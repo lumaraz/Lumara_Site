@@ -2,6 +2,15 @@
    No site publicado os dados vêm do banco (/api/publico); sem servidor, ficam no navegador. Esta
    mesma estrutura vira uma tabela no banco de dados e as imagens vão para o armazenamento.
    texto/textoEn: parágrafos separados por uma linha em branco. links: botões extras na página do projeto. */
+/* corrige endereços digitados sem https:// (ex.: bio.site/lumarasilva) e links antigos do próprio site */
+window.urlLimpa=window.urlLimpa||function(u){u=String(u||"").trim();if(!u)return u;
+  if(/^(https?:|mailto:|tel:|#)/i.test(u)) return u.replace(/^http:\/\/(www\.)?lumarasilva\.com\.br/i,"https://lumarasilva.com.br");
+  const s=u.replace(/^(\.\.\/|\.\/|\/)/,"");
+  if(/^index\.html#trabalhos$/i.test(s)) return "/#projetos";
+  if(/^index\.html(#.*)?$/i.test(s)) return "/"+(s.split("#")[1]?"#"+s.split("#")[1]:"");
+  if(/^(orcamento|privacidade|links)\.html/i.test(s)) return "/"+s.replace(/\.html/i,"");
+  if(/^(www\.)?[a-z0-9-]+(\.[a-z0-9-]+)+(\/|\?|$)/i.test(s)&&!/^[^/]+\.html?\b/i.test(s)) return "https://"+s;
+  return u;};
 (function(){
   const CHAVE="lumara_portfolio_v4"; /* v4: Guapi publicado com o material completo */
   const AREAS={
@@ -74,7 +83,7 @@
   "descricao": "Advogada",
   "descricaoEn": "Lawyer",
   "area": "social",
-  "cor": "#462D26",
+  "cor": "#23446A",
   "grade": 3,
   "ano": "2026",
   "slug": "juliana-carvalho",
@@ -288,7 +297,7 @@
 
   function slugify(t){return t.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"")}
   function carregar(){
-    try{const s=(window.NUVEM&&window.NUVEM.portfolio)?JSON.parse(JSON.stringify(window.NUVEM.portfolio)):JSON.parse(localStorage.getItem(CHAVE)); if(Array.isArray(s)&&s.length) return s}catch(e){}
+    try{const s=(window.NUVEM&&window.NUVEM.portfolio)?JSON.parse(JSON.stringify(window.NUVEM.portfolio)):JSON.parse(localStorage.getItem(CHAVE)); if(Array.isArray(s)&&s.length){s.forEach(p=>(p.links||[]).forEach(l=>{l.url=urlLimpa(l.url)}));return s}}catch(e){}
     return JSON.parse(JSON.stringify(padrao));
   }
   function salvar(lista){

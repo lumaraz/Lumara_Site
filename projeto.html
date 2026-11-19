@@ -12,7 +12,7 @@
 <meta property="og:title" content="Projeto — Lumara Silva">
 <meta property="og:description" content="Projeto de Lumara Silva, designer de marca e visual no Rio de Janeiro.">
 <meta property="og:url" content="https://lumarasilva.com.br/">
-<meta property="og:image" content="https://lumarasilva.com.br/img/compartilhar-2026.jpg">
+<meta property="og:image" content="https://lumarasilva.com.br/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
@@ -23,7 +23,7 @@
   .btn-link{display:inline-flex;align-items:center;text-decoration:none;font-weight:600;font-size:.95rem;color:var(--texto,#2D2D2D);border:1px solid currentColor;border-radius:99px;padding:.5rem 1.1rem;white-space:nowrap}
   .btn-link:hover{background:#2D2D2D;color:#FAFAFF;border-color:#2D2D2D}
 
-  :root{--bege:#F2EFE9;--claro:#FAFAFF;--azul:#86BBD8;--azul-esc:#3A6EA5;--texto:#2D2D2D;--marrom:#462D26;--linha:#CCCCCC;--suave:#2D2D2D}
+  :root{--bege:#F2EFE9;--claro:#FAFAFF;--azul:#86BBD8;--azul-esc:#3A6EA5;--texto:#2D2D2D;--azul-prof:#23446A;--linha:#CCCCCC;--suave:#2D2D2D}
   *{box-sizing:border-box;margin:0;padding:0}
   body{background:var(--bege);color:var(--texto);font-family:"Inter Tight",system-ui,sans-serif;font-size:1.0625rem;line-height:1.6;-webkit-font-smoothing:antialiased}
   a{color:inherit}
@@ -71,7 +71,7 @@
 </head>
 <body>
 <header><div class="wrap">
-  <a class="marca" href="index.html"><img src="img/logo-escuro.svg" alt="Lumara Silva" width="1552" height="366"></a>
+  <a class="marca" href="/"><img src="img/logo-escuro.svg" alt="Lumara Silva" width="1552" height="366"></a>
   <nav aria-label="Projeto"><button class="lang" id="idioma" aria-label="Switch to English" lang="en"><span class="ativo">PT</span><span>EN</span></button></nav>
 </div></header>
 <main id="conteudo" class="wrap"></main>
@@ -84,7 +84,7 @@ const esc=t=>String(t??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&g
 const sigla=n=>n.split(/\s+/).filter(w=>/^[A-ZÀ-Ú]/.test(w)).slice(0,2).map(w=>w[0]).join("");
 let lang="pt"; try{if(localStorage.getItem("lumara_lang")==="en")lang="en"}catch(e){}
 const L={
-  pt:{todos:"Todos os projetos",ano:"Ano",area:"Área",cliente:"Cliente",orc:"Solicitar orçamento",prox:"Próximo projeto",img:"imagem",de:"de",capa:"Capa do projeto",nf:"Projeto não encontrado",nfp:"Ele pode ter sido despublicado.",nfl:"Veja todos os trabalhos",abre:"(abre em nova aba)"},
+  pt:{todos:"Todos os projetos",ano:"Ano",area:"Área",cliente:"Cliente",orc:"Solicitar orçamento",prox:"Próximo projeto",img:"imagem",de:"de",capa:"Capa do projeto",nf:"Projeto não encontrado",nfp:"Ele pode ter sido despublicado.",nfl:"Veja todos os projetos",abre:"(abre em nova aba)"},
   en:{todos:"All projects",ano:"Year",area:"Field",cliente:"Client",orc:"Request a quote",prox:"Next project",img:"image",de:"of",capa:"Project cover",nf:"Project not found",nfp:"It may have been unpublished.",nfl:"See all work",abre:"(opens in a new tab)"}
 };
 function mostrar(rolar){
@@ -95,7 +95,7 @@ function mostrar(rolar){
   const lista=PORTFOLIO.carregar().filter(p=>p.publicado), slug=(()=>{const m=location.pathname.match(/\/projetos\/([^/?#]+)/);return m?decodeURIComponent(m[1]):location.hash.slice(1)})();
   if(!/\/projetos\//.test(location.pathname)&&slug) history.replaceState(null,"","/projetos/"+encodeURIComponent(slug));
   const i=lista.findIndex(p=>p.slug===slug), p=lista[i], m=document.getElementById("conteudo");
-  if(!p){m.innerHTML=`<div class="vazio"><h1>${T.nf}</h1><p class="desc">${T.nfp} <a href="index.html#trabalhos">${T.nfl}</a>.</p></div>`;document.title=T.nf+" — Lumara Silva";return}
+  if(!p){m.innerHTML=`<div class="vazio"><h1>${T.nf}</h1><p class="desc">${T.nfp} <a href="/#projetos">${T.nfl}</a>.</p></div>`;document.title=T.nf+" — Lumara Silva";return}
   const prox=lista[(i+1)%lista.length], area=PORTFOLIO.AREAS[p.area]?.[lang]||"", desc=(en&&p.descricaoEn)||p.descricao;
   document.title=`${p.nome} — Lumara Silva`;
   /* prévia de compartilhamento: no site publicado, cada projeto ganha a própria página com estas tags no HTML */
@@ -105,7 +105,7 @@ function mostrar(rolar){
   /* ficha ao lado do texto: cliente com a descrição, área e ano */
   const ficha=`<dl class="ficha"><div><dt>${T.cliente}</dt><dd>${esc(p.nome)}${desc?`<span class="sob">${esc(desc)}</span>`:""}</dd></div><div><dt>${T.area}</dt><dd>${esc(area)}</dd></div>${p.ano?`<div><dt>${T.ano}</dt><dd>${esc(p.ano)}</dd></div>`:""}</dl>`;
   m.innerHTML=`
-  <div class="topo-proj"><div><a class="voltar" href="index.html#trabalhos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>${T.todos}</a><h1>${esc(p.nome)}</h1></div></div>
+  <div class="topo-proj"><div><a class="voltar" href="/#projetos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>${T.todos}</a><h1>${esc(p.nome)}</h1></div></div>
   <div class="capa${p.capa?" com-img":""}" style="--c:${esc(p.cor)};${p.cor==="#86BBD8"?"color:#2D2D2D":""}">${p.capa?`<img src="${esc(p.capa)}" alt="${T.capa} ${esc(p.nome)}">`:esc(sigla(p.nome))}</div>
   ${`<div class="texto">
      ${ficha}
@@ -114,7 +114,7 @@ function mostrar(rolar){
    </div>`}
   ${p.galeria&&p.galeria.length?PORTFOLIO.galeriaHTML(p,esc,(k,n)=>`${esc(p.nome)}, ${T.img} ${k+1} ${T.de} ${n}`):""}
   <div class="acoes">
-    <div><a class="botao" href="orcamento.html">${T.orc}</a></div>
+    <div><a class="botao" href="/orcamento">${T.orc}</a></div>
     ${lista.length>1?`<a class="prox" href="/projetos/${prox.slug}"><small>${T.prox}</small><strong>${esc(prox.nome)}</strong></a>`:""}
   </div>`;
   if(rolar!==false) scrollTo(0,0);
