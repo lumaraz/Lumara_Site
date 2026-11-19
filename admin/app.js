@@ -13,7 +13,11 @@ const uid=p=>p+Array.from(crypto.getRandomValues(new Uint8Array(10)),b=>"abcdefg
 function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("on"),4200)}
 
 const SERV={"Identidade visual":"#3A6EA5","Social media":"#23446A","Alinhamento visual":"#86BBD8","Editorial":"#2D2D2D","UX/UI":"#23446A","Não sei ainda":"#A39C94"};
-const ETAPAS=["Briefing","Criação","Apresentação","Ajustes","Entrega final","Concluído"];
+const ETAPAS=["Onboarding","A fazer","Criação","Apresentação","Ajustes","Entrega final","Concluído"];
+/* modelo padrão da proposta (editável na aba Modelos) */
+const PROPOSTA_PADRAO={prazoEntrega:"",pagamento:"50% na aprovação e 50% na entrega",validade:15,obs:"Inclui duas rodadas de ajustes."};
+const modeloProp=()=>Object.assign({},PROPOSTA_PADRAO,S.modeloProposta||{});
+const PAGAMENTOS=["À vista, com 5% de desconto","50% na aprovação e 50% na entrega","3 parcelas mensais","Mensal, todo dia 10"];
 const CAT_E=["Projeto","Social media mensal","Outros"];
 const CAT_S=["Ferramentas e assinaturas","Impostos (DAS)","Freelancers","Equipamento","Marketing","Banco de imagens e fontes","Outros"];
 
@@ -59,7 +63,7 @@ function processarEventos(){
       }
       if(x.tipo==="contrato"){
         if(x.assinatura){c.doc=x.assinatura.doc;c.endereco=x.assinatura.endereco}
-        o.contrato=Object.assign(o.contrato||{},{status:"assinado",assinatura:x.assinatura,modelo:(o.contrato&&o.contrato.modelo)||S.contratoModelo||LS.MODELO_CONTRATO});
+        o.contrato=Object.assign(o.contrato||{},{status:"assinado",assinatura:x.assinatura,modelo:LS.modeloContrato(o,S)});
         const pj=S.projetos.find(y=>y.orc===o.id); if(pj){const ck=pj.check.find(k=>/contrato/i.test(k[0]));if(ck)ck[1]=1}
         notas.push(`${c.empresa} assinou o contrato da proposta ${o.num}.`);
       }
@@ -99,7 +103,10 @@ function carregar(){
   try{S=JSON.parse(localStorage.getItem("lumara_admin"))}catch(e){S=null}
   if(!S||S.v!==4) S=window.NUVEM_ADMIN?NUVEM_ADMIN.vazio():exemplo();
   if(!S.posts) S.posts=[];
-  S.projetos.forEach(p=>{p.etiquetas=p.etiquetas||[];p.comentarios=p.comentarios||[];p.anexos=p.anexos||[];p.entregas=p.entregas||[]});
+  S.projetos.forEach(p=>{p.etiquetas=p.etiquetas||[];p.comentarios=p.comentarios||[];p.anexos=p.anexos||[];p.entregas=p.entregas||[];p.check=p.check||[];p.reunioes=p.reunioes||[];p.onb=p.onb||{};
+    if(p.etapa==="Briefing") p.etapa="Onboarding"; if(!ETAPAS.includes(p.etapa)) p.etapa="Onboarding"});
+  /* nov/2026: contratos passam a usar os dois modelos novos (pontual e social media) */
+  if(!S.modelosV2&&(!window.NUVEM_ADMIN||NUVEM_ADMIN.papel==="admin")){delete S.contratoModelo;delete S.contratoSocial;S.modelosV2=1}
   if(!S.emails) S.emails=emailsPadrao();
   if(!S.catalogo) S.catalogo=catalogoPadrao();
   // pedidos vindos do formulário do site (mesmo navegador)
@@ -126,6 +133,7 @@ const VIEWS=[
   {id:"pedidos",nome:"Pedidos"},
   {id:"orcamentos",nome:"Orçamentos"},
   {id:"contratos",nome:"Contratos",admin:true},
+  {id:"modelos",nome:"Modelos (proposta e contratos)",admin:true},
   {id:"projetos",nome:"Projetos"},
   {id:"calendario",nome:"Calendário"},
   {id:"portfolio",nome:"Portfólio do site"},
@@ -151,11 +159,12 @@ function menu(){
 function render(){
   menu();
   const m=$("#conteudo");
-  m.innerHTML=({inicio,pedidos,orcamentos,contratos,projetos,calendario,portfolio,clientes,caixa,conteudo,emails,equipe})[view]();
+  m.innerHTML=({inicio,pedidos,orcamentos,contratos,modelos,projetos,calendario,portfolio,clientes,caixa,conteudo,emails,equipe})[view]();
   m.querySelectorAll(".tabela").forEach(t=>{const h=[...t.querySelectorAll("thead th")].map(x=>x.textContent);t.querySelectorAll("tbody tr").forEach(r=>[...r.children].forEach((td,i)=>td.setAttribute("data-label",h[i]||"")))});
   if(view==="projetos") ligarKanban();
   if(view==="inicio"){ carregarVisitas(); carregarFalhas(); }
   if(view==="orcamentos"&&orcAberto) ligarEditor();
+  if(view==="modelos") ligarModelos();
   fecharMenu();
 }
 window.addEventListener("hashchange",()=>{if($("#gaveta").classList.contains("on"))fechar();rota()});
@@ -243,8 +252,9 @@ function criarOrcamento(pid){
   const p=S.pedidos.find(x=>x.id===pid);
   let c=S.clientes.find(x=>x.email===p.email);
   if(!c){c={id:uid("c"),nome:p.nome,empresa:(p.negocio||"").split(/[,.]/)[0].slice(0,60)||p.nome,cidade:p.cidade,email:p.email,whats:p.whatsapp,origem:p.origem,desde:dia(0)};S.clientes.push(c)}
-  const o={id:uid("O"),num:HOJE.getFullYear()+"-"+String(S.seq++).padStart(3,"0"),cliente:c.id,pedido:pid,status:"rascunho",criado:dia(0),validade:15,prazoEntrega:p.prazo||"",
-    pagamento:"50% na aprovação e 50% na entrega",itens:[(c=>c?{s:c.nome,d:c.descricao,v:c.valor}:{s:p.servico==="Não sei ainda"?"":p.servico,d:"",v:0})((S.catalogo||[]).find(c=>p.servico&&c.nome.toLowerCase().startsWith(p.servico.toLowerCase())))],obs:"Inclui duas rodadas de ajustes."};
+  const M=modeloProp(), social=/social/i.test(p.servico||"");
+  const o={id:uid("O"),num:HOJE.getFullYear()+"-"+String(S.seq++).padStart(3,"0"),cliente:c.id,pedido:pid,status:"rascunho",criado:dia(0),validade:M.validade,prazoEntrega:p.prazo||M.prazoEntrega,
+    pagamento:social?"Mensal, todo dia 10":M.pagamento,social:social?{postsSemana:p.postsSemana||"",pecasMes:"",duracao:p.duracaoContrato&&p.duracaoContrato!=="Ainda não sei"?p.duracaoContrato:"",diaConteudo:5,diaPagamento:10}:undefined,itens:[(c=>c?{s:c.nome,d:c.descricao,v:c.valor}:{s:p.servico==="Não sei ainda"?"":p.servico,d:"",v:0})((S.catalogo||[]).find(c=>p.servico&&c.nome.toLowerCase().startsWith(p.servico.toLowerCase())))],obs:M.obs};
   S.orcamentos.push(o); p.orc=o.id; salvar(); fechar(); abrirOrc(o.id);
   toast("Rascunho criado com o serviço do catálogo. Ajuste valores e itens como precisar.");
 }
@@ -265,20 +275,24 @@ function orcamentos(){
   </tbody></table></div>`;
 }
 function novoOrcSemPedido(){
+  if(!S.clientes.length){toast("Cadastre um cliente primeiro (ou crie o orçamento a partir de um pedido).");return}
   const opts=S.clientes.map(c=>`<option value="${c.id}">${esc(c.empresa)} (${esc(c.nome)})</option>`).join("");
   abrir("Novo orçamento","Para um cliente já cadastrado",`<div class="cmp"><label for="nc">Cliente</label><select id="nc">${opts}</select></div>`,
-   `<button class="btn" onclick="(()=>{const o={id:uid('O'),num:HOJE.getFullYear()+'-'+String(S.seq++).padStart(3,'0'),cliente:$('#nc').value,status:'rascunho',criado:dia(0),validade:15,prazoEntrega:'',pagamento:'50% na aprovação e 50% na entrega',itens:[{s:'',d:'',v:0}],obs:''};S.orcamentos.push(o);salvar();fechar();abrirOrc(o.id)})()">Criar rascunho</button>`);
+   `<button class="btn" onclick="(()=>{const M=modeloProp();const o={id:uid('O'),num:HOJE.getFullYear()+'-'+String(S.seq++).padStart(3,'0'),cliente:$('#nc').value,status:'rascunho',criado:dia(0),validade:M.validade,prazoEntrega:M.prazoEntrega,pagamento:M.pagamento,itens:[{s:'',d:'',v:0}],obs:M.obs};S.orcamentos.push(o);salvar();fechar();abrirOrc(o.id)})()">Criar rascunho</button>`);
 }
 function editor(){
-  const o=S.orcamentos.find(x=>x.id===orcAberto), c=cli(o.cliente), trav=o.status==="aprovado"||o.status==="recusado"||!admin();
+  const o=S.orcamentos.find(x=>x.id===orcAberto), c=cli(o.cliente), trav=!admin(), tipo=LS.tipoContrato(o), so=o.social||{};
   const dis=trav?"disabled":"";
   return `<div class="cab"><div><h1>Orçamento ${o.num}</h1><p>${esc(c.empresa)} · <span class="tag ${ST_ORC[o.status][1]}">${ST_ORC[o.status][0]}</span></p></div>
     <div class="acoes"><button class="btn sec" onclick="orcAberto=null;render()">Voltar à lista</button>
     <button class="btn sec" onclick="baixarPDF()">Baixar PDF</button>
     ${admin()&&o.status!=="rascunho"?`<button class="btn sec" onclick="copiarLink(S.orcamentos.find(x=>x.id==='${o.id}'))">Copiar link da proposta</button><a class="btn sec" href="../proposta.html#${o.id}">Ver como cliente</a>`:""}
-    ${o.status==="rascunho"&&admin()?`<button class="btn" onclick="statusOrc('enviado')">Marcar como enviado</button>`:""}
-    ${o.status==="enviado"&&admin()?`<button class="btn perigo" onclick="statusOrc('recusado')">Cliente recusou</button><button class="btn" onclick="aprovar()">Cliente aprovou</button>`:""}
+    ${o.status==="rascunho"&&admin()?`<button class="btn perigo" onclick="statusOrc('recusado')">Marcar como recusada</button><button class="btn" onclick="statusOrc('enviado')">Marcar como enviado</button>`:""}
+    ${o.status==="enviado"&&admin()?`<button class="btn perigo" onclick="statusOrc('recusado')">Marcar como recusada</button><button class="btn" onclick="aprovar()">Cliente aprovou</button>`:""}
+    ${o.status==="recusado"&&admin()?`${c.whats?`<a class="btn sec" href="${zapLink(c.whats,`Oi, ${(c.nome||"").split(" ")[0]}! Aqui é a Lumara. Vi que a proposta não seguiu adiante e queria entender se posso ajudar de outro jeito.`)}" target="_blank" rel="noopener">WhatsApp<span class="sr-only"> (abre em nova aba)</span></a>`:""}<button class="btn" onclick="statusOrc('rascunho')">Reabrir proposta</button>`:""}
     </div></div>
+  ${o.status==="aprovado"&&admin()?`<p class="painel" style="margin-bottom:1rem">Proposta aprovada: dá para editar o texto e os itens, mas o projeto e as parcelas já lançados no caixa não mudam sozinhos. Se o contrato ainda não foi assinado, ele usa os dados novos.</p>`:""}
+  ${o.status==="recusado"?`<p class="painel" style="margin-bottom:1rem">Proposta recusada: o pedido saiu da lista de abertos. Use o WhatsApp para retomar a conversa, se fizer sentido.</p>`:""}
   ${!admin()?`<p class="painel" style="margin-bottom:1rem">Só a administradora pode editar orçamentos e ver valores.</p>`:""}
   <div class="editor">
     <form class="painel" id="ed" onsubmit="return false">
@@ -297,7 +311,16 @@ function editor(){
       <h2 style="margin-top:1.4rem">Condições</h2>
       <div class="cmp"><label for="pz">Prazo de entrega</label><input id="pz" data-f="prazoEntrega" value="${esc(o.prazoEntrega)}" ${dis}></div>
       <div class="cmp"><label for="pg">Pagamento</label><select id="pg" data-f="pagamento" ${dis}>
-        ${["À vista, com 5% de desconto","50% na aprovação e 50% na entrega","3 parcelas mensais","Mensal, todo dia 10"].map(x=>`<option ${x===o.pagamento?"selected":""}>${x}</option>`).join("")}</select></div>
+        ${PAGAMENTOS.concat(PAGAMENTOS.includes(o.pagamento)?[]:[o.pagamento]).map(x=>`<option ${x===o.pagamento?"selected":""}>${esc(x)}</option>`).join("")}</select></div>
+      <div class="cmp"><label for="tc">Modelo de contrato</label><select id="tc" data-f="tipoContrato" ${dis}>
+        <option value="pontual" ${tipo==="pontual"?"selected":""}>Projeto pontual (identidade visual / design)</option>
+        <option value="social" ${tipo==="social"?"selected":""}>Serviços mensais (design para social media)</option></select></div>
+      <div id="ed-social" class="${tipo==="social"?"":"oculto"}"><p class="mut" style="margin:-.2rem 0 .6rem">Uso interno: entra no contrato de social media.</p><div class="linha2">
+        <div class="cmp"><label for="so-ps">Posts por semana</label><input id="so-ps" data-s="postsSemana" value="${esc(so.postsSemana||"")}" ${dis}></div>
+        <div class="cmp"><label for="so-pm">Peças por mês</label><input id="so-pm" data-s="pecasMes" value="${esc(so.pecasMes||"")}" ${dis}></div>
+        <div class="cmp"><label for="so-du">Duração mínima</label><input id="so-du" data-s="duracao" placeholder="Ex.: 3 meses" value="${esc(so.duracao||"")}" ${dis}></div>
+        <div class="cmp"><label for="so-dc">Dia limite do conteúdo</label><input id="so-dc" type="number" min="1" max="28" data-s="diaConteudo" value="${esc(so.diaConteudo||5)}" ${dis}></div>
+        <div class="cmp"><label for="so-dp">Melhor dia de pagamento</label><input id="so-dp" type="number" min="1" max="28" data-s="diaPagamento" value="${esc(so.diaPagamento||10)}" ${dis}></div></div></div>
       <div class="cmp"><label for="vd">Validade da proposta (dias)</label><input id="vd" type="number" min="1" data-f="validade" value="${o.validade}" ${dis}></div>
       <div class="cmp"><label for="ob">Observações</label><textarea id="ob" data-f="obs" ${dis}>${esc(o.obs)}</textarea></div>
     </form>
@@ -324,13 +347,16 @@ function folha(o){
 }
 function ligarEditor(){
   const o=S.orcamentos.find(x=>x.id===orcAberto), ed=$("#ed");
+  ed.addEventListener("change",e=>{if(e.target.tagName==="SELECT")ed.dispatchEvent(new Event("input",{bubbles:true}))});
   ed.addEventListener("input",e=>{
     const t=e.target;
     if(t.dataset.k!==undefined){o.itens[t.dataset.k][t.dataset.c]=t.dataset.c==="v"?+t.value:t.value;
       if(t.dataset.c==="s"){const it=o.itens[t.dataset.k],c=S.catalogo.find(x=>x.nome===t.value);
         if(c){if(!it.d){it.d=c.descricao;t.closest(".it").querySelector('[data-c="d"]').value=c.descricao}
               if(!+it.v){it.v=c.valor;t.closest(".it").querySelector('[data-c="v"]').value=c.valor}}}}
-    else if(t.dataset.f){o[t.dataset.f]=t.dataset.f==="validade"?+t.value||1:t.value}
+    else if(t.dataset.s){o.social=o.social||{diaConteudo:5,diaPagamento:10};o.social[t.dataset.s]=t.value}
+    else if(t.dataset.f){o[t.dataset.f]=t.dataset.f==="validade"?+t.value||1:t.value;
+      if(t.dataset.f==="tipoContrato"){if(t.value==="social"&&!o.social)o.social={diaConteudo:5,diaPagamento:10};$("#ed-social").classList.toggle("oculto",t.value!=="social")}}
     $("#previa").innerHTML=folha(o); salvar();
   });
 }
@@ -362,9 +388,9 @@ function baixarPDF(){
 }
 function statusOrc(s){
   const o=S.orcamentos.find(x=>x.id===orcAberto); o.status=s;
-  const p=S.pedidos.find(x=>x.id===o.pedido); if(p) p.status=s==="enviado"?"enviado":s;
+  const p=S.pedidos.find(x=>x.id===o.pedido); if(p) p.status=s==="rascunho"?(o.enviadoEm?"enviado":"novo"):s;
   if(s==="enviado"){o.enviadoEm=dia(0);const c=cli(o.cliente);registrarEmail("enviado",c.email,{nome:c.nome.split(" ")[0],numero:o.num,link:linkProposta(o),validade:validadeOrc(o)})}
-  salvar(); render(); toast(s==="enviado"?"Orçamento enviado. O cliente recebe o e-mail com o link da proposta.":"Orçamento marcado como recusado.");
+  salvar(); render(); toast(s==="enviado"?"Orçamento enviado. O cliente recebe o e-mail com o link da proposta.":s==="rascunho"?"Proposta reaberta como rascunho.":"Proposta marcada como recusada. O pedido saiu dos abertos.");
 }
 function validadeOrc(o){const d=dt(o.enviadoEm||o.criado);d.setDate(d.getDate()+ +o.validade);return d.toLocaleDateString("pt-BR")}
 function copiarTexto(t,msg){try{navigator.clipboard.writeText(t).then(()=>toast(msg),()=>toast(t))}catch(e){toast(t)}}
@@ -372,7 +398,7 @@ function copiarLink(o){const u=linkProposta(o);try{navigator.clipboard.writeText
 function aprovar(){
   const o=S.orcamentos.find(x=>x.id===orcAberto), n=aprovarOrc(o,{});
   salvar(); render();
-  toast(`Aprovado! Projeto criado em Briefing e ${n} ${n>1?"parcelas lançadas":"parcela lançada"} no caixa como a receber.`);
+  toast(`Aprovado! Projeto criado em Onboarding e ${n} ${n>1?"parcelas lançadas":"parcela lançada"} no caixa como a receber.`);
 }
 function aprovarOrc(o,{forma,viaCliente,semEmail}){
   const c=cli(o.cliente), tot=totalOrc(o), desc=(SITE.carregar().integracoes.descontoVista||5)/100;
@@ -380,7 +406,7 @@ function aprovarOrc(o,{forma,viaCliente,semEmail}){
   const p=S.pedidos.find(x=>x.id===o.pedido); if(p) p.status="aprovado";
   const pjId=uid("J");
   S.projetos.push({id:pjId,orc:o.id,titulo:o.itens[0].s||"Novo projeto",cliente:o.cliente,servico:Object.keys(SERV).find(k=>(o.itens[0].s||"").includes(k.split(" ")[0]))||"Identidade visual",
-    etapa:"Briefing",prazo:dia(35),resp:"lumara",valor:tot,check:[["Reunião de briefing",0],["Contrato assinado",0],["Pagamento da 1ª parcela",0]],etiquetas:[],comentarios:[],anexos:[],entregas:[]});
+    etapa:"Onboarding",prazo:dia(35),resp:"lumara",valor:tot,check:[["Reunião de briefing",0],["Contrato assinado",0],["Pagamento da 1ª parcela",0]],etiquetas:[],comentarios:[],anexos:[],entregas:[],reunioes:[],onb:{}});
   o.contrato={status:"aguardando",criado:dia(0)};
   const jaAssinou=LS.fila().some(x=>x.tipo==="contrato"&&x.orc===o.id);
   if(!jaAssinou){window.SEM_ENVIO=!!semEmail;registrarEmail("contrato",c.email,{nome:(c.nome||"").split(" ")[0],link:linkContrato(o)});window.SEM_ENVIO=false}
@@ -395,12 +421,15 @@ function aprovarOrc(o,{forma,viaCliente,semEmail}){
 }
 
 /* ============ PROJETOS (kanban) ============ */
-let filtroResp="todos";
+let filtroResp="todos", filtroCli="todos";
 function projetos(){
-  const vis=S.projetos.filter(p=>filtroResp==="todos"||p.resp===filtroResp);
+  if(filtroCli!=="todos"&&!S.clientes.some(c=>c.id===filtroCli)&&filtroCli!=="") filtroCli="todos";
+  const vis=S.projetos.filter(p=>(filtroResp==="todos"||p.resp===filtroResp)&&(filtroCli==="todos"||(p.cliente||"")===filtroCli));
+  const clis=[...S.clientes].sort((a,b)=>String(a.empresa||a.nome).localeCompare(String(b.empresa||b.nome),"pt-BR"));
   return `<div class="cab"><div><h1>Projetos</h1><p>Arraste os cartões entre as etapas, como no Trello. No celular, segure o cartão por um instante antes de arrastar. Abra um cartão para ver etiquetas, comentários, anexos e as artes enviadas ao cliente.</p></div></div>
   <div class="filtros"><button aria-pressed="${filtroResp==="todos"}" onclick="filtroResp='todos';render()">Todos</button>
-   ${ativos().map(p=>`<button aria-pressed="${filtroResp===p.id}" onclick="filtroResp='${p.id}';render()">${esc(p.nome.split(" ")[0])}</button>`).join("")}</div>
+   ${ativos().map(p=>`<button aria-pressed="${filtroResp===p.id}" onclick="filtroResp='${p.id}';render()">${esc(p.nome.split(" ")[0])}</button>`).join("")}
+   <label class="filtro-cli"><span>Cliente</span><select onchange="filtroCli=this.value;render()"><option value="todos">Todos os clientes</option>${clis.map(c=>`<option value="${c.id}" ${filtroCli===c.id?"selected":""}>${esc(c.empresa||c.nome)}</option>`).join("")}${S.projetos.some(p=>!p.cliente)?`<option value="" ${filtroCli===""?"selected":""}>Sem cliente</option>`:""}</select></label></div>
   <div class="kanban" role="list" aria-label="Etapas dos projetos">${ETAPAS.map(et=>{const cs=vis.filter(p=>p.etapa===et);return `<div role="listitem" class="coluna" data-etapa="${et}" aria-labelledby="col-${ETAPAS.indexOf(et)}">
     <h2 class="col-cab" id="col-${ETAPAS.indexOf(et)}">${et}<span aria-label="${cs.length} cartões">${cs.length}</span></h2>
     <div class="cartoes">${cs.map(cartao).join("")}</div>
@@ -409,12 +438,13 @@ function projetos(){
 const ETQ={urgente:["Urgente","#A3283A"],cliente:["Aguardando cliente","#23446A"],revisao:["Em revisão","#3A6EA5"],grafica:["Gráfica","#23446A"],interno:["Interno","#5E5A55"]};
 const icoComent='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>', icoClipe='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 12l6-6a3 3 0 0 1 4 4l-8 8a5 5 0 0 1-7-7l7-7"/></svg>';
 function cartao(p){
+  if(!Array.isArray(p.check))p.check=[];
   const d=diasAte(p.prazo), fe=p.check.filter(c=>c[1]).length, r=pessoa(p.resp);
   const cls=p.etapa==="Concluído"?"ok":d<=2?"vence":"";
   const pend=(p.entregas||[]).filter(x=>x.tipo==="aprovacao"&&x.status==="aguardando").length;
-  return `<div class="cartao" role="button" tabindex="0" draggable="true" aria-label="${esc(p.titulo)}, ${esc(cli(p.cliente).empresa)}, prazo ${fmt(p.prazo)}${(p.etiquetas||[]).map(k=>", "+(ETQ[k]||[k])[0]).join("")}. Abrir para editar ou mudar de etapa" data-id="${p.id}" onclick="verProjeto('${p.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();verProjeto('${p.id}')}" style="--c:${SERV[p.servico]}">
+  return `<div class="cartao" role="button" tabindex="0" draggable="true" aria-label="${esc(p.titulo)}, ${esc(cli(p.cliente).empresa||"sem cliente")}, prazo ${fmt(p.prazo)}${(p.etiquetas||[]).map(k=>", "+(ETQ[k]||[k])[0]).join("")}. Abrir para editar ou mudar de etapa" data-id="${p.id}" onclick="verProjeto('${p.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();verProjeto('${p.id}')}" style="--c:${SERV[p.servico]||"#CCCCCC"}">
     ${(p.etiquetas||[]).length?`<div class="etqs">${p.etiquetas.map(k=>ETQ[k]?`<span class="etq" style="--c:${ETQ[k][1]}">${ETQ[k][0]}</span>`:"").join("")}</div>`:`<div class="faixa"></div>`}
-    <div class="tit">${esc(p.titulo)}</div><div class="cli">${esc(cli(p.cliente).empresa)}</div>
+    <div class="tit">${esc(p.titulo)}</div><div class="cli">${esc(cli(p.cliente).empresa||"Sem cliente")}</div>
     <div class="meta"><span class="prazo ${cls}">${p.etapa==="Concluído"?"Entregue":d<0?"Atrasado":"Prazo "+fmt(p.prazo)}</span>
     ${pend?`<span title="Artes aguardando o cliente">${pend} p/ aprovar</span>`:""}
     ${p.comentarios&&p.comentarios.length?`<span class="ico" title="Comentários">${icoComent}${p.comentarios.length}</span>`:""}
@@ -458,12 +488,20 @@ function novoCartao(btn,etapa){
   const box=document.createElement("div"); box.className="nova-entrada";
   box.innerHTML=`<textarea rows="2" placeholder="Título do cartão" aria-label="Título do novo cartão"></textarea><div class="acoes" style="margin-top:.4rem"><button class="btn peq">Adicionar</button><button class="btn peq sec">Cancelar</button></div>`;
   btn.replaceWith(box); const ta=box.querySelector("textarea"); ta.focus();
-  const ok=()=>{if(!ta.value.trim())return render();S.projetos.push({id:uid("J"),titulo:ta.value.trim(),cliente:S.clientes[0].id,servico:"Identidade visual",etapa,prazo:dia(14),resp:usuario,valor:0,check:[],etiquetas:[],comentarios:[],anexos:[],entregas:[]});salvar();render();toast("Cartão criado. Clique nele para escolher cliente e prazo.")};
+  const ok=()=>{const t=ta.value.trim();if(!t){ta.focus();ta.setAttribute("aria-invalid","true");toast("Escreva o título do cartão.");return}
+    try{
+      const novo={id:uid("J"),titulo:t,cliente:filtroCli!=="todos"?filtroCli:"",servico:"Identidade visual",etapa,prazo:dia(14),resp:pessoa(usuario).id?usuario:(ativos()[0]||{}).id||usuario,valor:0,
+        check:etapa==="Onboarding"?[["Reunião de briefing",0]]:[],etiquetas:[],comentarios:[],anexos:[],entregas:[],reunioes:[],onb:{}};
+      S.projetos.push(novo);salvar();render();
+      const el=document.querySelector(`.cartao[data-id="${novo.id}"]`);if(el){el.classList.add("novo");el.scrollIntoView({block:"nearest",inline:"nearest"})}
+      toast(novo.cliente?"Cartão criado.":"Cartão criado. Abra o cartão para escolher cliente e prazo.");
+    }catch(err){console.error(err);toast("Não foi possível criar o cartão: "+(err.message||err)+". Recarregue a página e tente de novo.")}};
   box.querySelectorAll("button")[0].onclick=ok; box.querySelectorAll("button")[1].onclick=render;
   ta.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();ok()}if(e.key==="Escape")render()});
 }
 function verProjeto(id,aba){
   const p=S.projetos.find(x=>x.id===id), c=cli(p.cliente);
+  ["etiquetas","comentarios","anexos","entregas","check","reunioes"].forEach(k=>{if(!Array.isArray(p[k]))p[k]=[]}); if(!p.onb||typeof p.onb!=="object")p.onb={};
   const nomeAutor=a=>a==="cliente"?c.nome||"Cliente":pessoa(a).nome||a;
   const quando=iso=>new Date(iso).toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
   const stEnt={aguardando:["Aguardando cliente","st-aguardando"],aprovado:["Aprovado","st-aprovado"],ajustes:["Ajustes pedidos","st-ajustes"],ok:["Liberado","st-aprovado"]};
@@ -472,7 +510,7 @@ function verProjeto(id,aba){
   <div class="linha2">
     <div class="cmp"><label for="pj-e">Etapa</label><select id="pj-e">${ETAPAS.map(e=>`<option ${e===p.etapa?"selected":""}>${e}</option>`).join("")}</select></div>
     <div class="cmp"><label for="pj-p">Prazo</label><input id="pj-p" type="date" value="${p.prazo}"></div>
-    <div class="cmp"><label for="pj-c">Cliente</label><select id="pj-c">${S.clientes.map(c=>`<option value="${c.id}" ${c.id===p.cliente?"selected":""}>${esc(c.empresa)}</option>`).join("")}</select></div>
+    <div class="cmp"><label for="pj-c">Cliente</label><select id="pj-c"><option value="" ${!p.cliente?"selected":""}>Sem cliente</option>${S.clientes.map(c=>`<option value="${c.id}" ${c.id===p.cliente?"selected":""}>${esc(c.empresa||c.nome)}</option>`).join("")}</select></div>
     <div class="cmp"><label for="pj-s">Serviço</label><select id="pj-s">${Object.keys(SERV).slice(0,4).map(s=>`<option ${s===p.servico?"selected":""}>${s}</option>`).join("")}</select></div>
     <div class="cmp"><label for="pj-r">Responsável</label><select id="pj-r">${ativos(p.resp).map(e=>`<option value="${e.id}" ${e.id===p.resp?"selected":""}>${esc(e.nome)}</option>`).join("")}</select></div>
     ${admin()?`<div class="cmp"><label>Valor do projeto</label><div style="padding:.55rem 0;font-weight:600">${brl(p.valor||0)}</div></div>`:""}
@@ -481,6 +519,20 @@ function verProjeto(id,aba){
     <div class="etq-sel">${Object.entries(ETQ).map(([k,[n,cor]])=>`<label style="--c:${cor}"><input type="checkbox" name="pj-etq" value="${k}" ${p.etiquetas.includes(k)?"checked":""}><span>${n}</span></label>`).join("")}</div></fieldset>
   <div class="bloco"><h3>Checklist</h3><ul class="checklist" id="pj-ck">${p.check.map((c,k)=>`<li class="${c[1]?"feito":""}"><input type="checkbox" id="ck${k}" ${c[1]?"checked":""} data-k="${k}"><label for="ck${k}"><span>${esc(c[0])}</span></label></li>`).join("")}</ul>
   <div style="display:flex;gap:.4rem;margin-top:.5rem"><input id="pj-nc" aria-label="Nova tarefa" placeholder="Nova tarefa" style="flex:1;padding:.45rem .6rem;border:1px solid #AEB5AD;border-radius:6px"><button class="btn peq sec" id="pj-add">Adicionar</button></div></div>
+  <div class="bloco"><h3>Onboarding</h3>
+    <p class="mut" style="margin-bottom:.6rem">Briefing, referências e materiais do cliente. Fica guardado no cartão em qualquer etapa.</p>
+    <div class="cmp"><label for="pj-ob-b">Briefing</label><textarea id="pj-ob-b" data-onb="briefing">${esc(p.onb.briefing||"")}</textarea></div>
+    <div class="cmp"><label for="pj-ob-r">Referências visuais</label><textarea id="pj-ob-r" data-onb="refs" placeholder="Links, descrições ou observações">${esc(p.onb.refs||"")}</textarea></div>
+    <div class="cmp"><label for="pj-ob-i">Identidade visual do cliente</label><textarea id="pj-ob-i" data-onb="identidade" placeholder="Cores, fontes, logo, manual da marca…">${esc(p.onb.identidade||"")}</textarea></div>
+    <div class="cmp"><label for="pj-ob-l">Links do cliente</label><textarea id="pj-ob-l" data-onb="links" placeholder="Drive, Instagram, site…">${esc(p.onb.links||"")}</textarea></div>
+    <div class="cmp"><label for="pj-ob-c">Conteúdos e copys (social media)</label><textarea id="pj-ob-c" data-onb="conteudo" style="min-height:140px" placeholder="Textos e conteúdos enviados pelo cliente para criar as peças">${esc(p.onb.conteudo||"")}</textarea></div></div>
+  <div class="bloco"><h3>Reuniões</h3>
+    <p class="mut" style="margin-bottom:.6rem">A reunião de briefing é obrigatória e fica no checklist. As de alinhamento são opcionais e não travam as etapas.</p>
+    <ul class="coments">${p.reunioes.map(r=>`<li style="display:flex;justify-content:space-between;align-items:center;gap:.5rem"><span><strong>${esc(r.tipo)}</strong> · ${r.data?fmtLongo(r.data):"sem data"}${r.nota?`<br><small>${esc(r.nota)}</small>`:""}</span><button class="btn peq sec" aria-label="Remover reunião ${esc(r.tipo)}" data-rm-reu="${r.id}">×</button></li>`).join("")||`<li class="mut" style="background:none;border:0;padding:0">Nenhuma reunião de alinhamento registrada.</li>`}</ul>
+    <div class="linha2"><div class="cmp"><label for="pj-ru-t">Reunião</label><select id="pj-ru-t">${["Alinhamento: criação","Alinhamento: apresentação","Alinhamento: finalização","Outra"].map(x=>`<option>${x}</option>`).join("")}</select></div>
+      <div class="cmp"><label for="pj-ru-d">Data</label><input id="pj-ru-d" type="date"></div></div>
+    <div class="cmp"><label for="pj-ru-n">Observação (opcional)</label><input id="pj-ru-n" placeholder="Pauta, link da chamada…"></div>
+    <div class="acoes"><button class="btn peq sec" id="pj-ru-ok">Registrar reunião</button>${(SITE.carregar().integracoes||{}).agenda?`<a class="btn peq sec" href="${esc(SITE.carregar().integracoes.agenda)}" target="_blank" rel="noopener">Abrir agenda<span class="sr-only"> (abre em nova aba)</span></a>`:""}</div></div>
   <div class="bloco"><h3>Entregas para o cliente</h3>
     <p class="mut" style="margin-bottom:.6rem">Artes para aprovação aparecem no portal com os botões “Aprovar” e “Pedir ajustes”. Arquivos finais só são liberados ao cliente depois do pagamento total.</p>
     <div class="entregas">${p.entregas.map(en=>`<div class="entrega">${en.tipo==="aprovacao"&&en.img?`<img src="${srcPF(en.img)}" alt="">`:`<span class="doc">ZIP</span>`}
@@ -496,7 +548,10 @@ function verProjeto(id,aba){
     <ul class="coments">${p.comentarios.map(k=>`<li class="${k.autor==="cliente"?"cliente":""}"><small>${esc(nomeAutor(k.autor))}${k.autor==="cliente"?" (cliente)":""} · ${quando(k.quando)}</small><p>${esc(k.texto)}</p></li>`).join("")||`<li class="mut" style="background:none;border:0;padding:0">Nenhum comentário ainda.</li>`}</ul>
     <div class="cmp"><label for="pj-cm">Novo comentário</label><textarea id="pj-cm" placeholder="Visível só para a equipe"></textarea></div><button class="btn peq sec" id="pj-cm-ok">Comentar</button></div>`;
   abrir(p.titulo,esc(c.empresa),corpo,`<button class="btn perigo" id="pj-del">Excluir</button><button class="btn" id="pj-ok">Salvar</button>`);
-  const reabrir=()=>{salvar();render();verProjeto(id)};
+  const lerOnb=()=>document.querySelectorAll("[data-onb]").forEach(x=>{p.onb[x.dataset.onb]=x.value});
+  const reabrir=()=>{lerOnb();salvar();render();verProjeto(id)};
+  document.querySelectorAll("[data-onb]").forEach(x=>x.addEventListener("change",()=>{lerOnb();salvar()}));
+  $("#pj-ru-ok").onclick=()=>{p.reunioes.push({id:uid("r"),tipo:$("#pj-ru-t").value,data:$("#pj-ru-d").value,nota:$("#pj-ru-n").value.trim()});reabrir();toast("Reunião registrada.")};
   $("#pj-ck").addEventListener("change",e=>{p.check[e.target.dataset.k][1]=e.target.checked?1:0;e.target.closest("li").classList.toggle("feito",e.target.checked);salvar()});
   document.querySelectorAll('[name="pj-etq"]').forEach(x=>x.onchange=()=>{p.etiquetas=[...document.querySelectorAll('[name="pj-etq"]:checked')].map(y=>y.value);salvar();render()});
   $("#pj-add").onclick=()=>{const v=$("#pj-nc").value.trim();if(!v)return;p.check.push([v,0]);reabrir()};
@@ -505,10 +560,10 @@ function verProjeto(id,aba){
     registrarEmail("arte",c.email,{nome:(c.nome||"").split(" ")[0],projeto:p.titulo,portal:linkPortal(c)});reabrir();toast("Arte enviada. O cliente recebe o aviso e aprova pelo portal.")};
   $("#pj-final").onclick=()=>{$("#pj-final-form").classList.toggle("oculto");$("#pj-fn").focus()};
   $("#pj-fok").onclick=()=>{const n=$("#pj-fn").value.trim();if(!n){$("#pj-fn").focus();return}p.entregas.push({id:uid("e"),tipo:"final",titulo:n,url:$("#pj-fu").value.trim(),status:"ok"});reabrir();toast("Arquivo final adicionado ao portal.")};
-  $("#gav-corpo").onclick=e=>{const b=e.target.closest("[data-rm-ent],[data-rm-anexo]");if(!b)return;
-    if(b.dataset.rmEnt) p.entregas=p.entregas.filter(x=>x.id!==b.dataset.rmEnt); else p.anexos.splice(+b.dataset.rmAnexo,1); reabrir()};
+  $("#gav-corpo").onclick=e=>{const b=e.target.closest("[data-rm-ent],[data-rm-anexo],[data-rm-reu]");if(!b)return;
+    if(b.dataset.rmReu) p.reunioes=p.reunioes.filter(x=>x.id!==b.dataset.rmReu); else if(b.dataset.rmEnt) p.entregas=p.entregas.filter(x=>x.id!==b.dataset.rmEnt); else p.anexos.splice(+b.dataset.rmAnexo,1); reabrir()};
   $("#pj-anexo").onchange=async e=>{for(const f of e.target.files){const src=f.type.startsWith("image/")?await reduzir(f,1200,.75):"";p.anexos.push({nome:f.name,src})}reabrir();toast("Anexo adicionado. No sistema publicado, qualquer arquivo vai para o armazenamento.")};
-  $("#pj-ok").onclick=()=>{const et=p.etapa;p.titulo=$("#pj-t").value;p.prazo=$("#pj-p").value||p.prazo;p.cliente=$("#pj-c").value;p.servico=$("#pj-s").value;p.resp=$("#pj-r").value;salvar();fechar();
+  $("#pj-ok").onclick=()=>{const et=p.etapa;lerOnb();p.titulo=$("#pj-t").value.trim()||p.titulo;p.prazo=$("#pj-p").value||p.prazo;p.cliente=$("#pj-c").value;p.servico=$("#pj-s").value;p.resp=$("#pj-r").value;salvar();fechar();
     if($("#pj-e").value!==et) moverProjeto(id,$("#pj-e").value); else{render();toast("Projeto salvo.")}};
   $("#pj-del").onclick=()=>{if(!$("#pj-del").dataset.c){$("#pj-del").dataset.c=1;$("#pj-del").textContent="Confirmar exclusão";return}S.projetos=S.projetos.filter(x=>x.id!==id);salvar();fechar();render();toast("Projeto excluído.")};
   if(aba==="coments") $("#pj-cm").focus();
@@ -519,28 +574,89 @@ function contratos(){
   const l=S.orcamentos.filter(o=>o.status==="aprovado").sort((a,b)=>b.num.localeCompare(a.num));
   const st=o=>o.contrato&&o.contrato.status==="assinado"?["Assinado","st-aprovado"]:["Aguardando assinatura","st-pendente"];
   return `<div class="cab"><div><h1>Contratos</h1><p>Cada proposta aprovada gera o contrato com os dados do cliente, os serviços e os valores. O cliente assina pelo link.</p></div>
-    <div class="acoes"><button class="btn sec" onclick="editarModelo()">Editar modelo do contrato</button></div></div>
-  <div class="tab-wrap"><table class="tabela"><thead><tr><th>Proposta</th><th>Cliente</th><th>Aprovada em</th><th>Situação</th><th>Ações</th></tr></thead><tbody>
+    <div class="acoes"><a class="btn sec" href="#modelos">Editar modelos</a></div></div>
+  <div class="tab-wrap"><table class="tabela"><thead><tr><th>Proposta</th><th>Cliente</th><th>Modelo</th><th>Aprovada em</th><th>Situação</th><th>Ações</th></tr></thead><tbody>
   ${l.length?l.map(o=>{const c=cli(o.cliente),[n,k]=st(o);return `<tr><td><strong>Nº ${esc(o.num)}</strong></td><td>${esc(c.empresa)}<div class="mut">${esc(c.nome)}</div></td>
+    <td>${LS.tipoContrato(o)==="social"?"Social media mensal":"Projeto pontual"}${o.contrato&&o.contrato.modelo&&o.contrato.status!=="assinado"?`<div class="mut">texto editado</div>`:""}</td>
     <td>${o.aprovadoEm?fmt(o.aprovadoEm):"—"}</td><td><span class="tag ${k}">${n}</span>${o.contrato&&o.contrato.assinatura?`<div class="mut">${new Date(o.contrato.assinatura.quando).toLocaleDateString("pt-BR")}</div>`:""}</td>
     <td><span class="acoes"><a class="btn peq sec" href="../contrato.html#${o.id}">Abrir<span class="sr-only"> contrato ${esc(o.num)}</span></a>
-      ${o.contrato&&o.contrato.status==="assinado"?"":`<button class="btn peq sec" onclick="copiarTexto(linkContrato(S.orcamentos.find(x=>x.id==='${o.id}')),'Link do contrato copiado.')">Copiar link</button>
-      ${c.whats?`<a class="btn peq sec" href="${zapLink(c.whats,`Oi, ${(c.nome||"").split(" ")[0]}! Seu contrato está pronto para assinar: ${linkContrato(o)}`)}" target="_blank" rel="noopener">WhatsApp<span class="sr-only"> (abre em nova aba)</span></a>`:""}`}</span></td></tr>`}).join(""):`<tr><td colspan="5" class="vazio">Nenhuma proposta aprovada ainda.</td></tr>`}
+      ${o.contrato&&o.contrato.status==="assinado"?"":`<button class="btn peq sec" onclick="editarContrato('${o.id}')">Editar<span class="sr-only"> contrato ${esc(o.num)}</span></button><button class="btn peq sec" onclick="copiarTexto(linkContrato(S.orcamentos.find(x=>x.id==='${o.id}')),'Link do contrato copiado.')">Copiar link</button>
+      ${c.whats?`<a class="btn peq sec" href="${zapLink(c.whats,`Oi, ${(c.nome||"").split(" ")[0]}! Seu contrato está pronto para assinar: ${linkContrato(o)}`)}" target="_blank" rel="noopener">WhatsApp<span class="sr-only"> (abre em nova aba)</span></a>`:""}`}</span></td></tr>`}).join(""):`<tr><td colspan="6" class="vazio">Nenhuma proposta aprovada ainda.</td></tr>`}
   </tbody></table></div>
-  <p class="mut" style="margin-top:1rem">O contrato assinado guarda a versão do modelo usada na assinatura. Mudanças no modelo valem só para os próximos contratos.</p>`;
+  <p class="mut" style="margin-top:1rem">O contrato assinado guarda a versão do texto usada na assinatura. Mudanças nos modelos valem só para os contratos ainda não assinados.</p>`;
 }
-function editarModelo(){
-  const atual=S.contratoModelo||LS.MODELO_CONTRATO;
-  const ex=S.orcamentos.find(o=>o.status==="aprovado");
-  abrir("Modelo do contrato","Usado nos próximos contratos",`
-    <p class="mut" style="margin-bottom:.6rem">Linhas que começam com “## ” viram títulos de cláusula, e “- ” vira item de lista. Os campos entre chaves são preenchidos sozinhos: {cliente_nome}, {cliente_doc}, {cliente_endereco}, {cliente_email}, {proposta}, {data_aprovacao}, {servicos}, {prazo}, {valor}, {valor_extenso}, {condicao}.</p>
-    <div class="cmp"><label for="md-t">Texto do contrato</label><textarea id="md-t" style="min-height:300px;font-size:.85rem">${esc(atual)}</textarea></div>
-    ${ex?`<div class="bloco"><h3>Prévia com a proposta nº ${esc(ex.num)}</h3><div class="contrato-prev" id="md-prev" tabindex="0" role="region" aria-label="Prévia do contrato"></div></div>`:""}`,
-    `<button class="btn sec" id="md-pad">Voltar ao modelo padrão</button><button class="btn" id="md-ok">Salvar modelo</button>`);
-  const prev=()=>{if(ex) $("#md-prev").innerHTML=LS.contratoHTML($("#md-t").value,LS.camposContrato(ex,cli(ex.cliente)))};
-  prev(); $("#md-t").oninput=prev;
-  $("#md-pad").onclick=()=>{$("#md-t").value=LS.MODELO_CONTRATO;prev()};
-  $("#md-ok").onclick=()=>{const v=$("#md-t").value.trim();S.contratoModelo=v===LS.MODELO_CONTRATO.trim()?undefined:v;salvar();fechar();toast("Modelo do contrato salvo.")};
+function editarModelo(){location.hash="modelos"}
+/* edição livre do contrato de uma proposta antes da assinatura */
+function editarContrato(oid){
+  const o=S.orcamentos.find(x=>x.id===oid), c=cli(o.cliente);
+  if(o.contrato&&o.contrato.status==="assinado"){toast("Este contrato já foi assinado e não pode mais ser alterado.");return}
+  const so=Object.assign({diaConteudo:5,diaPagamento:10},o.social||{});
+  const padraoDe=t=>t==="social"?(S.contratoSocial||LS.MODELO_SOCIAL):(S.contratoModelo||LS.MODELO_CONTRATO);
+  let tipo=LS.tipoContrato(o);
+  abrir("Contrato da proposta nº "+o.num,esc(c.empresa||c.nome),`
+    <div class="cmp"><label for="ec-t">Modelo</label><select id="ec-t"><option value="pontual" ${tipo==="pontual"?"selected":""}>Contrato – Projeto Pontual (Identidade Visual / Design)</option><option value="social" ${tipo==="social"?"selected":""}>Contrato – Serviços Mensais (Design para Social Media)</option></select></div>
+    <div id="ec-soc" class="${tipo==="social"?"":"oculto"}"><div class="linha2">
+      <div class="cmp"><label for="ec-ps">Posts por semana</label><input id="ec-ps" data-s="postsSemana" value="${esc(so.postsSemana||"")}"></div>
+      <div class="cmp"><label for="ec-pm">Peças por mês</label><input id="ec-pm" data-s="pecasMes" value="${esc(so.pecasMes||"")}"></div>
+      <div class="cmp"><label for="ec-du">Duração mínima do contrato</label><input id="ec-du" data-s="duracao" placeholder="Ex.: 3 meses" value="${esc(so.duracao||"")}"></div>
+      <div class="cmp"><label for="ec-dc">Dia limite do conteúdo</label><input id="ec-dc" type="number" min="1" max="28" data-s="diaConteudo" value="${esc(so.diaConteudo)}"></div>
+      <div class="cmp"><label for="ec-dp">Melhor dia de pagamento</label><input id="ec-dp" type="number" min="1" max="28" data-s="diaPagamento" value="${esc(so.diaPagamento)}"></div></div></div>
+    <p class="mut" style="margin:.4rem 0 .6rem">Os campos entre chaves são preenchidos sozinhos. Você pode mudar qualquer trecho só para este cliente; o modelo padrão não muda.</p>
+    <div class="cmp"><label for="ec-x">Texto do contrato</label><textarea id="ec-x" style="min-height:280px;font-size:.85rem">${esc((o.contrato&&o.contrato.modelo)||padraoDe(tipo))}</textarea></div>
+    <div class="bloco"><h3>Prévia</h3><div class="contrato-prev" id="ec-prev" tabindex="0" role="region" aria-label="Prévia do contrato"></div></div>`,
+    `<button class="btn sec" id="ec-pad">Voltar ao texto do modelo</button><button class="btn" id="ec-ok">Salvar contrato</button>`);
+  const tmp=()=>Object.assign({},o,{tipoContrato:$("#ec-t").value,social:Object.assign({},so,Object.fromEntries([...document.querySelectorAll("#ec-soc [data-s]")].map(x=>[x.dataset.s,x.value]))),contrato:{}});
+  const prev=()=>{$("#ec-prev").innerHTML=LS.contratoHTML($("#ec-x").value,LS.camposContrato(tmp(),c))};
+  prev(); $("#ec-x").oninput=prev; $("#ec-soc").oninput=prev;
+  $("#ec-t").onchange=()=>{const t=$("#ec-t").value, atual=$("#ec-x").value.trim();
+    if(atual===padraoDe(tipo).trim()) $("#ec-x").value=padraoDe(t); else toast("O texto foi editado: use “Voltar ao texto do modelo” para trocar pelo outro modelo.");
+    tipo=t; $("#ec-soc").classList.toggle("oculto",t!=="social"); prev()};
+  $("#ec-pad").onclick=()=>{$("#ec-x").value=padraoDe($("#ec-t").value);prev()};
+  $("#ec-ok").onclick=()=>{const t=tmp(), x=$("#ec-x").value.trim();
+    o.tipoContrato=t.tipoContrato; o.social=t.tipoContrato==="social"?t.social:o.social;
+    o.contrato=o.contrato||{status:"aguardando",criado:dia(0)};
+    if(x===padraoDe(t.tipoContrato).trim()) delete o.contrato.modelo; else o.contrato.modelo=x;
+    salvar();fechar();render();toast("Contrato salvo. O cliente vê esta versão no link do contrato.")};
+}
+
+/* ============ MODELOS (proposta e contratos) ============ */
+function modelos(){
+  const M=modeloProp();
+  const exemploO={num:HOJE.getFullYear()+"-000",cliente:"",criado:dia(0),validade:M.validade,prazoEntrega:M.prazoEntrega,pagamento:M.pagamento,obs:M.obs,itens:[{s:(S.catalogo[0]||{}).nome||"Identidade visual",d:(S.catalogo[0]||{}).descricao||"",v:(S.catalogo[0]||{}).valor||0}]};
+  return `<div class="cab"><div><h1>Modelos</h1><p>Modelo padrão da proposta de orçamento e os dois modelos de contrato. Dá para editar a qualquer momento, mesmo sem pedidos pendentes.</p></div></div>
+  <section class="painel" id="md-prop"><h2>Proposta de orçamento</h2>
+    <p class="mut" style="margin:-.4rem 0 .8rem">Valores usados ao criar uma proposta nova. Em cada proposta você continua podendo mudar tudo.</p>
+    <div class="editor"><form id="mp" onsubmit="return false">
+      <div class="cmp"><label for="mp-pz">Prazo de entrega padrão</label><input id="mp-pz" data-m="prazoEntrega" value="${esc(M.prazoEntrega)}" placeholder="Ex.: 30 dias úteis"></div>
+      <div class="cmp"><label for="mp-pg">Pagamento padrão</label><select id="mp-pg" data-m="pagamento">${PAGAMENTOS.map(x=>`<option ${x===M.pagamento?"selected":""}>${x}</option>`).join("")}</select></div>
+      <div class="cmp"><label for="mp-vd">Validade (dias)</label><input id="mp-vd" type="number" min="1" data-m="validade" value="${M.validade}"></div>
+      <div class="cmp"><label for="mp-ob">Observações</label><textarea id="mp-ob" data-m="obs">${esc(M.obs)}</textarea></div>
+      <div class="acoes"><button class="btn sec" type="button" onclick="S.modeloProposta=undefined;salvar();render();toast('Modelo da proposta voltou ao padrão.')">Voltar ao padrão</button><button class="btn" type="button" id="mp-ok">Salvar modelo da proposta</button></div>
+    </form><div id="mp-prev">${folhaExemplo(exemploO)}</div></div></section>
+  ${[["pontual","Contrato – Projeto Pontual (Identidade Visual / Design)","contratoModelo",LS.MODELO_CONTRATO],["social","Contrato – Serviços Mensais (Design para Social Media)","contratoSocial",LS.MODELO_SOCIAL]].map(([k,tit,chave,pad])=>`
+  <section class="painel" style="margin-top:1.2rem"><h2>${tit}</h2>
+    <p class="mut" style="margin:-.4rem 0 .8rem">“## ” abre uma cláusula e “- ” vira item de lista. Campos preenchidos sozinhos: {cliente_nome}, {cliente_doc}, {cliente_endereco}, {cliente_email}, {proposta}, {data_aprovacao}, {servicos}, {prazo}, {valor}, {valor_extenso}, {condicao}.${k==="social"?" Posts por semana, peças por mês, duração mínima, dia limite do conteúdo e dia de pagamento são preenchidos em cada proposta e entram na lista de serviços.":""}</p>
+    <div class="cmp"><label for="mc-${k}">Texto do modelo</label><textarea id="mc-${k}" data-chave="${chave}" style="min-height:260px;font-size:.85rem">${esc(S[chave]||pad)}</textarea></div>
+    <details><summary>Ver prévia</summary><div class="contrato-prev" id="mc-prev-${k}" tabindex="0" role="region" aria-label="Prévia do ${tit}"></div></details>
+    <div class="acoes" style="margin-top:.6rem"><button class="btn sec" type="button" data-pad="${k}">Voltar ao texto padrão</button><button class="btn" type="button" data-salvar="${k}">Salvar modelo</button></div></section>`).join("")}`;
+}
+function folhaExemplo(o){const c={id:"x",empresa:"Empresa do cliente",nome:"Nome do cliente",cidade:"Rio de Janeiro - RJ"};
+  const bk=S.clientes;S.clientes=[c];o.cliente="x";try{return folha(o)}finally{S.clientes=bk}}
+function ligarModelos(){
+  const f=$("#mp"); if(!f) return;
+  const ler=()=>{const M=modeloProp();f.querySelectorAll("[data-m]").forEach(x=>{M[x.dataset.m]=x.dataset.m==="validade"?(+x.value||15):x.value});return M};
+  const atual=()=>{const M=ler();$("#mp-prev").innerHTML=folhaExemplo({num:HOJE.getFullYear()+"-000",criado:dia(0),validade:M.validade,prazoEntrega:M.prazoEntrega,pagamento:M.pagamento,obs:M.obs,itens:[{s:(S.catalogo[0]||{}).nome||"Identidade visual",d:(S.catalogo[0]||{}).descricao||"",v:(S.catalogo[0]||{}).valor||0}]})};
+  f.addEventListener("input",atual); f.addEventListener("change",atual);
+  $("#mp-ok").onclick=()=>{S.modeloProposta=ler();salvar();toast("Modelo da proposta salvo. Vale para as próximas propostas.")};
+  const ex=S.orcamentos.find(o=>o.status==="aprovado")||{num:HOJE.getFullYear()+"-000",criado:dia(0),aprovadoEm:dia(0),prazoEntrega:"30 dias úteis",pagamento:"50% na aprovação e 50% na entrega",itens:[{s:"Identidade visual",d:"Logo, paleta e tipografia",v:3000}],social:{postsSemana:3,pecasMes:12,duracao:"3 meses",diaConteudo:5,diaPagamento:10}};
+  const exC=cli(ex.cliente).id?cli(ex.cliente):{nome:"Nome do cliente",email:"cliente@email.com"};
+  [["pontual",LS.MODELO_CONTRATO],["social",LS.MODELO_SOCIAL]].forEach(([k,pad])=>{
+    const ta=$("#mc-"+k), pv=$("#mc-prev-"+k);
+    const prev=()=>{pv.innerHTML=LS.contratoHTML(ta.value,LS.camposContrato(Object.assign({},ex,{tipoContrato:k,contrato:{}}),exC))};
+    prev(); ta.oninput=prev;
+    document.querySelector(`[data-pad="${k}"]`).onclick=()=>{ta.value=pad;prev()};
+    document.querySelector(`[data-salvar="${k}"]`).onclick=()=>{const v=ta.value.trim();S[ta.dataset.chave]=v===pad.trim()?undefined:v;salvar();toast("Modelo de contrato salvo. Vale para os contratos ainda não assinados.")};
+  });
 }
 
 /* ============ CALENDÁRIO ============ */

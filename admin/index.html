@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gestão — Lumara Silva</title>
-<meta name="robots" content="noindex">
+<meta name="robots" content="noindex, follow">
 <link rel="icon" type="image/svg+xml" href="../img/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="../img/favicon-32.png">
 <link rel="apple-touch-icon" href="../img/favicon-180.png">
@@ -123,6 +123,12 @@ h2{font-size:1.15rem;font-weight:700;letter-spacing:-.01em;margin-bottom:.75rem}
 .filtros button[aria-pressed=true]{background:var(--tinta);color:var(--papel);border-color:var(--tinta)}
 
 /* kanban */
+.filtro-cli{display:inline-flex;align-items:center;gap:.4rem;margin-left:.4rem;font-size:.85rem;font-weight:600}
+.filtro-cli select{font:inherit;font-weight:400;padding:.35rem .6rem;border:1px solid #CCCCCC;border-radius:99px;background:#FAFAFF;max-width:220px}
+.cartao.novo{animation:cartaoNovo 1.4s ease}
+@keyframes cartaoNovo{0%{box-shadow:0 0 0 3px #3A6EA5}100%{box-shadow:0 0 0 0 transparent}}
+@media (prefers-reduced-motion:reduce){.cartao.novo{animation:none;outline:2px solid #3A6EA5}}
+details summary{cursor:pointer;font-weight:600;font-size:.9rem;margin:.4rem 0}
 .kanban{display:flex;gap:.9rem;overflow-x:auto;padding-bottom:1rem;align-items:flex-start;scroll-snap-type:x proximity}
 .coluna{flex:0 0 272px;background:#E2E5DF;border-radius:10px;padding:.6rem;scroll-snap-align:start;max-height:calc(100vh - 180px);display:flex;flex-direction:column}
 .coluna.sobre{background:#D4DCD9;box-shadow:inset 0 0 0 2px var(--mar)}

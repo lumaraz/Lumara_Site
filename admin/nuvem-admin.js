@@ -219,7 +219,10 @@
     } catch (e) {
       console.error(e); salvando = false; falhas++;
       if (!pendente) pendente = S;
-      sinc("Sem conexão. Tentando salvar de novo…", true);
+      const recusado = /Banco 4(0[0-9]|2[0-9])/.test(e.message) && !/Banco 40[18]/.test(e.message);
+      sinc(recusado ? "O banco recusou a alteração. Tentando de novo…" : "Sem conexão. Tentando salvar de novo…", true);
+      if (falhas === 1 && typeof toast === "function")
+        toast(recusado ? "Não foi possível salvar a última alteração (o banco recusou). Recarregue a página; se continuar, avise a administradora." : "Sem conexão: a alteração fica guardada e será salva assim que a internet voltar.");
       clearTimeout(timer); timer = setTimeout(salvarAgora, Math.min(30000, 3000 * falhas));
     }
   }

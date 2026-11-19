@@ -1,0 +1,19 @@
+# Versões .html -> URLs limpas
+/index.html                  /                                      301!
+/orcamento.html              /orcamento                             301!
+/privacidade.html            /privacidade                           301!
+/links.html                  /links                                 301!
+
+# URLs antigas indexadas no Google -> página atual de cada projeto
+/ana-julia                   /projetos/ana-julia                    301
+/juliana-carvalho            /projetos/juliana-carvalho             301
+/guapi-parque                /projetos/guapi-parque-das-aguas       301
+/social-media-guapi-parque   /projetos/guapi-parque-das-aguas       301
+/social-media-psicologia     /#projetos                             301
+/colecao-2026-yins           /projetos/yin-s-brasil                 301
+/acesso-rio                  /#projetos                             301
+/anasol                      /projetos/anasol                       301
+/nkcom                       /projetos/nkcom                        301
+/barbara-kruger              /projetos/barbara-kruger               301
+/work                        /#projetos                             301
+/month                       /#projetos                             301

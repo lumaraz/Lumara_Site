@@ -25,6 +25,7 @@ export async function dadosDoCliente(cid) {
   for (const r of linhas) if (TIPOS.includes(r.tipo) && r.tipo !== "clientes") S[r.tipo].push(r.dados);
   const geral = (await lerConfig("geral")) || {};
   S.contratoModelo = geral.contratoModelo || null;
+  S.contratoSocial = geral.contratoSocial || null;
   const ev = await pendentes(cid);
   const pagoParcela = (id) => ev.some((x) => x.tipo === "parcela" && x.lanc === id);
   // O que é interno da equipe não sai daqui

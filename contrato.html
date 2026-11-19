@@ -88,8 +88,8 @@ if(o){const evA=LS.fila().find(x=>x.tipo==="aprovado"&&x.orc===o.id); if(evA&&o.
 if(o){const ev=LS.fila().reverse().find(x=>x.tipo==="contrato"&&x.orc===o.id); assinatura=(o.contrato&&o.contrato.assinatura)||(ev&&ev.assinatura)||null}
 
 function folha(t){
-  const campos=LS.camposContrato(o,c,assinatura), modelo=(o.contrato&&o.contrato.modelo)||S.contratoModelo;
-  return `<article class="folha" aria-labelledby="ct-tit"><h1 id="ct-tit">Contrato de prestação de serviços de design</h1>
+  const campos=LS.camposContrato(o,c,assinatura), modelo=LS.modeloContrato(o,S);
+  return `<article class="folha" aria-labelledby="ct-tit"><h1 id="ct-tit">${LS.tipoContrato(o)==="social"?"Contrato de prestação de serviços mensais de design para social media":"Contrato de prestação de serviços de design"}</h1>
     <p class="num">Proposta nº ${esc(o.num)} · ${esc(c.empresa||c.nome)}</p>
     ${t.ptOnly?`<p class="mut" lang="en" style="margin-bottom:1rem">${t.ptOnly}</p>`:""}
     <div lang="pt-BR">${LS.contratoHTML(modelo,campos)}</div>

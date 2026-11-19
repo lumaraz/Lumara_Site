@@ -27,6 +27,7 @@ export default async (req) => {
       .replace(/(<meta property="og:url" content=")[^"]*/, `$1${esc(url)}`)
       .replace(/(<meta property="og:image" content=")[^"]*/, `$1${esc(img)}`);
   }
+  if (!p) html = html.replace('<meta charset="utf-8">', '<meta charset="utf-8">\n<meta name="robots" content="noindex, follow">');
   return new Response(html, {
     status: p ? 200 : 404,
     headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "public, max-age=0, must-revalidate", "Netlify-CDN-Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" },

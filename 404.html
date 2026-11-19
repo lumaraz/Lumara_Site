@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, follow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Página não encontrada — Lumara Silva</title>
+<link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png">
+<link rel="preload" href="/fonts/inter-tight-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/css/fontes.css">
+<style>
+  :root{--bege:#F2EFE9;--claro:#FAFAFF;--texto:#2D2D2D;--linha:#CCCCCC;--azul-esc:#3A6EA5;--azul-prof:#23446A}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bege);color:var(--texto);font-family:"Inter Tight",system-ui,sans-serif;font-size:1.0625rem;line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100svh;display:flex;flex-direction:column}
+  a{color:inherit}
+  :focus-visible{outline:3px solid var(--azul-esc);outline-offset:3px;border-radius:3px}
+  header{width:min(1180px,100% - 2.5rem);margin-inline:auto;height:68px;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+  header img{height:clamp(32px,4vw,42px);width:auto;display:block}
+  .lang{display:inline-flex;padding:2px;border:1px solid var(--linha);border-radius:99px;background:var(--claro);cursor:pointer;font:inherit;font-size:.78rem;font-weight:600;color:var(--texto)}
+  .lang span{padding:.22rem .55rem;border-radius:99px}
+  .lang span.ativo{background:var(--texto);color:var(--claro)}
+  main{flex:1;display:grid;place-items:center;padding:2rem 1.25rem 4rem}
+  .caixa{text-align:center;max-width:34rem}
+  .num{display:inline-block;font-weight:800;font-size:clamp(4.5rem,16vw,8.5rem);line-height:1;letter-spacing:-.06em;color:var(--azul-prof);padding:.15em .35em;border:1.5px dashed var(--azul-prof);border-radius:22px;margin-bottom:1.6rem;position:relative}
+  .num::before,.num::after{content:"";position:absolute;width:9px;height:9px;background:var(--bege);border:1.5px solid var(--azul-prof)}
+  .num::before{top:-6px;left:-6px}.num::after{bottom:-6px;right:-6px}
+  h1{font-size:clamp(1.9rem,4.5vw,2.8rem);line-height:1.05;letter-spacing:-.045em;font-weight:800}
+  p{margin-top:.9rem;color:var(--texto);font-size:1.08rem}
+  .acoes{display:flex;flex-wrap:wrap;gap:.7rem;justify-content:center;margin-top:1.8rem}
+  .botao{display:inline-block;text-decoration:none;padding:.8rem 1.4rem;border-radius:99px;font-weight:600;background:var(--azul-prof);color:var(--claro);transition:background .15s,color .15s}
+  .botao:hover{background:var(--texto)}
+  .botao.sec{background:none;color:var(--texto);border:1px solid var(--texto)}
+  .botao.sec:hover{background:var(--texto);color:var(--claro)}
+  @media (prefers-reduced-motion:reduce){.botao{transition:none}}
+</style>
+</head>
+<body>
+<header>
+  <a href="/" aria-label="Lumara Silva, página inicial" id="marca"><img src="/img/logo-escuro.svg" alt="Lumara Silva" width="1552" height="366"></a>
+  <button class="lang" id="idioma" aria-label="Switch to English" lang="en"><span class="ativo">PT</span><span>EN</span></button>
+</header>
+<main>
+  <div class="caixa">
+    <span class="num" aria-hidden="true">404</span>
+    <h1 id="tit">Essa página saiu do layout.</h1>
+    <p id="txt">O endereço pode ter mudado ou não existe mais. Mas tem muita coisa boa por aqui: que tal começar pelo portfólio?</p>
+    <div class="acoes">
+      <a class="botao" href="/#projetos" id="b1">Ver projetos</a>
+      <a class="botao sec" href="/" id="b2">Ir para o início</a>
+    </div>
+  </div>
+</main>
+<script>
+(function(){
+  var T={pt:{t:"Página não encontrada — Lumara Silva",tit:"Essa página saiu do layout.",txt:"O endereço pode ter mudado ou não existe mais. Mas tem muita coisa boa por aqui: que tal começar pelo portfólio?",b1:"Ver projetos",b2:"Ir para o início",m:"Lumara Silva, página inicial"},
+         en:{t:"Page not found — Lumara Silva",tit:"This page fell off the layout.",txt:"The address may have changed or no longer exists. There's plenty to see here, though: why not start with the portfolio?",b1:"See projects",b2:"Go to the home page",m:"Lumara Silva, home page"}};
+  var lang="pt"; try{if(localStorage.getItem("lumara_lang")==="en")lang="en"}catch(e){}
+  var b=document.getElementById("idioma");
+  function aplicar(){var x=T[lang],en=lang==="en";
+    document.documentElement.lang=en?"en":"pt-BR";document.title=x.t;
+    ["tit","txt","b1","b2"].forEach(function(k){document.getElementById(k).textContent=x[k]});
+    document.getElementById("marca").setAttribute("aria-label",x.m);
+    b.children[0].classList.toggle("ativo",!en);b.children[1].classList.toggle("ativo",en);
+    b.setAttribute("aria-label",en?"Mudar para português":"Switch to English");b.setAttribute("lang",en?"pt-BR":"en")}
+  b.addEventListener("click",function(){lang=lang==="pt"?"en":"pt";try{localStorage.setItem("lumara_lang",lang)}catch(e){}aplicar()});
+  aplicar();
+})();
+</script>
+</body>
+</html>
